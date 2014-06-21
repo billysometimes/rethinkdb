@@ -177,8 +177,12 @@ class RqlQuery{
     RqlQuery([List args, Map optargs]){
         if(args != null)
           args.forEach((e){
+            if(_check_if_options(e,tt)){
+              optargs = optargs == null ? e : optargs;
+            }else{
             if(e != null)
               this.args.add(_expr(e));
+            }
           });
         if(optargs != null)
           optargs.forEach((k,v){
@@ -195,7 +199,25 @@ class RqlQuery{
       return c._start(this, global_optargs);
     }
 
+    //since a term that may take multiple options can now be passed
+    //one or two, we can't know if the final argument in a query
+    //is actually an option or just another arg.  _check_if_options
+    //checks if all of the keys in the object are in options
+    _check_if_options(obj,p.Term_TermType tt){
+      if(obj is Map == false){
+        return false;
+      }else{
+        List options = new _RqlAllOptions(tt).options;
 
+        bool isOptions = true;
+        obj.keys.forEach((k){
+          if(!options.contains(k)){
+            isOptions = false;
+          }
+        });
+        return isOptions;
+      }
+    }
 
     build(){
         List res = [];
@@ -218,6 +240,7 @@ class RqlQuery{
     }
     Insert insert(records,[options]) => new Insert(this,records,options);
 
+    IndexList indexList() => new IndexList(this);
 
     // Comparison operators
     Eq eq(other) => new Eq(this, other);
@@ -268,7 +291,7 @@ class RqlQuery{
 
     Without without(items) => new Without(_listify(items));
 
-    FunCall rqlDo(arg,expression) => new FunCall(_listify(arg),func_wrap(expression));
+    FunCall rqlDo(arg,[expression]) => new FunCall(_listify(arg),func_wrap(expression));
 
     Default rqlDefault(args) => new Default(this,args);
 
@@ -367,7 +390,7 @@ class RqlQuery{
           return new OrderBy(_listify(attrs),options);
         }
 
-    Between between(lowerKey,upperKey,[options]) => new Between(this,lowerKey,upperKey,options);
+    Between between(lowerKey,[upperKey,options]) => new Between(this,lowerKey,upperKey,options);
 
     Distinct distinct() => new Distinct(this);
 
@@ -381,11 +404,11 @@ class RqlQuery{
 
     Union union(sequence) => new Union(this,sequence);
 
-    InnerJoin innerJoin(otherSequence, predicate) => new InnerJoin(this,otherSequence,predicate);
+    InnerJoin innerJoin(otherSequence, [predicate]) => new InnerJoin(this,otherSequence,predicate);
 
-    OuterJoin outerJoin(otherSequence, predicate) => new OuterJoin(this,otherSequence,predicate);
+    OuterJoin outerJoin(otherSequence, [predicate]) => new OuterJoin(this,otherSequence,predicate);
 
-    EqJoin eqJoin(leftAttr,otherTable,[options]) => new EqJoin(this,leftAttr,otherTable,options);
+    EqJoin eqJoin(leftAttr,[otherTable,options]) => new EqJoin(this,leftAttr,otherTable,options);
 
     Zip zip() => new Zip(this);
 
@@ -397,13 +420,13 @@ class RqlQuery{
 
     //Array only operations
 
-    InsertAt insertAt(index,value) => new InsertAt(this,index,value);
+    InsertAt insertAt(index,[value]) => new InsertAt(this,index,value);
 
-    SpliceAt spliceAt(index,ar) => new SpliceAt(this,index,ar);
+    SpliceAt spliceAt(index,[ar]) => new SpliceAt(this,index,ar);
 
     DeleteAt deleteAt(index,[end]) => new DeleteAt(this,index,end);
 
-    ChangeAt changeAt(index,value) => new ChangeAt(this,index,value);
+    ChangeAt changeAt(index,[value]) => new ChangeAt(this,index,value);
 
     Sample sample(int i) => new Sample(this,i);
 
@@ -413,7 +436,7 @@ class RqlQuery{
 
     ToEpochTime toEpochTime() => new ToEpochTime(this);
 
-    During during(start,end,[options]) => new During(this,start,end,options);
+    During during(start,[end,options]) => new During(this,start,end,options);
 
     Date date() => new Date(this);
 
@@ -445,12 +468,13 @@ class RqlQuery{
           List tmp = invocation.positionalArguments;
                 List args = [];
                 Map options = null;
-                for(int i=0; i < tmp.length; i++){
-                  if(tmp[i] is Map && i == tmp.length-1)
-                    options = tmp[i];
-                  else
-                    args.add(tmp[i]);
+                if(tmp.length > 1 && tmp[tmp.length-1] is Map){
+                  options = tmp.removeAt(tmp[tmp.length-1]);
                 }
+
+                tmp.forEach((arg){
+                  args.add(arg);
+                });
 
           InstanceMirror im = reflect(this);
 
@@ -1145,7 +1169,7 @@ class Json extends RqlTopLevelQuery{
 class Args extends RqlTopLevelQuery{
     p.Term_TermType tt = p.Term_TermType.ARGS;
 
-    Args(List array):super(array);
+    Args(List array):super([array]);
 }
 
 class ToISO8601 extends RqlMethodQuery{
@@ -1309,4 +1333,67 @@ class RqlTimeName extends RqlQuery{
 p.Term_TermType tt;
 
 RqlTimeName(this.tt):super();
+}
+
+class _RqlAllOptions {
+  //list of every option from any term
+  List options;
+
+  _RqlAllOptions(p.Term_TermType tt){
+    switch (tt) {
+      case p.Term_TermType.TABLE_CREATE:
+        options = ['primaryKey','durablilty','datacenter'];
+        break;
+      case p.Term_TermType.INSERT:
+        options = ['durability','returnVals','upcert'];
+        break;
+      case p.Term_TermType.UPDATE:
+        options = ['durability','returnVals','nonAtomic'];
+        break;
+      case p.Term_TermType.REPLACE:
+        options = ['durability','returnVals','nonAtomic'];
+        break;
+      case p.Term_TermType.DELETE:
+        options = ['durability','returnVals'];
+        break;
+      case p.Term_TermType.TABLE:
+        options = ['useOutDated'];
+        break;
+      case p.Term_TermType.GET_ALL:
+        options = ['index'];
+        break;
+      case p.Term_TermType.BETWEEN:
+        options = ['index','left_bound','right_bound'];
+        break;
+      case p.Term_TermType.FILTER:
+        options = ['default'];
+        break;
+      case p.Term_TermType.EQ_JOIN:
+        options = ['index'];
+        break;
+      case p.Term_TermType.SLICE:
+        options = ['leftBound','rightBound'];
+        break;
+      case p.Term_TermType.GROUP:
+        options = ['index'];
+        break;
+      case p.Term_TermType.RANDOM:
+        options = ['float'];
+        break;
+      case p.Term_TermType.ISO8601:
+        options = ['default_timezone','returnVals'];
+        break;
+      case p.Term_TermType.DURING:
+        options = ['leftBound','rightBound'];
+        break;
+      case p.Term_TermType.JAVASCRIPT:
+        options = ['timeout'];
+        break;
+      case p.Term_TermType.HTTP:
+        options = ['timeout','reattempts','redirects','verify','resultFormat','method','auth','params','header','data','page','pageLimit'];
+        break;
+      default:
+        options = [];
+    }
+  }
 }

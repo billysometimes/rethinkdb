@@ -86,7 +86,7 @@ Desc desc(String attr) => new Desc(attr);
 /**
  * Create a time object for a specific time.
  */
-Time time(int year,int month,int day,String timezone,[int hour,int minute,num second]) => new Time(year, month, day,timezone,hour, minute, second);
+Time time(int year,[int month,int day,String timezone,int hour,int minute,num second]) => new Time(year, month, day,timezone,hour, minute, second);
 
 /**
  * Create a time object from a Dart DateTime object.
@@ -124,7 +124,7 @@ FunCall rqlDo(arg,[expr]) => new FunCall(arg,expr);
  * If the test expression returns false or null, the [falseBranch] will be executed.
  * In the other cases, the [trueBranch] is the one that will be evaluated.
  */
-Branch branch(test,trueBranch,falseBranch) => new Branch(test,trueBranch,falseBranch);
+Branch branch(test,[trueBranch,falseBranch]) => new Branch(test,trueBranch,falseBranch);
 
 /**
  * Throw a runtime error. If called with no arguments inside the second argument to default, re-throw the current error.
@@ -173,7 +173,7 @@ Args args(args) => new Args(args);
 
 Http http(url,[optargs]) => new Http(url,optargs);
 
-Random random(args,optargs) => new Random(func_wrap(args),optargs);
+Random random([left,right, options]) => new Random(left,right,options);
 
 Not not(args) => new Not(args);
 

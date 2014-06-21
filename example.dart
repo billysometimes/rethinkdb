@@ -146,7 +146,7 @@ exampleCommands(conn)
 
   /**between gets all documents with a key between two values**/
 
-  //r.table("animals").between(0,5501,{"index":"number_in_wild"}).run(conn).then((response)=>print(response));
+  //r.table("animals").between(r.args([0,5501])).run(conn).then((response)=>print(response));
 
 
   /**filter() filters based on the predicate**/

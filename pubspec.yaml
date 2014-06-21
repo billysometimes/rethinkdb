@@ -1,0 +1,8 @@
+name: rethink
+version: 0.4.3
+author: William Welch <billywelch@gmail.com>
+description: Dart driver for RethinkDB(v1.13).
+homepage: https://github.com/billysometimes/rethinkdb
+documentation: https://github.com/billysometimes/rethinkdb
+dependencies:
+  protobuf: any

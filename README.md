@@ -25,7 +25,7 @@ The driver api tries to align with the javascript and python RethinkDB drivers. 
   or add the package to your pubspec.yaml file:
   ```
   dependencies:
-    rethinkdb_driver: '>=0.4.3'
+    rethinkdb_driver: '>=0.4.4'
   ````
   and import the package into your project:
   ```

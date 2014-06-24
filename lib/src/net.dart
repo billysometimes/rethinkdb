@@ -127,7 +127,7 @@ class Cursor{
     toArray(){
       Completer c = new Completer();
       List results = [];
-      this.each((row) {
+      this.each((err,row) {
          results.add(row);
       },(){c.complete(results);});
 
@@ -163,6 +163,9 @@ class Connection {
     final Map _replyQueries = new Map();
     final Queue<Query> _sendQueue = new Queue<Query>();
 
+    final Map <String, List> _listeners = new Map<String, List>();
+
+
     Connection(String this._db, String this._host, int this._port, String this._auth_key);
 
     use(String db){
@@ -170,7 +173,11 @@ class Connection {
     }
 
     Future<Connection> _reconnect([bool noreply_wait=true]){
+
         close(noreply_wait);
+
+        if(_listeners["connect"] != null)
+          _listeners["connect"].forEach((func)=>func());
 
         Socket.connect(_host, _port).then((socket) {
                 _socket = socket;
@@ -205,7 +212,10 @@ class Connection {
       }
       String responseString = UTF8.decode(response);
       if(responseString != "SUCCESS"){
-        _completer.completeError(new RqlDriverError("Server dropped connection with message: $response"));
+        Exception error = new RqlDriverError("Server dropped connection with message: $response");
+        if(_listeners["error"] != null)
+          _listeners["error"].forEach((func)=>func(error));
+        _completer.completeError(error);
       }else{
         _completer.complete(this);
       }
@@ -253,6 +263,9 @@ class Connection {
     }
 
     close([bool noreply_wait=true]){
+      if(_listeners["close"] != null)
+        _listeners["close"].forEach((func)=>func());
+
         if(_socket != null){
             if(noreply_wait)
               noreplyWait();
@@ -273,6 +286,26 @@ class Connection {
 
         _cursor_cache = {};
 
+    }
+
+    /**
+  * Alias for addListener
+  */
+    void on(String key, Function val)
+    {
+      addListener(key,val);
+    }
+    /**
+  * Adds a listener to the connection.
+  */
+    void addListener(String key, Function val)
+    {
+      List currentListeners = [];
+      if(_listeners != null && _listeners[key] != null)
+        _listeners[key].forEach((element)=>currentListeners.add(element));
+
+      currentListeners.add(val);
+      _listeners[key] = currentListeners;
     }
 
     noreplyWait(){

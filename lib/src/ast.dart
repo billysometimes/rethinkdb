@@ -71,6 +71,8 @@ reql_type_time_to_datetime(Map obj){
                  l[1] = l[1]+"0";
                }
                s = l.join("");
+               }else{
+                 s+="000";
                }
         return new DateTime.fromMillisecondsSinceEpoch(int.parse(s));
     }
@@ -93,7 +95,7 @@ convert_pseudotype(Map obj, Map format_opts){
     String reql_type = obj['\$reql_type\$'];
     if(reql_type != null){
         if(reql_type == 'TIME'){
-            if(format_opts == null){
+            if(format_opts == null || format_opts.isEmpty){
               format_opts = {"time_format":"native"};
             }
             String time_format = format_opts['time_format'];
@@ -102,13 +104,13 @@ convert_pseudotype(Map obj, Map format_opts){
                 return reql_type_time_to_datetime(obj);
             }
             else if(time_format != 'raw')
-                throw new RqlDriverError("Unknown time_format run option \"%s\".");
+                throw new RqlDriverError("Unknown time_format run option $time_format.");
         }
         else if(reql_type == 'GROUPED_DATA'){
-            if(format_opts == null || format_opts['group_format'] == 'native')
+            if(format_opts == null || format_opts.isEmpty || format_opts['group_format'] == 'native')
                 return reql_type_grouped_data_to_object(obj);
             else if(format_opts['group_format'] != 'raw')
-              throw new RqlDriverError("Unknown group_format run option \"%s\".");
+              throw new RqlDriverError("Unknown group_format run option ${format_opts['group_format']}.");
         }else{
             throw new RqlDriverError("Unknown pseudo-type $reql_type");
         }
@@ -162,7 +164,7 @@ _expr(val, [nesting_depth=20]){
     else if(val is Function)
         return new Func(val);
     else if(val is DateTime){
-       new Time.nativeTime(val);
+       return new Time.nativeTime(val);
     }
     else
       return new Datum(val);
@@ -362,6 +364,7 @@ class RqlQuery{
 
     ConcatMap concatMap(mappingFunction) => new ConcatMap(this,func_wrap(mappingFunction));
 
+    Get get(id) => new Get(this,id);
 
     OrderBy orderBy(attrs, [index]){
       Map options = {};
@@ -803,7 +806,7 @@ class DB extends RqlTopLevelQuery{
 
     TableDrop tableDrop(String tableName) => new TableDrop.fromDB(this,tableName);
 
-    Table table(String tableName) => new Table.fromDB(this,tableName);
+    Table table(String tableName,[Map options]) => new Table.fromDB(this,tableName,options);
 }
 
 class FunCall extends RqlQuery{
@@ -1342,22 +1345,22 @@ class _RqlAllOptions {
   _RqlAllOptions(p.Term_TermType tt){
     switch (tt) {
       case p.Term_TermType.TABLE_CREATE:
-        options = ['primaryKey','durablilty','datacenter'];
+        options = ['primary_key','durability','datacenter'];
         break;
       case p.Term_TermType.INSERT:
-        options = ['durability','returnVals','upcert'];
+        options = ['durability','return_vals','upsert'];
         break;
       case p.Term_TermType.UPDATE:
-        options = ['durability','returnVals','nonAtomic'];
+        options = ['durability','return_vals','non_atomic'];
         break;
       case p.Term_TermType.REPLACE:
-        options = ['durability','returnVals','nonAtomic'];
+        options = ['durability','return_vals','non_atomic'];
         break;
       case p.Term_TermType.DELETE:
-        options = ['durability','returnVals'];
+        options = ['durability','return_vals'];
         break;
       case p.Term_TermType.TABLE:
-        options = ['useOutDated'];
+        options = ['use_outDated'];
         break;
       case p.Term_TermType.GET_ALL:
         options = ['index'];
@@ -1372,7 +1375,7 @@ class _RqlAllOptions {
         options = ['index'];
         break;
       case p.Term_TermType.SLICE:
-        options = ['leftBound','rightBound'];
+        options = ['left_bound','right_bound'];
         break;
       case p.Term_TermType.GROUP:
         options = ['index'];
@@ -1381,16 +1384,16 @@ class _RqlAllOptions {
         options = ['float'];
         break;
       case p.Term_TermType.ISO8601:
-        options = ['default_timezone','returnVals'];
+        options = ['default_timezone','return_vals'];
         break;
       case p.Term_TermType.DURING:
-        options = ['leftBound','rightBound'];
+        options = ['left_bound','right_bound'];
         break;
       case p.Term_TermType.JAVASCRIPT:
         options = ['timeout'];
         break;
       case p.Term_TermType.HTTP:
-        options = ['timeout','reattempts','redirects','verify','resultFormat','method','auth','params','header','data','page','pageLimit'];
+        options = ['timeout','attempts','redirects','verify','result_format','method','auth','params','header','data','page','page_limit'];
         break;
       default:
         options = [];

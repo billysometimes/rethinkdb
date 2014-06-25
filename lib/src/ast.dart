@@ -272,7 +272,7 @@ class RqlQuery{
     Any or(other) => new Any(this, other);
 
 
-    Contains contains(args) =>new Contains(func_wrap(args));
+    Contains contains(args) =>new Contains(this,func_wrap(args));
 
     HasFields hasFields(args) => new HasFields(this,args);
 
@@ -334,7 +334,7 @@ class RqlQuery{
 
     IndexesOf indexesOf(obj) => new IndexesOf(this,func_wrap(obj));
 
-    Slice slice(int start,[int end, Map options]) => new Slice(this,start,end,options);
+    Slice slice(int start,[end, Map options]) => new Slice(this,start,end,options);
 
     Skip skip(int i) => new Skip(this,i);
 
@@ -726,7 +726,7 @@ class SetDifference extends RqlMethodQuery{
 class Slice extends RqlBracketQuery{
     p.Term_TermType tt = p.Term_TermType.SLICE;
 
-    Slice(selection,int start,[int end, Map options]):super([selection,start,end],options);
+    Slice(selection,int start,[end, Map options]):super([selection,start,end],options);
 }
 class Skip extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.SKIP;
@@ -748,7 +748,7 @@ class GetField extends RqlBracketQuery{
 class Contains extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.CONTAINS;
 
-    Contains(items):super([items]);
+    Contains(tbl,items):super([tbl,items]);
 }
 class HasFields extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.HAS_FIELDS;
@@ -842,6 +842,8 @@ class Table extends RqlQuery{
     Sync sync() => new Sync(this);
 
     GetAll getAll(args,[options]) => new GetAll(_listify(args,this),options);
+
+    InnerJoin innerJoin(otherSeq,[predicate]) => new InnerJoin(this,otherSeq,predicate);
 }
 
 class Get extends RqlMethodQuery{
@@ -914,7 +916,7 @@ class ConcatMap extends RqlMethodQuery{
 class OrderBy extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.ORDERBY;
 
-    OrderBy(args,[Map options]):super([args],options);
+    OrderBy(args,[Map options]):super(args,options);
 }
 
 class Distinct extends RqlMethodQuery{

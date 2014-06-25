@@ -62,6 +62,8 @@ exampleCommands(conn)
 
   //r.db("test").tableCreate("people",{"primary_key":"person_id","durability":"soft"}).run(conn).then((response)=>print(response));
 
+  //r.tableCreate("zookeepers").run(conn).then((res)=>print(res));
+
   /**tableDrop removes a table from a database**/
 
   //r.tableDrop("people").run(conn).then((response)=>print(response));
@@ -176,27 +178,44 @@ exampleCommands(conn)
 
   /**between gets all documents with a key between two values**/
 
-  //r.table("animals").between(r.args([0,5501])).run(conn).then((response)=>print(response));
+  //r.table("animals").between(12,80,{"index":"number_in_wild"}).run(conn).then((response)=>response.toArray().then((r)=>print(r)));
 
 
   /**filter() filters based on the predicate**/
 
-  //r.table("animals").filter({"kingdom":"cat"}).run(conn).then((response)=>print(response));
+  //r.table("animals").filter((animal)=>animal("locations").contains("jungle")).run(conn).then((response)=>response.toArray().then((res)=>print(res)));
 
 
   /**innerJoin returns the inner product of two sequences**/
+  /***
+  List keepers = [
+                  {"name":"billy","watches":["cheetah","cats"]}
+                  ];
+
+  r.table("zookeepers").insert(keepers).run(conn).then((res)=>print(res));
+  **/
+
+  //r.table("zookeepers").innerJoin(r.table("animals"),(keeper,animal)=>keeper("watches").contains(animal("id"))).run(conn).then((res)=>res.toArray().then((r)=>print(r)));
+
   //r.expr([1,2,3,4,5]).innerJoin([2,3],(row1,row2)=>row1.lt(row2)).run(conn).then((response)=>print(response));
 
 
   /**outerJoin returns the left outer join**/
+
+  //r.table("zookeepers").outerJoin(r.table("animals"),(keeper,animal)=>keeper("watches").contains(animal("id"))).run(conn).then((res)=>res.toArray().then((r)=>print(r)));
+
+
   //r.expr([1,2,3,4,5]).outerJoin([2,3],(row1,row2)=>row1.lt(row2)).run(conn).then((response)=>print(response));
 
 
   /**eqJoin**/
 
+  //r.table("zookeepers").eqJoin('id',r.table("animals")).run(conn).then((res)=>res.toArray().then((r)=>print(r)));
+
   //r.expr([{"id":1500}]).eqJoin("id",r.table("animals"),{"index":"number_in_wild"}).run(conn).then((response)=>print(response));
 
   /**zip**/
+
   //r.expr([{"id":1500}]).eqJoin("id",r.table("animals"),{"index":"number_in_wild"}).zip().run(conn).then((response)=>print(response));
 
 
@@ -207,17 +226,17 @@ exampleCommands(conn)
 
   /**withfields**/
 
-  //r.table("animals").withFields("id","kingdom").run(conn).then((response)=>print(response));
+  //r.table("animals").withFields("id","last_seen").run(conn).then((response)=>response.toArray().then((r)=>print(r)));
 
   /**concatMap works like a reduce**/
 
-  //r.table("animals").concatMap((animal)=>animal("locations")).run(conn).then((response)=>print(response));
+  //r.table("animals").concatMap((animal)=>animal("locations").rqlDefault([])).run(conn).then((response)=>response.toArray().then((r)=>print(r)));
 
 
   /**orderBy specifies the property to order by**/
 
-
-  //r.table("animals").orderBy(r.asc("number_in_wild")).run(conn).then((response)=>print(response));
+  //TODO touch up orderBy
+  // r.table("animals").orderBy("seen_in_wild",r.desc("locations")).run(conn).then((response)=>print(response));
 
 
   /**skip() skips the number of records specified**/
@@ -227,12 +246,12 @@ exampleCommands(conn)
 
   /**limit() returns no more records than specified**/
 
-  //r.table("animals").limit(3).run(conn).then((response)=>print(response));
+  //r.table("animals").limit(3).run(conn).then((response)=>response.toArray().then((r)=>print(r)));
 
 
   /**slice trims the results to the indexes specified**/
 
-  //r.table("animals").slice(0,1,{"left_bound":"closed"}).run(conn).then((response)=>print(response));
+  //r.table("animals").slice(3,{"left_bound":"closed"}).run(conn).then((response)=>response.toArray().then((r)=>print(r)));
 
 
   /**nth returns the nth element**/

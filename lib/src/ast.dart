@@ -238,6 +238,9 @@ class RqlQuery{
         return res;
     }
 
+    Update update(args, [options]) => new Update(this,func_wrap(args),options);
+
+
     // Comparison operators
     Eq eq(other) => new Eq(this, other);
 
@@ -342,13 +345,13 @@ class RqlQuery{
 
     Reduce reduce(reductionFunction,[base]) => new Reduce(this,func_wrap(reductionFunction),base);
 
-    Sum sum() => new Sum(this);
+    Sum sum([args]) => new Sum(this,args);
 
-    Avg avg() => new Avg(this);
+    Avg avg([args]) => new Avg(this,args);
 
-    Min min() => new Min(this);
+    Min min([args]) => new Min(this,args);
 
-    Max max() => new Max(this);
+    Max max([args]) => new Max(this,args);
 
     RqlMap map(mappingFunction) => new RqlMap(this,func_wrap(mappingFunction));
 
@@ -875,25 +878,25 @@ class Reduce extends RqlMethodQuery{
 class Sum extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.SUM;
 
-    Sum(args):super([args]);
+    Sum(obj,args):super([obj,args]);
 }
 
 class Avg extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.AVG;
 
-    Avg(args):super([args]);
+    Avg(obj,args):super([obj,args]);
 }
 
 class Min extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.MIN;
 
-    Min(args):super([args]);
+    Min(obj,args):super([obj,args]);
 }
 
 class Max extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.MAX;
 
-    Max(args):super([args]);
+    Max(obj,args):super([obj,args]);
 }
 
 class RqlMap extends RqlMethodQuery{

@@ -174,7 +174,6 @@ exampleCommands(conn)
 
   //r.table("animals").getAll("cat",{"index":"kingdom"}).run(conn).then((response)=>print(response));
 
-  //TODO left off at between
 
   /**between gets all documents with a key between two values**/
 
@@ -283,7 +282,7 @@ exampleCommands(conn)
 
   /**group Takes a stream and partitions it into multiple groups based on the fields or functions provided**/
 
-  //r.table("animals").group("number_in_wild").run(conn).then((response)=>print(response));
+  //r.table("animals").group("locations").run(conn).then((response)=>print(response));
 
 
   /**ungroup Takes a grouped stream or grouped data and turns it into an array of objects representing the groups**/
@@ -300,23 +299,33 @@ exampleCommands(conn)
 
   //r.table("animals").count().run(conn).then((response)=>print(response));
 
+  //r.table("animals")("seen_in_wild").count((wild)=>wild.gt(59)).run(conn).then((response)=>print(response));
+
 
   /**sum adds all objects in a sequence**/
 
   //r.expr([3,4]).sum().run(conn).then((response)=>print(response));
 
+  //r.table("animals").sum((animal)=>animal("seen_in_wild").add(12)).run(conn).then((response)=>print(response));
+
   /**avg averages objects in a sequence**/
 
   //r.expr([1,4,8,16]).avg().run(conn).then((response)=>print(response));
+
+  //r.expr([1,4,8,16]).avg((num)=>num.mul(2)).run(conn).then((response)=>print(response));
 
   /**min finds the smallest of a sequence**/
 
   //r.expr([100,4,28,588]).min().run(conn).then((response)=>print(response));
 
+  //r.expr([100,4,28,588]).min((number)=>number.mul(5)).run(conn).then((response)=>print(response));
+
 
   /**max finds the maximum of a sequence**/
 
   //r.expr([8,24,3,5]).max().run(conn).then((response)=>print(response));
+
+  //r.expr([8,24,3,5]).max((number)=>number.div(2)).run(conn).then((response)=>print(response));
 
 
   /**distinct removes duplicates**/
@@ -326,7 +335,9 @@ exampleCommands(conn)
 
   /**contains returns whether or not a sequence contains an item**/
 
-  //r.expr([1,2,3]).contains(3).run(conn).then((response)=>print(response));
+  //TODO fix for multiple values
+
+  //r.expr([1,2,3]).contains(2).run(conn).then((response)=>print(response));
 
   /**row**/
 
@@ -336,7 +347,7 @@ exampleCommands(conn)
 
   /**pluck selects fields specified**/
 
-  //r.table("animals").get("cheetah").pluck(["number_in_wild","kingdom"]).run(conn).then((response)=>print(response));
+  //r.table("animals").get("cheetah").pluck("number_in_wild","phylum").run(conn).then((response)=>print(response));
 
 
   /**without returns everything BUT the specified fields**/
@@ -386,9 +397,10 @@ exampleCommands(conn)
 
   /**( ) gets a single field for an object**/
 
-  //r.table("animals").get("cheetah")("kingdom").run(conn).then((response)=>print(response));
+  //r.table("animals").get("cheetah")("phylum").run(conn).then((response)=>print(response));
 
   //r.expr({"id":1,"name":"ted","age":77})("name").run(conn).then((response)=>print(response));
+
 
   /**hasFields tests if an object has a certain field or fields**/
 
@@ -409,6 +421,7 @@ exampleCommands(conn)
 
   //r.expr([1,2,3,0,4]).deleteAt(3).run(conn).then((response)=>print(response));
 
+  //r.expr([1,2,3,0,4]).deleteAt(-3,-1).run(conn).then((response)=>print(response));
 
   /**change at replaces the item at the specified index**/
 
@@ -420,6 +433,11 @@ exampleCommands(conn)
   //r.table("animals").get("cheetah").keys().run(conn).then((response)=>print(response));
 
 
+
+  //literal replace an object in an update instead of merging**/
+
+  //r.table("animals").get("cheetah").update({"last_seen":r.literal({"now":r.now()})}).run(conn).then((res)=>print(res));
+
   /**object creates an object from key value pairs**/
 
   //r.object("A","first","B","Second").run(conn).then((response)=>print(response));
@@ -427,7 +445,7 @@ exampleCommands(conn)
 
   /**match matches a string for a regexp**/
 
-  //r.table("animals").filter((animal)=>animal("id").match("cheetah")).run(conn).then((response)=>print(response));
+  //r.table("animals").filter((animal)=>animal("id").match("^c")).run(conn).then((response)=>response.toArray().then((r)=>print(r)));
 
 
   /**split splits a string into two substrings**/
@@ -452,7 +470,7 @@ exampleCommands(conn)
   //r.expr([1,2,3]).add([4,5,6]).run(conn).then((response)=>print(response));
 
 
-  /**sub subtracts two numbers**/
+  /**sub subtracts time and numbers **/
 
   //r.expr(5).sub(2).run(conn).then((response)=>print(response));
 
@@ -461,6 +479,7 @@ exampleCommands(conn)
 
   //r.expr(2).mul(2).run(conn).then((response)=>print(response));
 
+  //r.expr([2,3]).mul(5).run(conn).then((response)=>print(response));
 
   /** div divides**/
 
@@ -515,6 +534,17 @@ exampleCommands(conn)
 
   //r.expr(false).not().run(conn).then((response)=>print(response));
 
+  //r.not(true).run(conn).then((res)=>print(res));
+
+  /**random generates random number between the given bounds**/
+
+  //r.random().run(conn).then((res)=>print(res));
+
+  //r.random(100).run(conn).then((res)=>print(res));
+
+  //r.random(200,300).run(conn).then((res)=>print(res));
+
+  //r.random(200,300,{"float":true}).run(conn).then((res)=>print(res));
 
   /**now returns the current time**/
 
@@ -542,7 +572,7 @@ exampleCommands(conn)
 
 
   /**timezone returns the timezone for a date**/
-  //r.now().timezone().eq("-00:00").run(conn).then((response)=>print(response));
+  //r.now().timezone().run(conn).then((response)=>print(response));
 
 
   /**during returns if a time is between two others**/
@@ -613,6 +643,14 @@ exampleCommands(conn)
 
   //r.now().toEpochTime().run(conn).then((response)=>print(response));
 
+  /**args lets you pass an array of args to a command that takes a variable number of args**/
+
+  //List animals_returned_from_user = ["cats","cheetah"];
+
+  //r.table("animals").getAll(r.args(animals_returned_from_user)).run(conn).then((response)=>print(response));
+
+
+  //TODO left off at do
 
   /**rqlDo is equivalent to the javascript r.do function, do is a keyword in dart**/
 

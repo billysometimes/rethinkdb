@@ -100,7 +100,7 @@ Time nativeTime(DateTime time) => new Time.nativeTime(time);
  * If you pass an ISO 8601 date-time without a time zone, you must specify the time zone with the optarg default_timezone.
  *
  */
-RqlISO8601 iso8601(String stringTime,[default_time_zone="Z"]) => new RqlISO8601(stringTime,default_time_zone);
+RqlISO8601 ISO8601(String stringTime,[default_time_zone="Z"]) => new RqlISO8601(stringTime,default_time_zone);
 
 /**
  * Create a time object based on seconds since epoch.

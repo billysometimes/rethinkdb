@@ -172,6 +172,9 @@ class Connection {
         _db = db;
     }
 
+    Future<Connection> connect([bool noreply_wait=true]){
+      return(_reconnect(noreply_wait));
+    }
     Future<Connection> _reconnect([bool noreply_wait=true]){
 
         close(noreply_wait);
@@ -404,6 +407,7 @@ class Connection {
             }else{
 
               // Send json
+              print(query.serialize());
               List  query_str = UTF8.encode(query.serialize());
               List query_header = [];
               query_header.addAll(_toBytes8(query._token));

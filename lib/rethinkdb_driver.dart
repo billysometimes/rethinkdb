@@ -159,7 +159,7 @@ Map avg(String attr) => {"AVG": attr};
 /**
  * Returns the currently visited document.
  */
-GetField row(String rowName) => new GetField([new ImplicitVar(),rowName],{});
+ImplicitVar row = new ImplicitVar();
 
 /**
  * Adds fields to an object

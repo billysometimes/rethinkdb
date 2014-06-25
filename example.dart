@@ -15,13 +15,31 @@ main() {
 exampleCommands(conn)
 {
   /**use() changes the default database on the connection**/
+
   //conn.use("app_db");
 
 
   /** noreplyWait() waits for any queries with the noreply option to run**/
 
-  //conn.noreplyWait();
+  //conn.noreplyWait().then((res){
+  //  print("wait complete");
+  //});
+
   //conn.close();
+
+  /**addListener adds a listener to a close,connect,or error event**/
+  //conn.addListener("close",()=>print("connection closed"));
+
+  //conn.addListener("connect",()=>print("connection established"));
+
+  /**connect closes and reopens the connection**/
+
+  //conn.connect();
+
+
+
+  //TODO event emitter for cursor
+
 
   /**dbCreate() takes a string for the name of the database to be created and returns a CreatedResponse**/
 
@@ -42,27 +60,30 @@ exampleCommands(conn)
 
   //r.tableCreate("animals").run(conn).then((response)=>print(response)).catchError((err)=>print(err));
 
-  //r.db("test").tableCreate("people").run(conn).then((response)=>print(response));
+  //r.db("test").tableCreate("people",{"primary_key":"person_id","durability":"soft"}).run(conn).then((response)=>print(response));
 
   /**tableDrop removes a table from a database**/
 
   //r.tableDrop("people").run(conn).then((response)=>print(response));
 
   /**tableList lists the tables in the database**/
+
   //r.tableList().run(conn).then((response)=>print(response));
+
+  //r.db("test").tableList().run(conn).then((response)=>print(response));
 
   /**indexCreate creates an index on the specified table**/
 
   //r.table("animals").indexCreate("kingdom").run(conn).then((response)=>print(response));
 
-  //r.db("test").table("animals").indexCreate("number_in_wild").run(conn).then((response)=>print(response));
+  //r.db("test").table("animals").indexCreate("kingdomAndphylum",(animal)=>[animal('kingdom'),animal('phylum')],{"multi":true}).run(conn).then((response)=>print(response));
 
   //r.table("animals").indexCreate("phylum").run(conn).then((response)=>print(response));
 
 
   /**indexDrop drops the index from the table**/
 
-  //r.table("animals").indexDrop("phylum").run(conn).then((response)=>print(response));
+  //r.table("animals").indexDrop("kingdom").run(conn).then((response)=>print(response));
 
 
   /**indexList lists the indexes for a table**/
@@ -76,17 +97,24 @@ exampleCommands(conn)
 
   //r.table("animals").indexStatus("phylum").run(conn).then((response)=>print(response));
 
+  //r.table("animals").indexStatus("phylum","kingdomAndphylum").run(conn).then((response)=>print(response));
 
   /**indexWait() waits for an index to be ready**/
 
-  //r.table("animals").indexWait("number_in_wild").run(conn).then((response)=>print(response));
-
   //r.table("animals").indexWait().run(conn).then((response)=>print(response));
 
+  //r.table("animals").indexWait("phylum").run(conn).then((response)=>print(response));
+
+  //r.table("animals").indexWait("phylum","kingdomAndphylum").run(conn).then((response)=>print(response));
+
+
+  /**changes() returns the changes to a table when an item is inserted,deleted,updated,or replaced**/
+
+  //r.table("animals").changes().run(conn).then((response)=>response.each((error,res)=>print(res)));
 
   /**insert() inserts records into a table**/
 
-  //r.table("animals").insert({"id":"cheetah","number_in_wild":4000,"kingdom":"cat","phylum":"cat also","locations":["jungle","zoo"]}).run(conn).then((response)=>print(response));
+  //r.table("animals").insert({"id":"cheetah","last_seen":new DateTime.now(),"number_in_wild":4000,"kingdom":"cat","phylum":"cat also","locations":["jungle","zoo"]},{'durability':'hard','return_vals':true,'upsert':true}).run(conn).then((response)=>print(response));
 
 //  List animalsToAdd = [
 //                       {"number_in_wild":2000,"kingdom":"horse","phylum":"horse also","locations":["jungle","zoo"]},
@@ -98,13 +126,17 @@ exampleCommands(conn)
 
   /**update updates matching records**/
 
-  //r.table("animals").update({"last_seen":r.time(2012,1,21,'Z')}).run(conn).then((response)=>print(response));
+  //r.table("animals").update({"last_seen":r.time(2012,1,21,'Z'),"number_in_wild":r.row("number_in_wild").add(1).rqlDefault(0)},{'durability':'hard','non_atomic':true}).run(conn).then((response)=>print(response));
+
+  //r.table("animals").update((animal)=>r.branch(animal("number_in_wild").gt(100),{"number_in_wild":100},{"number_in_wild":200})).run(conn).then((response)=>print(response));
 
   /** replace replaces a record **/
 
   //r.table("animals").get("sloth").replace({"id":"sloth","number_in_wild":2000,"kingdom":"not a bear","phylum":"not the same as a bear"}).run(conn).then((response)=>print(response));
 
   //r.table("animals").get("cats").replace({"id":"cats","date":r.now(),"replaced":true},{"return_vals":true}).run(conn).then((response)=>print(response));
+
+  //r.db("test").table("animals").replace((animal)=>animal.without("kingdom")).run(conn).then((response)=>print(response));
 
   /**delete deletes a record**/
 
@@ -118,31 +150,29 @@ exampleCommands(conn)
 
   /**db returns a refrence to the database to be chained with other commands**/
 
-  //r.db("test").table("animals").run(conn).then((response)=>print(response));
+   //r.db("test")
 
 
 
 
   /**table() selects all documents for the given database**/
 
-  //r.table("animals").run(conn).then((response)=>print(response));
-
+  //r.db("test").table("animals",{"use_outdated":true}).run(conn).then((cursor){
+  //  cursor.toArray().then((res)=>print(res));
+  //});
 
   /**get retrieves a document by the primary key**/
 
-  //r.table("animals").get("zebra").run(conn).then((response)=>print(response));
+  //r.table("animals").get("cheetah").run(conn).then((response)=>print(response));
 
 
   /**getAll retrieves documents matching any all keys**/
 
-  //r.table("animals").getAll("zebra","cheetah",{"index":"id"}).run(conn).then((response)=>print(response));
-
-  //r.table("animals").getAll(["zebra","cheetah"]).run(conn).then((response)=>print(response));
-
-  //r.table("animals").getAll(["horse"],{"index":"kingdom"}).run(conn).then((response)=>print(response));
+  //r.table("animals").getAll("cheetah","cats").run(conn).then((response)=>print(response));
 
   //r.table("animals").getAll("cat",{"index":"kingdom"}).run(conn).then((response)=>print(response));
 
+  //TODO left off at between
 
   /**between gets all documents with a key between two values**/
 

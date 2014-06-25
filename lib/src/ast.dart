@@ -2,22 +2,18 @@ part of rethinkdb;
 
 
 
-func_wrap_all(args){
-  List argsList = [];
-  args = _listify(args);
-  args.forEach((arg){
-    argsList.add(func_wrap(arg));
-  });
-  return argsList;
-}
-
-_listify(args){
+_listify(args,[parg]){
   if(args is List){
+    args.insert(0,parg);
     return args;
   }
   else{
-    if(args != null)
-      return [args];
+    if(args != null){
+      if(parg != null)
+        return [parg,args];
+      else
+        return [args];
+    }
     else
       return [];
   }
@@ -25,28 +21,29 @@ _listify(args){
 
 
 _ivar_scan(query){
- if(query is RqlQuery == false)
-     return false;
- else if(query is ImplicitVar)
-     return true;
- else if(query is List){
-   bool a = false;
 
-   query.forEach((e){
-     if(_ivar_scan(e)){
-       a = true;
-     }
-   });
-   return a;
- }else if(query is Map){
-   bool a = false;
-   query.forEach((k,v){
-     if(_ivar_scan(v)){
-       a = true;
-     }
-   });
-   return a;
- }else
+  if(query is RqlQuery == false){
+     return false;
+ }
+
+ if(query is ImplicitVar){
+     return true;
+ }
+
+ for(var e in query.args){
+   if(_ivar_scan(e)){
+     return true;
+   }
+ }
+
+
+ var optArgKeys = query.optargs.keys;
+
+ for(var key in optArgKeys){
+   if(_ivar_scan(query.optargs[key])){
+     return true;
+   }
+ }
    return false;
 }
 
@@ -54,7 +51,7 @@ _ivar_scan(query){
 func_wrap(val){
  val = _expr(val);
  if(_ivar_scan(val)){
-     return new Func((x){val;});
+     return new Func((x) => val);
  }
  return val;
 }
@@ -240,9 +237,6 @@ class RqlQuery{
         }
         return res;
     }
-    Insert insert(records,[options]) => new Insert(this,records,options);
-
-    IndexList indexList() => new IndexList(this);
 
     // Comparison operators
     Eq eq(other) => new Eq(this, other);
@@ -278,7 +272,7 @@ class RqlQuery{
     Any or(other) => new Any(this, other);
 
 
-    Contains contains(args) =>new Contains(func_wrap_all(args));
+    Contains contains(args) =>new Contains(func_wrap(args));
 
     HasFields hasFields(args) => new HasFields(this,args);
 
@@ -289,15 +283,13 @@ class RqlQuery{
     Changes changes() => new Changes(this);
 
     // Polymorphic object/sequence operations
-    Pluck pluck(args) => new Pluck(_listify(args));
+    Pluck pluck(args) => new Pluck(_listify(args,this));
 
-    Without without(items) => new Without(_listify(items));
+    Without without(items) => new Without(_listify(items,this));
 
-    FunCall rqlDo(arg,[expression]) => new FunCall(_listify(arg),func_wrap(expression));
+    FunCall rqlDo(arg,[expression]) => new FunCall(_listify(arg,this),func_wrap(expression));
 
     Default rqlDefault(args) => new Default(this,args);
-
-    Update update(args, [options]) => new Update(this,func_wrap(args),options);
 
     Replace replace(expr, [options]) => new Replace(this,func_wrap(expr),options);
 
@@ -310,7 +302,7 @@ class RqlQuery{
 
     TypeOf typeOf() => new TypeOf(this);
 
-    Merge merge(obj) => new Merge(this,func_wrap_all(obj));
+    Merge merge(obj) => new Merge(this,func_wrap(obj));
 
     Append append(val) => new Append(this,val);
 
@@ -390,7 +382,7 @@ class RqlQuery{
             attrs = tmp;
           }
 
-          return new OrderBy(_listify(attrs),options);
+          return new OrderBy(_listify(attrs,this),options);
         }
 
     Between between(lowerKey,[upperKey,options]) => new Between(this,lowerKey,upperKey,options);
@@ -471,13 +463,13 @@ class RqlQuery{
           List tmp = invocation.positionalArguments;
                 List args = [];
                 Map options = null;
-                if(tmp.length > 1 && tmp[tmp.length-1] is Map){
-                  options = tmp.removeAt(tmp[tmp.length-1]);
-                }
-
                 tmp.forEach((arg){
                   args.add(arg);
                 });
+
+                if(args.length > 1 && args[args.length-1] is Map){
+                  options = args.removeAt(args.length-1);
+                }
 
           InstanceMirror im = reflect(this);
 
@@ -556,6 +548,15 @@ class MakeObj extends RqlQuery{
     p.Term_TermType tt = p.Term_TermType.MAKE_OBJ;
 
     MakeObj(obj_dict):super([],obj_dict);
+
+    build(){
+      var res = {};
+      optargs.forEach((k,v){
+       res[ k is RqlQuery ? k.build() : k] = v is RqlQuery ? v.build() : v;
+      });
+      return res;
+
+    }
 }
 class Var extends RqlQuery{
   p.Term_TermType tt = p.Term_TermType.VAR;
@@ -823,6 +824,24 @@ class Table extends RqlQuery{
     Table(String tableName, [Map options]):super([tableName],options);
 
     Table.fromDB(DB db, String tableName, [Map options]):super([db,tableName],options);
+
+    Insert insert(records,[options]) => new Insert(this,records,options);
+
+    IndexList indexList() => new IndexList(this);
+
+    IndexCreate indexCreate(indexName,[indexFunction,Map options]) => new IndexCreate(this,indexName,indexFunction,options);
+
+    IndexDrop indexDrop(indexName) => new IndexDrop(this,indexName);
+
+    IndexStatus indexStatus([indexes]) => new IndexStatus(this,indexes);
+
+    IndexWait indexWait([indexes]) => new IndexWait(this,indexes);
+
+    Update update(args, [options]) => new Update(this,func_wrap(args),options);
+
+    Sync sync() => new Sync(this);
+
+    GetAll getAll(args,[options]) => new GetAll(_listify(args,this),options);
 }
 
 class Get extends RqlMethodQuery{
@@ -838,7 +857,7 @@ class Get extends RqlMethodQuery{
 class GetAll extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.GET_ALL;
 
-    GetAll(keys,[options]):super([keys],options);
+    GetAll(keys,[options]):super(keys,options);
 
     call(attr){
       return new GetField(this,attr);
@@ -1077,7 +1096,7 @@ class IndexCreate extends RqlMethodQuery{
 class IndexDrop extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.INDEX_DROP;
 
-    IndexDrop(table,index,[Map options]):super([table,index],options);
+    IndexDrop(table,index):super([table,index]);
 }
 
 class IndexList extends RqlMethodQuery{
@@ -1089,13 +1108,13 @@ class IndexList extends RqlMethodQuery{
 class IndexStatus extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.INDEX_STATUS;
 
-    IndexStatus(indexList):super(indexList);
+    IndexStatus(tbl,indexList):super([tbl,indexList is List ? new Args(indexList) : indexList]);
 }
 
 class IndexWait extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.INDEX_WAIT;
 
-    IndexWait(indexList):super(indexList);
+    IndexWait(tbl,indexList):super([tbl, indexList is List ? new Args(indexList) : indexList]);
 }
 
 class Sync extends RqlMethodQuery{
@@ -1361,6 +1380,9 @@ class _RqlAllOptions {
         break;
       case p.Term_TermType.TABLE:
         options = ['use_outDated'];
+        break;
+      case p.Term_TermType.INDEX_CREATE:
+        options = ["multi"];
         break;
       case p.Term_TermType.GET_ALL:
         options = ['index'];

@@ -60,6 +60,8 @@ class Cursor{
         _responses.add(response);
     }
 
+
+
     each(Function cb, [Function onDone]){
       if(_responses.length >0){
       _conn._check_error_response(_responses[0], _query._term);
@@ -407,7 +409,6 @@ class Connection {
             }else{
 
               // Send json
-              print(query.serialize());
               List  query_str = UTF8.encode(query.serialize());
               List query_header = [];
               query_header.addAll(_toBytes8(query._token));

@@ -1,4 +1,4 @@
-import 'lib/rethinkdb_driver.dart';
+import 'package:rethinkdb_driver/rethinkdb_driver.dart';
 
 Rethinkdb r = new Rethinkdb();
 main() {
@@ -650,13 +650,14 @@ exampleCommands(conn)
   //r.table("animals").getAll(r.args(animals_returned_from_user)).run(conn).then((response)=>print(response));
 
 
-  //TODO left off at do
+  //TODO test rqlDo
 
   /**rqlDo is equivalent to the javascript r.do function, do is a keyword in dart**/
 
   //r.rqlDo(r.table("animals").get("cheetah"),(animal)=>animal("locations")).run(conn).then((response)=>print(response));
 
   //r.table("animals").get("cheetah").rqlDo((animal)=>animal("locations")).run(conn).then((response)=>print(response));
+
 
   /**branch is an if statement, it accepts a test, a true value and a false value**/
 
@@ -665,7 +666,7 @@ exampleCommands(conn)
 
   /**forEach loops through each item**/
 
-  //r.table("animals").forEach((animal)=>animal.pluck("id","locations")).run(conn).then((response)=>print(response));
+  //r.table("animals").forEach((animal)=>animal.pluck("id")).run(conn).then((response)=>print(response));
 
 
   /**error throws an error**/
@@ -673,9 +674,9 @@ exampleCommands(conn)
   //r.error("impossible!").run(conn).then((response)=>print(response));
 
 
-  /**defaultTo will return a default value if one is not found**/
+  /**rqlDefault will return a default value if one is not found**/
 
-  //r.table("animals").map((animal)=>{"id":animal("id"),"favorite_food":animal("favorite_food").defaultTo("candy")}).run(conn).then((response)=>print(response));
+  //r.table("animals").map((animal)=>{"id":animal("id"),"favorite_food":animal("favorite_food").rqlDefault("candy")}).run(conn).then((response)=>response.toArray().then((res)=>print(res)));
 
 
   /**expr constructs a native reql json object**/
@@ -685,12 +686,12 @@ exampleCommands(conn)
 
   /**js creates javascript expressions**/
 
-  //r.js("new Date();").run(conn).then((response)=>print(response));
+  //r.js("new Date();",{"timeout":13}).run(conn).then((response)=>print(response));
 
 
   /**coerceTo converts one object type to another**/
 
-  //r.expr(1).coerceTo("string").run(conn).then((response)=>print(response));
+  //r.expr(1).coerceTo("string").run(conn).then((response)=>print("$response type ${response.runtimeType}"));
 
 
   /**typeOf returns the type**/
@@ -706,6 +707,11 @@ exampleCommands(conn)
   /**json parses a json string on the server**/
 
   //r.json("[1,2,3]").run(conn).then((response)=>print(response));
+
+  /**http can do lots of stuff and has a ton of options.  be sure
+   * to check out the documentation**/
+
+  //r.http("https://github.com/billysometimes/rethinkdb/stargazers").run(conn).then((response)=>print(response));
 
   /**for more information check out the rethinkdb javascript API.**/
 

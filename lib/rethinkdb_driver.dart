@@ -134,7 +134,7 @@ UserError error(String message) => new UserError(message,{});
 /**
  * Create a javascript expression.
  */
-JavaScript js(String js) => new JavaScript(js,{});
+JavaScript js(String js,[Map options]) => new JavaScript(js,options);
 
 /**
  * Parse a JSON string on the server.

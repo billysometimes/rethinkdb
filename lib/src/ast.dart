@@ -464,7 +464,7 @@ class RqlQuery{
     noSuchMethod(Invocation invocation) {
           Symbol methodName = invocation.memberName;
           List tmp = invocation.positionalArguments;
-                List args = [];
+                var args = [];
                 Map options = null;
                 tmp.forEach((arg){
                   args.add(arg);
@@ -475,6 +475,9 @@ class RqlQuery{
                 }
 
           InstanceMirror im = reflect(this);
+
+          if(methodName == const Symbol("contains"))
+            args = new Args(args);
 
           if(options != null)
             return im.invoke(methodName, [args, options]).reflectee;
@@ -844,7 +847,14 @@ class Table extends RqlQuery{
 
     Sync sync() => new Sync(this);
 
-    GetAll getAll(args,[options]) => new GetAll(_listify(args,this),options);
+    GetAll getAll(args,[options]){
+      if(options != null && options is Map == false){
+        args = _listify(args,this);
+        options = args.add(options);
+        return new GetAll(args,options);
+      }
+      return new GetAll(_listify(args,this),options);
+    }
 
     InnerJoin innerJoin(otherSeq,[predicate]) => new InnerJoin(this,otherSeq,predicate);
 }

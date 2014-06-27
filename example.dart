@@ -1,4 +1,4 @@
-import 'package:rethinkdb_driver/rethinkdb_driver.dart';
+import 'lib/rethinkdb_driver.dart';
 
 Rethinkdb r = new Rethinkdb();
 main() {
@@ -335,9 +335,7 @@ exampleCommands(conn)
 
   /**contains returns whether or not a sequence contains an item**/
 
-  //TODO fix for multiple values
-
-  //r.expr([1,2,3]).contains(2).run(conn).then((response)=>print(response));
+  //r.expr([1,2,3,[2,1]]).contains([2,1],2).run(conn).then((response)=>print(response));
 
   /**row**/
 

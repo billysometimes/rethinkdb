@@ -362,11 +362,23 @@ class RqlQuery{
     Get get(id) => new Get(this,id);
 
     OrderBy orderBy(attrs, [index]){
-      Map options = {};
 
-          if(attrs is List){
+          if(attrs is Map && attrs.containsKey("index")){
+            index = attrs;
+            attrs = [];
+
+            index.forEach((k,ob){
+                        if(ob is Asc || ob is Desc){
+                          //do nothing
+                        }
+                        else
+                          ob = func_wrap(ob);
+            });
+          }
+          else if(attrs is List){
             if(index is Map == false && index != null){
               attrs.add(index);
+              index = null;
             }
             attrs.forEach((ob){
             if(ob is Asc || ob is Desc){
@@ -381,11 +393,12 @@ class RqlQuery{
             tmp.add(attrs);
             if(index is Map == false && index != null){
               tmp.add(index);
+              index = null;
             }
             attrs = tmp;
           }
 
-          return new OrderBy(_listify(attrs,this),options);
+          return new OrderBy(_listify(attrs,this),index);
         }
 
     Between between(lowerKey,[upperKey,options]) => new Between(this,lowerKey,upperKey,options);

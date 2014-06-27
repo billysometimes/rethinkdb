@@ -409,6 +409,7 @@ class Connection {
             }else{
 
               // Send json
+              print(query.serialize());
               List  query_str = UTF8.encode(query.serialize());
               List query_header = [];
               query_header.addAll(_toBytes8(query._token));

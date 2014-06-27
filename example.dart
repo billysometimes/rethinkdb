@@ -234,8 +234,10 @@ exampleCommands(conn)
 
   /**orderBy specifies the property to order by**/
 
-  //TODO touch up orderBy
-  // r.table("animals").orderBy("seen_in_wild",r.desc("locations")).run(conn).then((response)=>print(response));
+
+   //r.table("animals").orderBy({"index":"seen_in_wild"}).run(conn).then((response)=>print(response));
+
+   //r.table("animals").orderBy(r.desc("last_seen"),"id").run(conn).then((response)=>print(response));
 
 
   /**skip() skips the number of records specified**/
@@ -647,8 +649,6 @@ exampleCommands(conn)
 
   //r.table("animals").getAll(r.args(animals_returned_from_user)).run(conn).then((response)=>print(response));
 
-
-  //TODO test rqlDo
 
   /**rqlDo is equivalent to the javascript r.do function, do is a keyword in dart**/
 

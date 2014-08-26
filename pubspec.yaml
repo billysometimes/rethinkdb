@@ -5,4 +5,5 @@ description: Dart driver for RethinkDB(v1.13).
 homepage: https://github.com/billysometimes/rethinkdb
 documentation: https://github.com/billysometimes/rethinkdb
 dependencies:
+  crypto: any
   protobuf: any

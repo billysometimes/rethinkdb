@@ -108,6 +108,11 @@ convert_pseudotype(Map obj, Map format_opts){
                 return reql_type_grouped_data_to_object(obj);
             else if(format_opts['group_format'] != 'raw')
               throw new RqlDriverError("Unknown group_format run option ${format_opts['group_format']}.");
+        }else if(reql_type == "BINARY"){
+          if(format_opts == null || format_opts["binary_format"] == "native")
+            return _reql_type_binary_to_bytes(obj);
+          else
+            throw new RqlDriverError("Unknown binary_format run option: ${format_opts["binary_format"]}");
         }else{
             throw new RqlDriverError("Unknown pseudo-type $reql_type");
         }
@@ -115,7 +120,9 @@ convert_pseudotype(Map obj, Map format_opts){
 
     return obj;
 }
-
+_reql_type_binary_to_bytes(Map obj){
+  return CryptoUtils.base64StringToBytes(obj['data']);
+}
 recursively_convert_pseudotypes(obj, format_opts){
     if(obj is Map){
       obj.forEach((k,v){
@@ -472,6 +479,8 @@ class RqlQuery{
     Seconds seconds() => new Seconds(this);
 
     InTimezone inTimezone(tz) => new InTimezone(this,tz);
+    
+    Binary binary(data) => new Binary(data);
 
 
     noSuchMethod(Invocation invocation) {
@@ -851,6 +860,8 @@ class Table extends RqlQuery{
     IndexCreate indexCreate(indexName,[indexFunction,Map options]) => new IndexCreate(this,indexName,indexFunction,options);
 
     IndexDrop indexDrop(indexName) => new IndexDrop(this,indexName);
+    
+    IndexRename indexRename(old_name,new_name) => new IndexRename(this,old_name,new_name);
 
     IndexStatus indexStatus([indexes]) => new IndexStatus(this,indexes);
 
@@ -1127,6 +1138,12 @@ class IndexDrop extends RqlMethodQuery{
     IndexDrop(table,index):super([table,index]);
 }
 
+class IndexRename extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.INDEX_RENAME;
+  
+  IndexRename(table,old_name,new_name) : super([table,old_name,new_name]);
+}
+
 class IndexList extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.INDEX_LIST;
 
@@ -1300,6 +1317,10 @@ class Seconds extends RqlMethodQuery{
     Seconds(seconds):super([seconds]);
 }
 
+class Binary extends RqlTopLevelQuery{
+  p.Term_TermType tt = p.Term_TermType.BINARY;
+  Binary(data):super([data]);
+}
 class Time extends RqlTopLevelQuery{
     p.Term_TermType tt = p.Term_TermType.TIME;
 
@@ -1395,16 +1416,16 @@ class _RqlAllOptions {
         options = ['primary_key','durability','datacenter'];
         break;
       case p.Term_TermType.INSERT:
-        options = ['durability','return_vals','upsert'];
+        options = ['durability','return_changes','conflict'];
         break;
       case p.Term_TermType.UPDATE:
-        options = ['durability','return_vals','non_atomic'];
+        options = ['durability','return_changes','non_atomic'];
         break;
       case p.Term_TermType.REPLACE:
-        options = ['durability','return_vals','non_atomic'];
+        options = ['durability','return_changes','non_atomic'];
         break;
       case p.Term_TermType.DELETE:
-        options = ['durability','return_vals'];
+        options = ['durability','return_changes'];
         break;
       case p.Term_TermType.TABLE:
         options = ['use_outDated'];

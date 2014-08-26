@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'src/generated/ql2.pb.dart' as p;
+import 'package:crypto/crypto.dart';
 import 'dart:mirrors';
 import 'dart:convert';
 import 'dart:collection';
@@ -201,6 +202,8 @@ Upcase upcase(String str) => new Upcase(str);
 Downcase downcase(String str) => new Downcase(str);
 
 expr(val) => _expr(val);
+
+Binary binary(var data) => new Binary(data);
 
  noSuchMethod(Invocation invocation) {
        var methodName = invocation.memberName;

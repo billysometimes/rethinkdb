@@ -80,7 +80,7 @@ exampleCommands(conn)
 
   //r.db("test").table("animals").indexCreate("kingdomAndphylum",(animal)=>[animal('kingdom'),animal('phylum')],{"multi":true}).run(conn).then((response)=>print(response));
 
-  //r.table("animals").indexCreate("phylum").run(conn).then((response)=>print(response));
+  //r.table("animals").indexCreate("phy").run(conn).then((response)=>print(response));
 
 
   /**indexDrop drops the index from the table**/
@@ -91,6 +91,9 @@ exampleCommands(conn)
   /**indexList lists the indexes for a table**/
 
   //r.table("animals").indexList().run(conn).then((response)=>print(response));
+  
+  /**indexRename renames a secondary index for a table**/
+  //r.table("animals").indexRename("phy", "phylum").run(conn).then((response)=>print(response));
 
 
   /**indexStatus() returns the status of the index**/
@@ -116,7 +119,7 @@ exampleCommands(conn)
 
   /**insert() inserts records into a table**/
 
-  //r.table("animals").insert({"id":"cheetah","last_seen":new DateTime.now(),"number_in_wild":4000,"kingdom":"cat","phylum":"cat also","locations":["jungle","zoo"]},{'durability':'hard','return_vals':true,'upsert':true}).run(conn).then((response)=>print(response));
+  //r.table("animals").insert({"id":"cheetah","last_seen":new DateTime.now(),"number_in_wild":4000,"kingdom":"cat","phylum":"cat also","locations":["jungle","zoo"]},{'durability':'hard','return_changes':true,'conflict':'update'}).run(conn).then((response)=>print(response));
 
 //  List animalsToAdd = [
 //                       {"number_in_wild":2000,"kingdom":"horse","phylum":"horse also","locations":["jungle","zoo"]},
@@ -136,7 +139,7 @@ exampleCommands(conn)
 
   //r.table("animals").get("sloth").replace({"id":"sloth","number_in_wild":2000,"kingdom":"not a bear","phylum":"not the same as a bear"}).run(conn).then((response)=>print(response));
 
-  //r.table("animals").get("cats").replace({"id":"cats","date":r.now(),"replaced":true},{"return_vals":true}).run(conn).then((response)=>print(response));
+  //r.table("animals").get("cats").replace({"id":"cats","date":r.now(),"replaced":true},{"return_changes":true}).run(conn).then((response)=>print(response));
 
   //r.db("test").table("animals").replace((animal)=>animal.without("kingdom")).run(conn).then((response)=>print(response));
 
@@ -434,7 +437,7 @@ exampleCommands(conn)
 
 
 
-  //literal replace an object in an update instead of merging**/
+  /**literal replace an object in an update instead of merging**/
 
   //r.table("animals").get("cheetah").update({"last_seen":r.literal({"now":r.now()})}).run(conn).then((res)=>print(res));
 
@@ -713,7 +716,8 @@ exampleCommands(conn)
 
   /**for more information check out the rethinkdb javascript API.**/
 
-
+  /**binary**/
+  //r.binary("this data in binary").run(conn).then((response)=>print(response));
 
 
 }

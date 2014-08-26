@@ -357,6 +357,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType MAKE_OBJ = const Term_TermType._(3, 'MAKE_OBJ');
   static const Term_TermType VAR = const Term_TermType._(10, 'VAR');
   static const Term_TermType JAVASCRIPT = const Term_TermType._(11, 'JAVASCRIPT');
+  static const Term_TermType UUID = const Term_TermType._(169, 'UUID');
   static const Term_TermType HTTP = const Term_TermType._(153, 'HTTP');
   static const Term_TermType ERROR = const Term_TermType._(12, 'ERROR');
   static const Term_TermType IMPLICIT_VAR = const Term_TermType._(13, 'IMPLICIT_VAR');
@@ -407,6 +408,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType IS_EMPTY = const Term_TermType._(86, 'IS_EMPTY');
   static const Term_TermType UNION = const Term_TermType._(44, 'UNION');
   static const Term_TermType NTH = const Term_TermType._(45, 'NTH');
+  static const Term_TermType BRACKET = const Term_TermType._(170, 'BRACKET');
   static const Term_TermType INNER_JOIN = const Term_TermType._(48, 'INNER_JOIN');
   static const Term_TermType OUTER_JOIN = const Term_TermType._(49, 'OUTER_JOIN');
   static const Term_TermType EQ_JOIN = const Term_TermType._(50, 'EQ_JOIN');
@@ -433,6 +435,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType INDEX_LIST = const Term_TermType._(77, 'INDEX_LIST');
   static const Term_TermType INDEX_STATUS = const Term_TermType._(139, 'INDEX_STATUS');
   static const Term_TermType INDEX_WAIT = const Term_TermType._(140, 'INDEX_WAIT');
+  static const Term_TermType INDEX_RENAME = const Term_TermType._(156, 'INDEX_RENAME');
   static const Term_TermType FUNCALL = const Term_TermType._(64, 'FUNCALL');
   static const Term_TermType BRANCH = const Term_TermType._(65, 'BRANCH');
   static const Term_TermType ANY = const Term_TermType._(66, 'ANY');
@@ -497,6 +500,19 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType RANDOM = const Term_TermType._(151, 'RANDOM');
   static const Term_TermType CHANGES = const Term_TermType._(152, 'CHANGES');
   static const Term_TermType ARGS = const Term_TermType._(154, 'ARGS');
+  static const Term_TermType BINARY = const Term_TermType._(155, 'BINARY');
+  static const Term_TermType GEOJSON = const Term_TermType._(157, 'GEOJSON');
+  static const Term_TermType TO_GEOJSON = const Term_TermType._(158, 'TO_GEOJSON');
+  static const Term_TermType POINT = const Term_TermType._(159, 'POINT');
+  static const Term_TermType LINE = const Term_TermType._(160, 'LINE');
+  static const Term_TermType POLYGON = const Term_TermType._(161, 'POLYGON');
+  static const Term_TermType DISTANCE = const Term_TermType._(162, 'DISTANCE');
+  static const Term_TermType INTERSECTS = const Term_TermType._(163, 'INTERSECTS');
+  static const Term_TermType INCLUDES = const Term_TermType._(164, 'INCLUDES');
+  static const Term_TermType CIRCLE = const Term_TermType._(165, 'CIRCLE');
+  static const Term_TermType GET_INTERSECTING = const Term_TermType._(166, 'GET_INTERSECTING');
+  static const Term_TermType FILL = const Term_TermType._(167, 'FILL');
+  static const Term_TermType GET_NEAREST = const Term_TermType._(168, 'GET_NEAREST');
 
   static const List<Term_TermType> values = const <Term_TermType> [
     DATUM,
@@ -504,6 +520,7 @@ class Term_TermType extends ProtobufEnum {
     MAKE_OBJ,
     VAR,
     JAVASCRIPT,
+    UUID,
     HTTP,
     ERROR,
     IMPLICIT_VAR,
@@ -554,6 +571,7 @@ class Term_TermType extends ProtobufEnum {
     IS_EMPTY,
     UNION,
     NTH,
+    BRACKET,
     INNER_JOIN,
     OUTER_JOIN,
     EQ_JOIN,
@@ -580,6 +598,7 @@ class Term_TermType extends ProtobufEnum {
     INDEX_LIST,
     INDEX_STATUS,
     INDEX_WAIT,
+    INDEX_RENAME,
     FUNCALL,
     BRANCH,
     ANY,
@@ -644,6 +663,19 @@ class Term_TermType extends ProtobufEnum {
     RANDOM,
     CHANGES,
     ARGS,
+    BINARY,
+    GEOJSON,
+    TO_GEOJSON,
+    POINT,
+    LINE,
+    POLYGON,
+    DISTANCE,
+    INTERSECTS,
+    INCLUDES,
+    CIRCLE,
+    GET_INTERSECTING,
+    FILL,
+    GET_NEAREST,
   ];
 
   static final Map<int, Term_TermType> _byValue = ProtobufEnum.initByValue(values);

@@ -1,7 +1,7 @@
 Dart RethinkDB Driver
 =========
 
-A [Dart](http://www.dartlang.org) driver for [RethinkDB v1.13](http://www.rethinkdb.com).
+A [Dart](http://www.dartlang.org) driver for [RethinkDB v1.14](http://www.rethinkdb.com).
 
 This driver has been rewritten from scratch to conform with the new RethinkDB JSON Protocol
 
@@ -25,7 +25,7 @@ The driver api tries to align with the javascript and python RethinkDB drivers. 
   or add the package to your pubspec.yaml file:
   ```
   dependencies:
-    rethinkdb_driver: '>=0.4.4'
+    rethinkdb_driver: '>=0.6.0'
   ````
   and import the package into your project:
   ```

@@ -1,9 +1,9 @@
 Dart RethinkDB Driver
 =========
 
-A [Dart](http://www.dartlang.org) driver for [RethinkDB v1.14](http://www.rethinkdb.com).
+A [Dart](http://www.dartlang.org) driver for [RethinkDB v1.16](http://www.rethinkdb.com).
 
-This driver has been rewritten from scratch to conform with the new RethinkDB JSON Protocol
+This driver has been rewritten from scratch to conform with the new RethinkDB JSON Protocol.
 
 Getting Started:
 ========

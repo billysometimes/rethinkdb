@@ -277,11 +277,6 @@ class RqlQuery{
     Mod mod(other) => new Mod(this, other);
 
 
-    All and(other) =>new All(this, other);
-
-    Any or(other) => new Any(this, other);
-
-
     Contains contains(args) =>new Contains(this,func_wrap(args));
 
     HasFields hasFields(args) => new HasFields(this,args);
@@ -341,8 +336,6 @@ class RqlQuery{
     Downcase downcase() => new Downcase(this);
 
     IsEmpty isEmpty() => new IsEmpty(this);
-
-    IndexesOf indexesOf(obj) => new IndexesOf(this,func_wrap(obj));
 
     Slice slice(int start,[end, Map options]) => new Slice(this,start,end,options);
 
@@ -945,13 +938,13 @@ class Filter extends RqlMethodQuery{
     Filter(selection,predicate,[Map options]):super([selection,predicate],options);
 }
 class ConcatMap extends RqlMethodQuery{
-    p.Term_TermType tt = p.Term_TermType.CONCATMAP;
+    p.Term_TermType tt = p.Term_TermType.CONCAT_MAP;
 
     ConcatMap(seq,mappingFunction):super([seq,mappingFunction]);
 }
 
 class OrderBy extends RqlMethodQuery{
-    p.Term_TermType tt = p.Term_TermType.ORDERBY;
+    p.Term_TermType tt = p.Term_TermType.ORDER_BY;
 
     OrderBy(args,[Map options]):super(args,options);
 }
@@ -1000,12 +993,6 @@ class Downcase extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.DOWNCASE;
 
     Downcase(obj):super([obj]);
-}
-
-class IndexesOf extends RqlMethodQuery{
-    p.Term_TermType tt = p.Term_TermType.INDEXES_OF;
-
-    IndexesOf(seq,index):super([seq,index]);
 }
 
 class IsEmpty extends RqlMethodQuery{
@@ -1057,7 +1044,7 @@ class Ungroup extends RqlMethodQuery{
 }
 
 class TypeOf extends RqlMethodQuery{
-    p.Term_TermType tt = p.Term_TermType.TYPEOF;
+    p.Term_TermType tt = p.Term_TermType.TYPE_OF;
 
     TypeOf(obj):super([obj]);
 }
@@ -1173,20 +1160,20 @@ class Branch extends RqlTopLevelQuery{
 
     Branch(predicate, true_branch, false_branch):super([predicate,true_branch,false_branch]);
 }
-class Any extends RqlBoolOperQuery{
-    p.Term_TermType tt = p.Term_TermType.ANY;
+class Or extends RqlBoolOperQuery{
+    p.Term_TermType tt = p.Term_TermType.OR;
 
-    Any(orable,obj):super([orable,obj]);
+    Or(orable,obj):super([orable,obj]);
 }
 
-class All extends RqlBoolOperQuery{
-    p.Term_TermType tt = p.Term_TermType.ALL;
+class And extends RqlBoolOperQuery{
+    p.Term_TermType tt = p.Term_TermType.AND;
 
-    All(andable,obj):super([andable,obj]);
+    And(andable,obj):super([andable,obj]);
 }
 
 class ForEach extends RqlMethodQuery{
-    p.Term_TermType tt = p.Term_TermType.FOREACH;
+    p.Term_TermType tt = p.Term_TermType.FOR_EACH;
 
     ForEach(obj,write_query):super([obj,write_query]);
 }

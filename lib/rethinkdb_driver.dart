@@ -3,7 +3,7 @@ library rethinkdb;
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'src/generated/ql2.pb.dart' as p;
+import 'src/generated/q2.pb.dart' as p;
 import 'package:crypto/crypto.dart';
 import 'dart:mirrors';
 import 'dart:convert';

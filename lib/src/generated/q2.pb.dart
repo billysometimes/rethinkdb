@@ -1,7 +1,7 @@
 ///
 //  Generated code. Do not modify.
 ///
-library ql2;
+library q2;
 
 import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart';
@@ -10,11 +10,13 @@ class VersionDummy_Version extends ProtobufEnum {
   static const VersionDummy_Version V0_1 = const VersionDummy_Version._(1063369270, 'V0_1');
   static const VersionDummy_Version V0_2 = const VersionDummy_Version._(1915781601, 'V0_2');
   static const VersionDummy_Version V0_3 = const VersionDummy_Version._(1601562686, 'V0_3');
+  static const VersionDummy_Version V0_4 = const VersionDummy_Version._(1074539808, 'V0_4');
 
   static const List<VersionDummy_Version> values = const <VersionDummy_Version> [
     V0_1,
     V0_2,
     V0_3,
+    V0_4,
   ];
 
   static final Map<int, VersionDummy_Version> _byValue = ProtobufEnum.initByValue(values);
@@ -48,6 +50,8 @@ class VersionDummy extends GeneratedMessage {
   VersionDummy.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   VersionDummy clone() => new VersionDummy()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static VersionDummy create() => new VersionDummy();
+  static PbList<VersionDummy> createRepeated() => new PbList<VersionDummy>();
 }
 
 class Query_QueryType extends ProtobufEnum {
@@ -72,7 +76,7 @@ class Query_QueryType extends ProtobufEnum {
 class Query_AssocPair extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Query_AssocPair')
     ..a(1, 'key', GeneratedMessage.OS)
-    ..a(2, 'val', GeneratedMessage.OM, () => new Term(), () => new Term())
+    ..a(2, 'val', GeneratedMessage.OM, Term.create, Term.create)
   ;
 
   Query_AssocPair() : super();
@@ -80,6 +84,8 @@ class Query_AssocPair extends GeneratedMessage {
   Query_AssocPair.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Query_AssocPair clone() => new Query_AssocPair()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Query_AssocPair create() => new Query_AssocPair();
+  static PbList<Query_AssocPair> createRepeated() => new PbList<Query_AssocPair>();
 
   String get key => getField(1);
   void set key(String v) { setField(1, v); }
@@ -94,12 +100,12 @@ class Query_AssocPair extends GeneratedMessage {
 
 class Query extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Query')
-    ..e(1, 'type', GeneratedMessage.OE, () => Query_QueryType.START, (var v) => Query_QueryType.valueOf(v))
-    ..a(2, 'query', GeneratedMessage.OM, () => new Term(), () => new Term())
-    ..a(3, 'token', GeneratedMessage.O6, () => makeLongInt(0))
+    ..e(1, 'type', GeneratedMessage.OE, Query_QueryType.START, (var v) => Query_QueryType.valueOf(v))
+    ..a(2, 'query', GeneratedMessage.OM, Term.create, Term.create)
+    ..a(3, 'token', GeneratedMessage.O6, Int64.ZERO)
     ..a(4, 'oBSOLETENoreply', GeneratedMessage.OB)
     ..a(5, 'acceptsRJson', GeneratedMessage.OB)
-    ..m(6, 'globalOptargs', () => new Query_AssocPair(), () => new PbList<Query_AssocPair>())
+    ..m(6, 'globalOptargs', Query_AssocPair.create, Query_AssocPair.createRepeated)
   ;
 
   Query() : super();
@@ -107,6 +113,8 @@ class Query extends GeneratedMessage {
   Query.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Query clone() => new Query()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Query create() => new Query();
+  static PbList<Query> createRepeated() => new PbList<Query>();
 
   Query_QueryType get type => getField(1);
   void set type(Query_QueryType v) { setField(1, v); }
@@ -153,8 +161,8 @@ class Frame_FrameType extends ProtobufEnum {
 
 class Frame extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Frame')
-    ..e(1, 'type', GeneratedMessage.OE, () => Frame_FrameType.POS, (var v) => Frame_FrameType.valueOf(v))
-    ..a(2, 'pos', GeneratedMessage.O6, () => makeLongInt(0))
+    ..e(1, 'type', GeneratedMessage.OE, Frame_FrameType.POS, (var v) => Frame_FrameType.valueOf(v))
+    ..a(2, 'pos', GeneratedMessage.O6, Int64.ZERO)
     ..a(3, 'opt', GeneratedMessage.OS)
     ..hasRequiredFields = false
   ;
@@ -164,6 +172,8 @@ class Frame extends GeneratedMessage {
   Frame.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Frame clone() => new Frame()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Frame create() => new Frame();
+  static PbList<Frame> createRepeated() => new PbList<Frame>();
 
   Frame_FrameType get type => getField(1);
   void set type(Frame_FrameType v) { setField(1, v); }
@@ -183,7 +193,7 @@ class Frame extends GeneratedMessage {
 
 class Backtrace extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Backtrace')
-    ..m(1, 'frames', () => new Frame(), () => new PbList<Frame>())
+    ..m(1, 'frames', Frame.create, Frame.createRepeated)
     ..hasRequiredFields = false
   ;
 
@@ -192,6 +202,8 @@ class Backtrace extends GeneratedMessage {
   Backtrace.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Backtrace clone() => new Backtrace()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Backtrace create() => new Backtrace();
+  static PbList<Backtrace> createRepeated() => new PbList<Backtrace>();
 
   List<Frame> get frames => getField(1);
 }
@@ -202,6 +214,7 @@ class Response_ResponseType extends ProtobufEnum {
   static const Response_ResponseType SUCCESS_PARTIAL = const Response_ResponseType._(3, 'SUCCESS_PARTIAL');
   static const Response_ResponseType SUCCESS_FEED = const Response_ResponseType._(5, 'SUCCESS_FEED');
   static const Response_ResponseType WAIT_COMPLETE = const Response_ResponseType._(4, 'WAIT_COMPLETE');
+  static const Response_ResponseType SUCCESS_ATOM_FEED = const Response_ResponseType._(6, 'SUCCESS_ATOM_FEED');
   static const Response_ResponseType CLIENT_ERROR = const Response_ResponseType._(16, 'CLIENT_ERROR');
   static const Response_ResponseType COMPILE_ERROR = const Response_ResponseType._(17, 'COMPILE_ERROR');
   static const Response_ResponseType RUNTIME_ERROR = const Response_ResponseType._(18, 'RUNTIME_ERROR');
@@ -212,6 +225,7 @@ class Response_ResponseType extends ProtobufEnum {
     SUCCESS_PARTIAL,
     SUCCESS_FEED,
     WAIT_COMPLETE,
+    SUCCESS_ATOM_FEED,
     CLIENT_ERROR,
     COMPILE_ERROR,
     RUNTIME_ERROR,
@@ -225,11 +239,11 @@ class Response_ResponseType extends ProtobufEnum {
 
 class Response extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Response')
-    ..e(1, 'type', GeneratedMessage.OE, () => Response_ResponseType.SUCCESS_ATOM, (var v) => Response_ResponseType.valueOf(v))
-    ..a(2, 'token', GeneratedMessage.O6, () => makeLongInt(0))
-    ..m(3, 'response', () => new Datum(), () => new PbList<Datum>())
-    ..a(4, 'backtrace', GeneratedMessage.OM, () => new Backtrace(), () => new Backtrace())
-    ..a(5, 'profile', GeneratedMessage.OM, () => new Datum(), () => new Datum())
+    ..e(1, 'type', GeneratedMessage.OE, Response_ResponseType.SUCCESS_ATOM, (var v) => Response_ResponseType.valueOf(v))
+    ..a(2, 'token', GeneratedMessage.O6, Int64.ZERO)
+    ..m(3, 'response', Datum.create, Datum.createRepeated)
+    ..a(4, 'backtrace', GeneratedMessage.OM, Backtrace.create, Backtrace.create)
+    ..a(5, 'profile', GeneratedMessage.OM, Datum.create, Datum.create)
   ;
 
   Response() : super();
@@ -237,6 +251,8 @@ class Response extends GeneratedMessage {
   Response.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Response clone() => new Response()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Response create() => new Response();
+  static PbList<Response> createRepeated() => new PbList<Response>();
 
   Response_ResponseType get type => getField(1);
   void set type(Response_ResponseType v) { setField(1, v); }
@@ -289,7 +305,7 @@ class Datum_DatumType extends ProtobufEnum {
 class Datum_AssocPair extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Datum_AssocPair')
     ..a(1, 'key', GeneratedMessage.OS)
-    ..a(2, 'val', GeneratedMessage.OM, () => new Datum(), () => new Datum())
+    ..a(2, 'val', GeneratedMessage.OM, Datum.create, Datum.create)
   ;
 
   Datum_AssocPair() : super();
@@ -297,6 +313,8 @@ class Datum_AssocPair extends GeneratedMessage {
   Datum_AssocPair.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Datum_AssocPair clone() => new Datum_AssocPair()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Datum_AssocPair create() => new Datum_AssocPair();
+  static PbList<Datum_AssocPair> createRepeated() => new PbList<Datum_AssocPair>();
 
   String get key => getField(1);
   void set key(String v) { setField(1, v); }
@@ -311,12 +329,12 @@ class Datum_AssocPair extends GeneratedMessage {
 
 class Datum extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Datum')
-    ..e(1, 'type', GeneratedMessage.OE, () => Datum_DatumType.R_NULL, (var v) => Datum_DatumType.valueOf(v))
+    ..e(1, 'type', GeneratedMessage.OE, Datum_DatumType.R_NULL, (var v) => Datum_DatumType.valueOf(v))
     ..a(2, 'rBool', GeneratedMessage.OB)
     ..a(3, 'rNum', GeneratedMessage.OD)
     ..a(4, 'rStr', GeneratedMessage.OS)
-    ..m(5, 'rArray', () => new Datum(), () => new PbList<Datum>())
-    ..m(6, 'rObject', () => new Datum_AssocPair(), () => new PbList<Datum_AssocPair>())
+    ..m(5, 'rArray', Datum.create, Datum.createRepeated)
+    ..m(6, 'rObject', Datum_AssocPair.create, Datum_AssocPair.createRepeated)
     ..hasExtensions = true
   ;
 
@@ -325,6 +343,8 @@ class Datum extends GeneratedMessage {
   Datum.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Datum clone() => new Datum()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Datum create() => new Datum();
+  static PbList<Datum> createRepeated() => new PbList<Datum>();
 
   Datum_DatumType get type => getField(1);
   void set type(Datum_DatumType v) { setField(1, v); }
@@ -387,7 +407,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType SLICE = const Term_TermType._(30, 'SLICE');
   static const Term_TermType SKIP = const Term_TermType._(70, 'SKIP');
   static const Term_TermType LIMIT = const Term_TermType._(71, 'LIMIT');
-  static const Term_TermType INDEXES_OF = const Term_TermType._(87, 'INDEXES_OF');
+  static const Term_TermType OFFSETS_OF = const Term_TermType._(87, 'OFFSETS_OF');
   static const Term_TermType CONTAINS = const Term_TermType._(93, 'CONTAINS');
   static const Term_TermType GET_FIELD = const Term_TermType._(31, 'GET_FIELD');
   static const Term_TermType KEYS = const Term_TermType._(94, 'KEYS');
@@ -401,8 +421,8 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType REDUCE = const Term_TermType._(37, 'REDUCE');
   static const Term_TermType MAP = const Term_TermType._(38, 'MAP');
   static const Term_TermType FILTER = const Term_TermType._(39, 'FILTER');
-  static const Term_TermType CONCATMAP = const Term_TermType._(40, 'CONCATMAP');
-  static const Term_TermType ORDERBY = const Term_TermType._(41, 'ORDERBY');
+  static const Term_TermType CONCAT_MAP = const Term_TermType._(40, 'CONCAT_MAP');
+  static const Term_TermType ORDER_BY = const Term_TermType._(41, 'ORDER_BY');
   static const Term_TermType DISTINCT = const Term_TermType._(42, 'DISTINCT');
   static const Term_TermType COUNT = const Term_TermType._(43, 'COUNT');
   static const Term_TermType IS_EMPTY = const Term_TermType._(86, 'IS_EMPTY');
@@ -413,12 +433,13 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType OUTER_JOIN = const Term_TermType._(49, 'OUTER_JOIN');
   static const Term_TermType EQ_JOIN = const Term_TermType._(50, 'EQ_JOIN');
   static const Term_TermType ZIP = const Term_TermType._(72, 'ZIP');
+  static const Term_TermType RANGE = const Term_TermType._(173, 'RANGE');
   static const Term_TermType INSERT_AT = const Term_TermType._(82, 'INSERT_AT');
   static const Term_TermType DELETE_AT = const Term_TermType._(83, 'DELETE_AT');
   static const Term_TermType CHANGE_AT = const Term_TermType._(84, 'CHANGE_AT');
   static const Term_TermType SPLICE_AT = const Term_TermType._(85, 'SPLICE_AT');
   static const Term_TermType COERCE_TO = const Term_TermType._(51, 'COERCE_TO');
-  static const Term_TermType TYPEOF = const Term_TermType._(52, 'TYPEOF');
+  static const Term_TermType TYPE_OF = const Term_TermType._(52, 'TYPE_OF');
   static const Term_TermType UPDATE = const Term_TermType._(53, 'UPDATE');
   static const Term_TermType DELETE = const Term_TermType._(54, 'DELETE');
   static const Term_TermType REPLACE = const Term_TermType._(55, 'REPLACE');
@@ -429,6 +450,11 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType TABLE_CREATE = const Term_TermType._(60, 'TABLE_CREATE');
   static const Term_TermType TABLE_DROP = const Term_TermType._(61, 'TABLE_DROP');
   static const Term_TermType TABLE_LIST = const Term_TermType._(62, 'TABLE_LIST');
+  static const Term_TermType CONFIG = const Term_TermType._(174, 'CONFIG');
+  static const Term_TermType STATUS = const Term_TermType._(175, 'STATUS');
+  static const Term_TermType WAIT = const Term_TermType._(177, 'WAIT');
+  static const Term_TermType RECONFIGURE = const Term_TermType._(176, 'RECONFIGURE');
+  static const Term_TermType REBALANCE = const Term_TermType._(179, 'REBALANCE');
   static const Term_TermType SYNC = const Term_TermType._(138, 'SYNC');
   static const Term_TermType INDEX_CREATE = const Term_TermType._(75, 'INDEX_CREATE');
   static const Term_TermType INDEX_DROP = const Term_TermType._(76, 'INDEX_DROP');
@@ -438,9 +464,9 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType INDEX_RENAME = const Term_TermType._(156, 'INDEX_RENAME');
   static const Term_TermType FUNCALL = const Term_TermType._(64, 'FUNCALL');
   static const Term_TermType BRANCH = const Term_TermType._(65, 'BRANCH');
-  static const Term_TermType ANY = const Term_TermType._(66, 'ANY');
-  static const Term_TermType ALL = const Term_TermType._(67, 'ALL');
-  static const Term_TermType FOREACH = const Term_TermType._(68, 'FOREACH');
+  static const Term_TermType OR = const Term_TermType._(66, 'OR');
+  static const Term_TermType AND = const Term_TermType._(67, 'AND');
+  static const Term_TermType FOR_EACH = const Term_TermType._(68, 'FOR_EACH');
   static const Term_TermType FUNC = const Term_TermType._(69, 'FUNC');
   static const Term_TermType ASC = const Term_TermType._(73, 'ASC');
   static const Term_TermType DESC = const Term_TermType._(74, 'DESC');
@@ -451,6 +477,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType SAMPLE = const Term_TermType._(81, 'SAMPLE');
   static const Term_TermType DEFAULT = const Term_TermType._(92, 'DEFAULT');
   static const Term_TermType JSON = const Term_TermType._(98, 'JSON');
+  static const Term_TermType TO_JSON_STRING = const Term_TermType._(172, 'TO_JSON_STRING');
   static const Term_TermType ISO8601 = const Term_TermType._(99, 'ISO8601');
   static const Term_TermType TO_ISO8601 = const Term_TermType._(100, 'TO_ISO8601');
   static const Term_TermType EPOCH_TIME = const Term_TermType._(101, 'EPOCH_TIME');
@@ -513,6 +540,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType GET_INTERSECTING = const Term_TermType._(166, 'GET_INTERSECTING');
   static const Term_TermType FILL = const Term_TermType._(167, 'FILL');
   static const Term_TermType GET_NEAREST = const Term_TermType._(168, 'GET_NEAREST');
+  static const Term_TermType POLYGON_SUB = const Term_TermType._(171, 'POLYGON_SUB');
 
   static const List<Term_TermType> values = const <Term_TermType> [
     DATUM,
@@ -550,7 +578,7 @@ class Term_TermType extends ProtobufEnum {
     SLICE,
     SKIP,
     LIMIT,
-    INDEXES_OF,
+    OFFSETS_OF,
     CONTAINS,
     GET_FIELD,
     KEYS,
@@ -564,8 +592,8 @@ class Term_TermType extends ProtobufEnum {
     REDUCE,
     MAP,
     FILTER,
-    CONCATMAP,
-    ORDERBY,
+    CONCAT_MAP,
+    ORDER_BY,
     DISTINCT,
     COUNT,
     IS_EMPTY,
@@ -576,12 +604,13 @@ class Term_TermType extends ProtobufEnum {
     OUTER_JOIN,
     EQ_JOIN,
     ZIP,
+    RANGE,
     INSERT_AT,
     DELETE_AT,
     CHANGE_AT,
     SPLICE_AT,
     COERCE_TO,
-    TYPEOF,
+    TYPE_OF,
     UPDATE,
     DELETE,
     REPLACE,
@@ -592,6 +621,11 @@ class Term_TermType extends ProtobufEnum {
     TABLE_CREATE,
     TABLE_DROP,
     TABLE_LIST,
+    CONFIG,
+    STATUS,
+    WAIT,
+    RECONFIGURE,
+    REBALANCE,
     SYNC,
     INDEX_CREATE,
     INDEX_DROP,
@@ -601,9 +635,9 @@ class Term_TermType extends ProtobufEnum {
     INDEX_RENAME,
     FUNCALL,
     BRANCH,
-    ANY,
-    ALL,
-    FOREACH,
+    OR,
+    AND,
+    FOR_EACH,
     FUNC,
     ASC,
     DESC,
@@ -614,6 +648,7 @@ class Term_TermType extends ProtobufEnum {
     SAMPLE,
     DEFAULT,
     JSON,
+    TO_JSON_STRING,
     ISO8601,
     TO_ISO8601,
     EPOCH_TIME,
@@ -676,6 +711,7 @@ class Term_TermType extends ProtobufEnum {
     GET_INTERSECTING,
     FILL,
     GET_NEAREST,
+    POLYGON_SUB,
   ];
 
   static final Map<int, Term_TermType> _byValue = ProtobufEnum.initByValue(values);
@@ -687,7 +723,7 @@ class Term_TermType extends ProtobufEnum {
 class Term_AssocPair extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Term_AssocPair')
     ..a(1, 'key', GeneratedMessage.OS)
-    ..a(2, 'val', GeneratedMessage.OM, () => new Term(), () => new Term())
+    ..a(2, 'val', GeneratedMessage.OM, Term.create, Term.create)
   ;
 
   Term_AssocPair() : super();
@@ -695,6 +731,8 @@ class Term_AssocPair extends GeneratedMessage {
   Term_AssocPair.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Term_AssocPair clone() => new Term_AssocPair()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Term_AssocPair create() => new Term_AssocPair();
+  static PbList<Term_AssocPair> createRepeated() => new PbList<Term_AssocPair>();
 
   String get key => getField(1);
   void set key(String v) { setField(1, v); }
@@ -709,10 +747,10 @@ class Term_AssocPair extends GeneratedMessage {
 
 class Term extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Term')
-    ..e(1, 'type', GeneratedMessage.OE, () => Term_TermType.DATUM, (var v) => Term_TermType.valueOf(v))
-    ..a(2, 'datum', GeneratedMessage.OM, () => new Datum(), () => new Datum())
-    ..m(3, 'args', () => new Term(), () => new PbList<Term>())
-    ..m(4, 'optargs', () => new Term_AssocPair(), () => new PbList<Term_AssocPair>())
+    ..e(1, 'type', GeneratedMessage.OE, Term_TermType.DATUM, (var v) => Term_TermType.valueOf(v))
+    ..a(2, 'datum', GeneratedMessage.OM, Datum.create, Datum.create)
+    ..m(3, 'args', Term.create, Term.createRepeated)
+    ..m(4, 'optargs', Term_AssocPair.create, Term_AssocPair.createRepeated)
     ..hasExtensions = true
   ;
 
@@ -721,6 +759,8 @@ class Term extends GeneratedMessage {
   Term.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
   Term clone() => new Term()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
+  static Term create() => new Term();
+  static PbList<Term> createRepeated() => new PbList<Term>();
 
   Term_TermType get type => getField(1);
   void set type(Term_TermType v) { setField(1, v); }

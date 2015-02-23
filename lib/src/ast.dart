@@ -275,7 +275,10 @@ class RqlQuery{
 
 
     Mod mod(other) => new Mod(this, other);
+    
+    And and(other) =>new And(this, other);
 
+    Or or(other) => new Or(this, other);
 
     Contains contains(args) =>new Contains(this,func_wrap(args));
 
@@ -993,6 +996,12 @@ class Downcase extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.DOWNCASE;
 
     Downcase(obj):super([obj]);
+}
+
+class OffsetsOf extends RqlMethodQuery{
+    p.Term_TermType tt = p.Term_TermType.OFFSETS_OF;
+
+    OffsetsOf(seq,index):super([seq,index]);
 }
 
 class IsEmpty extends RqlMethodQuery{

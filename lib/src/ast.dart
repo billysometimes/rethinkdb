@@ -1,182 +1,5 @@
 part of rethinkdb;
 
-
-
-_listify(args,[parg]){
-  if(args is List){
-    args.insert(0,parg);
-    return args;
-  }
-  else{
-    if(args != null){
-      if(parg != null)
-        return [parg,args];
-      else
-        return [args];
-    }
-    else
-      return [];
-  }
-}
-
-
-_ivar_scan(query){
-
-  if(query is RqlQuery == false){
-     return false;
- }
-
- if(query is ImplicitVar){
-     return true;
- }
-
- for(var e in query.args){
-   if(_ivar_scan(e)){
-     return true;
-   }
- }
-
-
- var optArgKeys = query.optargs.keys;
-
- for(var key in optArgKeys){
-   if(_ivar_scan(query.optargs[key])){
-     return true;
-   }
- }
-   return false;
-}
-
-// Called on arguments that should be functions
-func_wrap(val){
- val = _expr(val);
- if(_ivar_scan(val)){
-     return new Func((x) => val);
- }
- return val;
-}
-
-
-reql_type_time_to_datetime(Map obj){
-    if(obj["epoch_time"] == null){
-      throw new RqlDriverError('pseudo-type TIME object $obj does not have expected field "epoch_time".');
-    }else{
-      String s = obj["epoch_time"].toString();
-               if(s.indexOf(".")>=0){
-               List l = s.split('.');
-               while(l[1].length < 3){
-                 l[1] = l[1]+"0";
-               }
-               s = l.join("");
-               }else{
-                 s+="000";
-               }
-        return new DateTime.fromMillisecondsSinceEpoch(int.parse(s));
-    }
-}
-
-
-reql_type_grouped_data_to_object(Map obj){
-    if(obj['data'] == null){
-        throw new RqlDriverError('pseudo-type GROUPED_DATA object $obj does not have the expected field "data".');
-    }
-
-    Map retObj = {};
-    obj['data'].forEach((e){
-      retObj[e[0]] = e[1];
-    });
-    return retObj;
-}
-
-convert_pseudotype(Map obj, Map format_opts){
-    String reql_type = obj['\$reql_type\$'];
-    if(reql_type != null){
-        if(reql_type == 'TIME'){
-            if(format_opts == null || format_opts.isEmpty){
-              format_opts = {"time_format":"native"};
-            }
-            String time_format = format_opts['time_format'];
-            if(time_format != null || time_format == 'native'){
-                // Convert to native dart DateTime
-                return reql_type_time_to_datetime(obj);
-            }
-            else if(time_format != 'raw')
-                throw new RqlDriverError("Unknown time_format run option $time_format.");
-        }
-        else if(reql_type == 'GROUPED_DATA'){
-            if(format_opts == null || format_opts.isEmpty || format_opts['group_format'] == 'native')
-                return reql_type_grouped_data_to_object(obj);
-            else if(format_opts['group_format'] != 'raw')
-              throw new RqlDriverError("Unknown group_format run option ${format_opts['group_format']}.");
-        }else if(reql_type == "BINARY"){
-          if(format_opts == null || format_opts["binary_format"] == "native")
-            return _reql_type_binary_to_bytes(obj);
-          else
-            throw new RqlDriverError("Unknown binary_format run option: ${format_opts["binary_format"]}");
-        }else if(reql_type == "GEOMETRY"){
-          obj.remove('\$reql_type\$');
-          return obj;
-        }else{
-            throw new RqlDriverError("Unknown pseudo-type $reql_type");
-        }
-    }
-
-    return obj;
-}
-_reql_type_binary_to_bytes(Map obj){
-  return CryptoUtils.base64StringToBytes(obj['data']);
-}
-recursively_convert_pseudotypes(obj, format_opts){
-    if(obj is Map){
-      obj.forEach((k,v){
-        obj[k] = recursively_convert_pseudotypes(v,format_opts);
-      });
-      obj = convert_pseudotype(obj, format_opts);
-    }else if(obj is List){
-      obj.forEach((e){
-        e = recursively_convert_pseudotypes(e,format_opts);
-      });
-    }
-    return obj;
-}
-
-
-
-_expr(val, [nesting_depth=20]){
-
-    if(nesting_depth <= 0)
-      throw new RqlDriverError("Nesting depth limit exceeded");
-
-    if(nesting_depth is int == false)
-        throw new RqlDriverError("Second argument to `r.expr` must be a number.");
-
-    if(val is RqlQuery)
-        return val;
-    else if(val is List){
-        val.forEach((v){
-          v = _expr(v,nesting_depth - 1);
-        });
-
-        return new MakeArray(val);
-    }
-    else if(val is Map){
-        Map obj = {};
-
-        val.forEach((k,v){
-          obj[k] = _expr(v,nesting_depth -1);
-        });
-
-        return new MakeObj(obj);
-    }
-    else if(val is Function)
-        return new Func(val);
-    else if(val is DateTime){
-       return new Time.nativeTime(val);
-    }
-    else
-      return new Datum(val);
-}
-
 class RqlQuery{
     p.Term_TermType tt;
 
@@ -249,7 +72,182 @@ class RqlQuery{
         return res;
     }
 
-    Update update(args, [options]) => new Update(this,func_wrap(args),options);
+    
+    _recursively_convert_pseudotypes(obj, format_opts){
+        if(obj is Map){
+          obj.forEach((k,v){
+            obj[k] = _recursively_convert_pseudotypes(v,format_opts);
+          });
+          obj = _convert_pseudotype(obj, format_opts);
+        }else if(obj is List){
+          obj.forEach((e){
+            e = _recursively_convert_pseudotypes(e,format_opts);
+          });
+        }
+        return obj;
+    }
+    
+    _listify(args,[parg]){
+      if(args is List){
+        args.insert(0,parg);
+        return args;
+      }
+      else{
+        if(args != null){
+          if(parg != null)
+            return [parg,args];
+          else
+            return [args];
+        }
+        else
+          return [];
+      }
+    }
+
+
+    _ivar_scan(query){
+
+      if(query is RqlQuery == false){
+         return false;
+     }
+
+     if(query is ImplicitVar){
+         return true;
+     }
+
+     for(var e in query.args){
+       if(_ivar_scan(e)){
+         return true;
+       }
+     }
+
+
+     var optArgKeys = query.optargs.keys;
+
+     for(var key in optArgKeys){
+       if(_ivar_scan(query.optargs[key])){
+         return true;
+       }
+     }
+       return false;
+    }
+
+// Called on arguments that should be functions
+    _func_wrap(val){
+     val = _expr(val);
+     if(_ivar_scan(val)){
+         return new Func((x) => val);
+     }
+     return val;
+    }
+
+
+    _reql_type_time_to_datetime(Map obj){
+        if(obj["epoch_time"] == null){
+          throw new RqlDriverError('pseudo-type TIME object $obj does not have expected field "epoch_time".');
+        }else{
+          String s = obj["epoch_time"].toString();
+                   if(s.indexOf(".")>=0){
+                   List l = s.split('.');
+                   while(l[1].length < 3){
+                     l[1] = l[1]+"0";
+                   }
+                   s = l.join("");
+                   }else{
+                     s+="000";
+                   }
+            return new DateTime.fromMillisecondsSinceEpoch(int.parse(s));
+        }
+    }
+
+
+    _reql_type_grouped_data_to_object(Map obj){
+        if(obj['data'] == null){
+            throw new RqlDriverError('pseudo-type GROUPED_DATA object $obj does not have the expected field "data".');
+        }
+
+        Map retObj = {};
+        obj['data'].forEach((e){
+          retObj[e[0]] = e[1];
+        });
+        return retObj;
+    }
+
+    _convert_pseudotype(Map obj, Map format_opts){
+        String reql_type = obj['\$reql_type\$'];
+        if(reql_type != null){
+            if(reql_type == 'TIME'){
+                if(format_opts == null || format_opts.isEmpty){
+                  format_opts = {"time_format":"native"};
+                }
+                String time_format = format_opts['time_format'];
+                if(time_format != null || time_format == 'native'){
+                    // Convert to native dart DateTime
+                    return _reql_type_time_to_datetime(obj);
+                }
+                else if(time_format != 'raw')
+                    throw new RqlDriverError("Unknown time_format run option $time_format.");
+            }
+            else if(reql_type == 'GROUPED_DATA'){
+                if(format_opts == null || format_opts.isEmpty || format_opts['group_format'] == 'native')
+                    return _reql_type_grouped_data_to_object(obj);
+                else if(format_opts['group_format'] != 'raw')
+                  throw new RqlDriverError("Unknown group_format run option ${format_opts['group_format']}.");
+            }else if(reql_type == "BINARY"){
+              if(format_opts == null || format_opts["binary_format"] == "native")
+                return _reql_type_binary_to_bytes(obj);
+              else
+                throw new RqlDriverError("Unknown binary_format run option: ${format_opts["binary_format"]}");
+            }else if(reql_type == "GEOMETRY"){
+              obj.remove('\$reql_type\$');
+              return obj;
+            }else{
+                throw new RqlDriverError("Unknown pseudo-type $reql_type");
+            }
+        }
+
+        return obj;
+    }
+    _reql_type_binary_to_bytes(Map obj){
+      return CryptoUtils.base64StringToBytes(obj['data']);
+    }
+
+    _expr(val, [nesting_depth=20]){
+
+        if(nesting_depth <= 0)
+          throw new RqlDriverError("Nesting depth limit exceeded");
+
+        if(nesting_depth is int == false)
+            throw new RqlDriverError("Second argument to `r.expr` must be a number.");
+
+        if(val is RqlQuery)
+            return val;
+        else if(val is List){
+            val.forEach((v){
+              v = _expr(v,nesting_depth - 1);
+            });
+
+            return new MakeArray(val);
+        }
+        else if(val is Map){
+            Map obj = {};
+
+            val.forEach((k,v){
+              obj[k] = _expr(v,nesting_depth -1);
+            });
+
+            return new MakeObj(obj);
+        }
+        else if(val is Function)
+            return new Func(val);
+        else if(val is DateTime){
+           return new Time.nativeTime(val);
+        }
+        else
+          return new Datum(val);
+    }
+    
+    Update update(args, [options]) => new Update(this,_func_wrap(args),options);
 
 
     // Comparison operators
@@ -284,7 +282,7 @@ class RqlQuery{
 
     Or or(other) => new Or([this, other]);
 
-    Contains contains(args) =>new Contains(this,func_wrap(args));
+    Contains contains(args) =>new Contains(this,_func_wrap(args));
 
     HasFields hasFields(args) => new HasFields(this,args);
 
@@ -299,11 +297,11 @@ class RqlQuery{
 
     Without without(items) => new Without(_listify(items,this));
 
-    FunCall rqlDo(arg,[expression]) => new FunCall(_listify(arg,this),func_wrap(expression));
+    FunCall rqlDo(arg,[expression]) => new FunCall(_listify(arg,this),_func_wrap(expression));
 
     Default rqlDefault(args) => new Default(this,args);
 
-    Replace replace(expr, [options]) => new Replace(this,func_wrap(expr),options);
+    Replace replace(expr, [options]) => new Replace(this,_func_wrap(expr),options);
 
     Delete delete([options]) => new Delete(this,options);
 
@@ -314,7 +312,7 @@ class RqlQuery{
 
     TypeOf typeOf() => new TypeOf(this);
 
-    Merge merge(obj) => new Merge(this,func_wrap(obj));
+    Merge merge(obj) => new Merge(this,_func_wrap(obj));
 
     Append append(val) => new Append(this,val);
 
@@ -350,7 +348,7 @@ class RqlQuery{
 
     Limit limit(int i) => new Limit(this,i);
 
-    Reduce reduce(reductionFunction,[base]) => new Reduce(this,func_wrap(reductionFunction),base);
+    Reduce reduce(reductionFunction,[base]) => new Reduce(this,_func_wrap(reductionFunction),base);
 
     Sum sum([args]) => new Sum(this,args);
 
@@ -360,11 +358,11 @@ class RqlQuery{
 
     Max max([args]) => new Max(this,args);
 
-    RqlMap map(mappingFunction) => new RqlMap(this,func_wrap(mappingFunction));
+    RqlMap map(mappingFunction) => new RqlMap(this,_func_wrap(mappingFunction));
 
-    Filter filter(expr,[options]) => new Filter(this,func_wrap(expr),options);
+    Filter filter(expr,[options]) => new Filter(this,_func_wrap(expr),options);
 
-    ConcatMap concatMap(mappingFunction) => new ConcatMap(this,func_wrap(mappingFunction));
+    ConcatMap concatMap(mappingFunction) => new ConcatMap(this,_func_wrap(mappingFunction));
 
     Get get(id) => new Get(this,id);
 
@@ -379,7 +377,7 @@ class RqlQuery{
                           //do nothing
                         }
                         else
-                          ob = func_wrap(ob);
+                          ob = _func_wrap(ob);
             });
           }
           else if(attrs is List){
@@ -392,7 +390,7 @@ class RqlQuery{
               //do nothing
             }
             else
-              ob = func_wrap(ob);
+              ob = _func_wrap(ob);
 
             });
           }else{
@@ -416,7 +414,7 @@ class RqlQuery{
     Count count([filter]){
       if(filter == null)
         return new Count(this);
-      return new Count(this,func_wrap(filter));
+      return new Count(this,_func_wrap(filter));
     }
 
 
@@ -432,7 +430,7 @@ class RqlQuery{
 
     Group group(args,[options]) => new Group(this,args,options);
 
-    ForEach forEach(write_query) => new ForEach(this,func_wrap(write_query));
+    ForEach forEach(write_query) => new ForEach(this,_func_wrap(write_query));
 
     Info info() => new Info(this);
 
@@ -896,7 +894,7 @@ class Table extends RqlQuery{
 
     IndexWait indexWait([indexes]) => new IndexWait(this,indexes);
 
-    Update update(args, [options]) => new Update(this,func_wrap(args),options);
+    Update update(args, [options]) => new Update(this,_func_wrap(args),options);
 
     Sync sync() => new Sync(this);
 

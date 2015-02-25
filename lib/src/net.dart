@@ -76,7 +76,7 @@ class Cursor{
 
 
       if(_responses.length == 1){
-        List response_data = recursively_convert_pseudotypes(_responses.removeAt(0)._data, _opts);
+        List response_data = _query._recursively_convert_pseudotypes(_responses.removeAt(0)._data, _opts);
         response_data.forEach((var e){
           cb(null,e);
         });
@@ -114,7 +114,7 @@ class Cursor{
              c.completeError(new RqlDriverError("Connection closed, cannot read cursor"));
 
       }else if(_responses.length == 1){
-         c.complete(recursively_convert_pseudotypes(_responses.removeAt(0)._data, _opts));
+         c.complete(_query._recursively_convert_pseudotypes(_responses.removeAt(0)._data, _opts));
       }else if(_responses.length == 0 && !_end_flag){
 
         Query query = new Query(p.Query_QueryType.CONTINUE, this._query._token, null, null);
@@ -249,7 +249,7 @@ class Connection {
         if(response._data.length < 1){
         value = null;
         }
-        value = recursively_convert_pseudotypes(response._data[0], null);
+        value = query._recursively_convert_pseudotypes(response._data[0], null);
 
       }else if(response._type == p.Response_ResponseType.WAIT_COMPLETE.value){
         //Noreply_wait response

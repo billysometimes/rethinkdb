@@ -169,26 +169,48 @@ ImplicitVar row = new ImplicitVar();
 RqlObject object(args) => new RqlObject(args);
 
 
-//TODO label new stuff
+/**
+ * Acts like the ruby splat operator; unpacks a list of arguments.
+ */
 Args args(args) => new Args(args);
 
+
+/**
+ * Returns data from a specified http url
+ */
 Http http(url,[optargs]) => new Http(url,optargs);
 
+/**
+ * Generates a random number between two bounds
+ */
 Random random([left,right, options]) => new Random(left,right,options);
 
+
+/**
+ * Returns logical inverse of the arguments given
+ */
 Not not(args) => new Not(args);
 
-//TODO FIX
 
+
+/**
+ * computes logical 'and' of two or more values
+ */
 And and(obj1,obj2) => new And([obj1,obj2]);
 
+/**
+ * computes logical 'or' of two or more values
+ */
 Or or(obj1,obj2) => new Or([obj1,obj2]);
 
+/**
+ * Returns the type of the value
+ */
 
-TypeOf typeOf(args) => new TypeOf(args);
 
-Info info(args) => new Info(args);
-
+/**
+ * Replace an object in a field instead of merging it with an existing object in a [merge] or [update] operation.
+ */
 Literal literal(args) => new Literal(args);
 
 
@@ -202,21 +224,41 @@ Upcase upcase(String str) => new Upcase(str);
   */
 Downcase downcase(String str) => new Downcase(str);
 
+/**
+ * Convert native dart object into a RqlObject
+ */
 expr(val) => _expr(val);
 
+/**
+ * Convert a GeoJSON object to a ReQL geometry object.
+ */
 GeoJson geojson(Map geoJson) => new GeoJson(geoJson);
 
+
+/**
+ * Construct a circular line or polygon. 
+ */
 Circle circle(point, num radius, [Map options])=> new Circle(point,radius,options);
 
+/**
+ * Construct a geometric line
+ */
 Line line(point1, point2) => new Line([point1,point2]);
  
+/**
+ * Construct a geometric point
+ */
 Point point(num long, num lat) => new Point(long,lat);
 
+/**
+ * Construct a geometric polygon
+ */
 Polygon polygon(point1, point2) => new Polygon([point1,point2]);
 
+/**
+ * Encapsulate binary data within a query.
+ */
 Binary binary(var data) => new Binary(data);
-
-//TODO handle 2 or more points and arrays to points for line,polygon
 
  noSuchMethod(Invocation invocation) {
        String methodName = MirrorSystem.getName(invocation.memberName);

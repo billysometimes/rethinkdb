@@ -1,5 +1,40 @@
 part of rethinkdb;
 
+_expr(val, [nesting_depth=20]){
+
+    if(nesting_depth <= 0)
+      throw new RqlDriverError("Nesting depth limit exceeded");
+
+    if(nesting_depth is int == false)
+        throw new RqlDriverError("Second argument to `r.expr` must be a number.");
+
+    if(val is RqlQuery)
+        return val;
+    else if(val is List){
+        val.forEach((v){
+          v = _expr(v,nesting_depth - 1);
+        });
+
+        return new MakeArray(val);
+    }
+    else if(val is Map){
+        Map obj = {};
+
+        val.forEach((k,v){
+          obj[k] = _expr(v,nesting_depth -1);
+        });
+
+        return new MakeObj(obj);
+    }
+    else if(val is Function)
+        return new Func(val);
+    else if(val is DateTime){
+       return new Time.nativeTime(val);
+    }
+    else
+      return new Datum(val);
+}
+
 class RqlQuery{
     p.Term_TermType tt;
 
@@ -210,41 +245,6 @@ class RqlQuery{
     }
     _reql_type_binary_to_bytes(Map obj){
       return CryptoUtils.base64StringToBytes(obj['data']);
-    }
-
-    _expr(val, [nesting_depth=20]){
-
-        if(nesting_depth <= 0)
-          throw new RqlDriverError("Nesting depth limit exceeded");
-
-        if(nesting_depth is int == false)
-            throw new RqlDriverError("Second argument to `r.expr` must be a number.");
-
-        if(val is RqlQuery)
-            return val;
-        else if(val is List){
-            val.forEach((v){
-              v = _expr(v,nesting_depth - 1);
-            });
-
-            return new MakeArray(val);
-        }
-        else if(val is Map){
-            Map obj = {};
-
-            val.forEach((k,v){
-              obj[k] = _expr(v,nesting_depth -1);
-            });
-
-            return new MakeObj(obj);
-        }
-        else if(val is Function)
-            return new Func(val);
-        else if(val is DateTime){
-           return new Time.nativeTime(val);
-        }
-        else
-          return new Datum(val);
     }
     
     Update update(args, [options]) => new Update(this,_func_wrap(args),options);

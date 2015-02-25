@@ -113,6 +113,9 @@ convert_pseudotype(Map obj, Map format_opts){
             return _reql_type_binary_to_bytes(obj);
           else
             throw new RqlDriverError("Unknown binary_format run option: ${format_opts["binary_format"]}");
+        }else if(reql_type == "GEOMETRY"){
+          obj.remove('\$reql_type\$');
+          return obj;
         }else{
             throw new RqlDriverError("Unknown pseudo-type $reql_type");
         }
@@ -177,6 +180,7 @@ _expr(val, [nesting_depth=20]){
 class RqlQuery{
     p.Term_TermType tt;
 
+    int _err_depth = 0;
     List args = [];
     Map optargs = {};
 
@@ -276,9 +280,9 @@ class RqlQuery{
 
     Mod mod(other) => new Mod(this, other);
     
-    And and(other) =>new And(this, other);
+    And and(other) =>new And([this, other]);
 
-    Or or(other) => new Or(this, other);
+    Or or(other) => new Or([this, other]);
 
     Contains contains(args) =>new Contains(this,func_wrap(args));
 
@@ -478,28 +482,58 @@ class RqlQuery{
     
     Binary binary(data) => new Binary(data);
 
+    Distance distance(geo,[opts]) => new Distance(this,geo,opts);
+    
+    Fill fill() => new Fill(this);
+    
+    ToGeoJson toGeojson(geo,[Map options]) => new ToGeoJson(this);
+    
+    GetIntersecting getIntersecting(geo,[Map options]) => new GetIntersecting(this,geo,options);
+    
+    GetNearest getNearest(point,[Map options]) => new GetNearest(this,point,options);
+    
+    Includes includes(geo) => new Includes(this,geo);
+    
+    Intersects intersects(geo) => new Intersects(this,geo);
+    
+    PolygonSub polygonsub(Polygon poly) => new PolygonSub(this,poly);
+    
+    Config config() => new Config(this);
+    
+    Rebalance rebalance() => new Rebalance(this);
+    
+    Reconfigure reconfigure(Map options) => new Reconfigure(this,options);
+    
+    Status status() => new Status(this);
+    
+    Wait wait([Map options]) => new Wait(this,options);
 
     noSuchMethod(Invocation invocation) {
-          Symbol methodName = invocation.memberName;
-          List tmp = invocation.positionalArguments;
-                var args = [];
-                Map options = null;
-                tmp.forEach((arg){
-                  args.add(arg);
-                });
+      if(this._err_depth == 0){
+        _err_depth++;
+        Symbol methodName = invocation.memberName;
+        List tmp = invocation.positionalArguments;
+        
+        var args = [];
+        Map options = null;
+        tmp.forEach((arg){
+          args.add(arg);
+        });
 
-                if(args.length > 1 && args[args.length-1] is Map){
-                  options = args.removeAt(args.length-1);
-                }
+        if(args.length > 1 && args[args.length-1] is Map){
+          options = args.removeAt(args.length-1);
+        }
 
-          InstanceMirror im = reflect(this);
+        InstanceMirror im = reflect(this);
 
-          if(methodName == const Symbol("contains"))
-            args = new Args(args);
-
-          if(options != null)
-            return im.invoke(methodName, [args, options]).reflectee;
-          return im.invoke(methodName, [args]).reflectee;
+        args = new Args(args);
+         
+        if(options != null)
+          return im.invoke(methodName, [args, options]).reflectee;
+        return im.invoke(methodName, [args]).reflectee;
+      }else{
+        throw new RqlDriverError("${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
+      }
 
     }
 
@@ -837,7 +871,6 @@ class DB extends RqlTopLevelQuery{
 class FunCall extends RqlQuery{
     p.Term_TermType tt = p.Term_TermType.FUNCALL;
 
-    //TODO is this really supposed to go to super backwards?
     FunCall(args,expression):super([expression,args]);
 
 }
@@ -1172,13 +1205,13 @@ class Branch extends RqlTopLevelQuery{
 class Or extends RqlBoolOperQuery{
     p.Term_TermType tt = p.Term_TermType.OR;
 
-    Or(orable,obj):super([orable,obj]);
+    Or(orables):super(orables);
 }
 
 class And extends RqlBoolOperQuery{
     p.Term_TermType tt = p.Term_TermType.AND;
 
-    And(andable,obj):super([andable,obj]);
+    And(andables):super(andables);
 }
 
 class ForEach extends RqlMethodQuery{
@@ -1396,6 +1429,115 @@ class Literal extends RqlTopLevelQuery{
 
 }
 
+class Circle extends RqlTopLevelQuery{
+  p.Term_TermType tt = p.Term_TermType.CIRCLE;
+  
+  Circle(point, radius,[Map options]):super([point,radius],options);
+}
+
+class Distance extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.DISTANCE;
+  
+  Distance(obj,geo,[Map options]):super([obj,geo],options);
+}
+
+class Fill extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.FILL;
+  
+  Fill(obj):super([obj]);
+}
+
+class GeoJson extends RqlTopLevelQuery{
+  p.Term_TermType tt = p.Term_TermType.GEOJSON;
+  
+  GeoJson(Map geoJson):super([geoJson]);
+}
+
+class ToGeoJson extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.TO_GEOJSON;
+  
+  ToGeoJson(obj):super([obj]);
+}
+
+class GetIntersecting extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.GET_INTERSECTING;
+  
+  GetIntersecting(table,geo,[Map options]):super([table,geo],options);
+}
+
+class GetNearest extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.GET_NEAREST;
+  
+  GetNearest(table,point,Map options):super([table,point],options);
+}
+
+class Includes extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.INCLUDES;
+  
+  Includes(obj,geo):super([obj,geo]);
+}
+
+class Intersects extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.INTERSECTS;
+  
+  Intersects(obj,geo):super([obj,geo]);
+}
+
+class Line extends RqlTopLevelQuery{
+  p.Term_TermType tt = p.Term_TermType.LINE;
+  
+  Line(points):super(points);
+}
+
+class Point extends RqlTopLevelQuery{
+  p.Term_TermType tt = p.Term_TermType.POINT;
+  
+  Point(long,lat):super([long,lat]);
+}
+
+class Polygon extends RqlTopLevelQuery{
+  p.Term_TermType tt = p.Term_TermType.POLYGON;
+  
+  Polygon(points):super(points);
+}
+
+class PolygonSub extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.POLYGON_SUB;
+  
+  PolygonSub(Polygon poly1,Polygon poly2):super([poly1,poly2]);
+}
+
+class Config extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.CONFIG;
+  
+  Config(obj):super([obj]);
+}
+
+class Rebalance extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.REBALANCE;
+  
+  Rebalance(obj):super([obj]);
+}
+
+class Reconfigure extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.RECONFIGURE;
+  
+  Reconfigure(obj,Map options):super([obj],options);
+}
+
+class Status extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.STATUS;
+  
+  Status(obj):super([obj]);
+}
+
+class Wait extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.WAIT;
+  
+  Wait(obj,[Map options]):super([obj],options);
+}
+
+
 class RqlTimeName extends RqlQuery{
 p.Term_TermType tt;
 
@@ -1461,6 +1603,18 @@ class _RqlAllOptions {
         break;
       case p.Term_TermType.HTTP:
         options = ['timeout','attempts','redirects','verify','result_format','method','auth','params','header','data','page','page_limit'];
+        break;
+      case p.Term_TermType.CIRCLE:
+        options = ['num_vertices','geo_system','unit','fill'];
+        break;
+      case p.Term_TermType.GET_NEAREST:
+        options = ['index','max_results','max_dist','unit','geo_system'];
+        break;
+      case p.Term_TermType.RECONFIGURE:
+        options = ['shards', 'replicas', 'primary_replica_tag', 'dry_run'];
+        break;
+      case p.Term_TermType.WAIT:
+        options = ['wait_for', 'timeout'];
         break;
       default:
         options = [];

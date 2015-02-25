@@ -178,11 +178,12 @@ Random random([left,right, options]) => new Random(left,right,options);
 
 Not not(args) => new Not(args);
 
-/**
-All and(args) => new All(args);
+//TODO FIX
 
-Any or(args) => new Any(args);
-* **/
+And and(obj1,obj2) => new And([obj1,obj2]);
+
+Or or(obj1,obj2) => new Or([obj1,obj2]);
+
 
 TypeOf typeOf(args) => new TypeOf(args);
 
@@ -203,10 +204,22 @@ Downcase downcase(String str) => new Downcase(str);
 
 expr(val) => _expr(val);
 
+GeoJson geojson(Map geoJson) => new GeoJson(geoJson);
+
+Circle circle(point, num radius, [Map options])=> new Circle(point,radius,options);
+
+Line line(point1, point2) => new Line([point1,point2]);
+ 
+Point point(num long, num lat) => new Point(long,lat);
+
+Polygon polygon(point1, point2) => new Polygon([point1,point2]);
+
 Binary binary(var data) => new Binary(data);
 
+//TODO handle 2 or more points and arrays to points for line,polygon
+
  noSuchMethod(Invocation invocation) {
-       var methodName = invocation.memberName;
+       String methodName = MirrorSystem.getName(invocation.memberName);
        List tmp = invocation.positionalArguments;
              List args = [];
              Map options = null;
@@ -217,10 +230,22 @@ Binary binary(var data) => new Binary(data);
                  args.add(tmp[i]);
              }
 
-       if(methodName == const Symbol("object"))
-         return this.object(args);
-       if(methodName == const Symbol("rqlDo"))
-         return this.rqlDo(args.sublist(0, args.length-1),args[args.length-1]);
+       switch(methodName){
+         case "object":
+           return this.object(args);
+         case "rqlDo":
+           return this.rqlDo(args.sublist(0, args.length-1),args[args.length-1]);
+         case "line":
+           return new Line(tmp);
+         case "polygon":
+           return new Polygon(tmp);
+         case "and":
+           return new And(tmp);
+         case "or":
+           return new Or(tmp);
+         default:
+           throw new RqlDriverError("Unknown method $methodName");
+       }
      }
 
 RqlTimeName monday = new RqlTimeName(p.Term_TermType.MONDAY);

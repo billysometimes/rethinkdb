@@ -1542,6 +1542,12 @@ p.Term_TermType tt;
 RqlTimeName(this.tt):super();
 }
 
+class RqlConstant extends RqlQuery{
+  p.Term_TermType tt;
+
+  RqlConstant(this.tt):super();
+}
+
 class _RqlAllOptions {
   //list of every option from any term
   List options;

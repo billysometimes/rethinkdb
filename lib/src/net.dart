@@ -56,7 +56,7 @@ class Cursor{
     Cursor(Connection this._conn,Query this._query,Map this._opts);
 
     _extend(Response response){
-        _end_flag = response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value && response._type != p.Response_ResponseType.SUCCESS_FEED.value;
+        _end_flag = response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value;
         _responses.add(response);
     }
 
@@ -66,8 +66,7 @@ class Cursor{
       if(_responses.length >0){
       _conn._check_error_response(_responses[0], _query._term);
       if(_responses[0]._type != p.Response_ResponseType.SUCCESS_PARTIAL.value &&
-         _responses[0]._type != p.Response_ResponseType.SUCCESS_SEQUENCE.value &&
-         _responses[0]._type != p.Response_ResponseType.SUCCESS_FEED.value)
+         _responses[0]._type != p.Response_ResponseType.SUCCESS_SEQUENCE.value)
            cb(new RqlDriverError("Unexpected response type received for cursor"),null);
       }
 
@@ -106,8 +105,7 @@ class Cursor{
       if(_responses.length >0){
             _conn._check_error_response(_responses[0], _query._term);
             if(_responses[0]._type != p.Response_ResponseType.SUCCESS_PARTIAL.value &&
-               _responses[0]._type != p.Response_ResponseType.SUCCESS_SEQUENCE.value &&
-               _responses[0]._type != p.Response_ResponseType.SUCCESS_FEED.value)
+               _responses[0]._type != p.Response_ResponseType.SUCCESS_SEQUENCE.value)
                  c.completeError(new RqlDriverError("Unexpected response type received for cursor"));
       }
       if(_responses.length == 0 && _connection_closed){
@@ -239,8 +237,7 @@ class Connection {
         var value;
 
         if(response._type == p.Response_ResponseType.SUCCESS_PARTIAL.value ||
-               response._type == p.Response_ResponseType.SUCCESS_SEQUENCE.value ||
-               response._type == p.Response_ResponseType.SUCCESS_FEED.value){
+               response._type == p.Response_ResponseType.SUCCESS_SEQUENCE.value){
 
                 value = new Cursor(this, query,{});
                 _cursor_cache[query._token] = value;
@@ -327,7 +324,7 @@ class Connection {
         cursor._extend(response);
         cursor._outstanding_requests--;
 
-        if(response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value && response._type != p.Response_ResponseType.SUCCESS_FEED.value && cursor._outstanding_requests == 0)
+        if(response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value && cursor._outstanding_requests == 0)
             _cursor_cache.remove(response._token);
     }
 

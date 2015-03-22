@@ -3,7 +3,7 @@ library rethinkdb;
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'src/generated/q2.pb.dart' as p;
+import 'src/generated/ql2.pb.dart' as p;
 import 'package:crypto/crypto.dart';
 import 'dart:mirrors';
 import 'dart:convert';
@@ -310,5 +310,9 @@ RqlTimeName september = new RqlTimeName(p.Term_TermType.SEPTEMBER);
 RqlTimeName october = new RqlTimeName(p.Term_TermType.OCTOBER);
 RqlTimeName november = new RqlTimeName(p.Term_TermType.NOVEMBER);
 RqlTimeName december = new RqlTimeName(p.Term_TermType.DECEMBER);
+
+RqlConstant minval = new RqlConstant(p.Term_TermType.MINVAL);
+RqlConstant maxval = new RqlConstant(p.Term_TermType.MAXVAL);
+
 
 }

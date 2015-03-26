@@ -290,7 +290,7 @@ class RqlQuery{
 
     Keys keys() => new Keys(this);
 
-    Changes changes() => new Changes(this);
+    Changes changes([Map opts]) => new Changes(this,opts);
 
     // Polymorphic object/sequence operations
     Pluck pluck(args) => new Pluck(_listify(args,this));
@@ -649,7 +649,7 @@ class Random extends RqlTopLevelQuery{
 class Changes extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.CHANGES;
 
-    Changes([arg]):super([arg]);
+    Changes([arg,opts]):super([arg],opts);
 }
 
 class Default extends RqlMethodQuery{

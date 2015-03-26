@@ -8,11 +8,13 @@ import 'package:crypto/crypto.dart';
 import 'dart:mirrors';
 import 'dart:convert';
 import 'dart:collection';
+import 'src/EventEmitter.dart';
 
 
 part 'src/ast.dart';
 part 'src/errors.dart';
 part 'src/net.dart';
+part 'src/cursor.dart';
 
 
 

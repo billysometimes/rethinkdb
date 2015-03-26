@@ -128,7 +128,10 @@ class Cursor extends IterableBase{
         Query query = new Query(p.Query_QueryType.CONTINUE, this._query._token, null, null);
         _conn._sendQueue.addLast(query);
         _conn._send_query().then((res){
-          res._each(cb);
+          if(res is Map){
+            res['value']._each(cb);
+          }else
+            res._each(cb);
         });
       }
       return c.future;

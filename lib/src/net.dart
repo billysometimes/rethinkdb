@@ -5,6 +5,7 @@ class Query extends RqlQuery{
     int _token;
     RqlQuery _term;
     Map _global_optargs;
+    Cursor _cursor;
     final Completer _queryCompleter = new Completer();
 
     Query(p.Query_QueryType this._type, int this._token, [RqlQuery this._term, Map this._global_optargs]);
@@ -17,7 +18,7 @@ class Query extends RqlQuery{
         if(_global_optargs != null){
             Map optargs = {};
             _global_optargs.forEach((k,v){
-              optargs[k] = v is RqlQuery ? v.build() : v.value;
+              optargs[k] = v is RqlQuery ? v.build() : v;
             });
 
             res.add(optargs);
@@ -33,6 +34,7 @@ class Response{
     var _backtrace;
     var _profile;
     List _notes = [];
+    
     Response(int this._token,String json_str){
         if(json_str.length > 0){
         Map full_response = JSON.decode(json_str);
@@ -53,7 +55,7 @@ class Connection {
     int _port;
     String _db;
     String _auth_key;
-    Map<int,Cursor> _cursor_cache = {};
+    //Map<int,Cursor> _cursor_cache = {};
 
     Completer _completer = new Completer();
 
@@ -152,13 +154,13 @@ class Connection {
           cursor = cursor == null ? new Cursor(this, query,query.optargs) : cursor;
 
                 value = cursor;
-                _cursor_cache[query._token] = value;
+                query._cursor = value;
                 value._extend(response);
         }else if(response._type == p.Response_ResponseType.SUCCESS_SEQUENCE.value){
 
 
                 value = new Cursor(this, query,{});
-                _cursor_cache[query._token] = value;
+                query._cursor = value;
                 value._extend(response);
         }else if(response._type == p.Response_ResponseType.SUCCESS_ATOM.value){
           if(response._data.length < 1){
@@ -199,13 +201,6 @@ class Connection {
               _socket = null;
           }
 
-          _cursor_cache.forEach((token,cursor){
-            cursor._end_flag = true;
-            cursor._connection_closed = true;
-          });
-
-          _cursor_cache = {};
-
       }
 
       /**
@@ -238,12 +233,12 @@ class Connection {
       }
 
       _handle_cursor_response(Response response){
-          Cursor cursor = _cursor_cache[response._token];
+          Cursor cursor = _replyQueries[response._token]._cursor;
           cursor._extend(response);
           cursor._outstanding_requests--;
 
           if(response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value && cursor._outstanding_requests == 0)
-              _cursor_cache.remove(response._token);
+            _replyQueries[response._token]._cursor = null;
       }
 
       _read_response(res){
@@ -251,11 +246,10 @@ class Connection {
           String response_buf;
           int response_len;
 
-            if(res is List){
-              _response_buffer.addAll(res);
-            }else
-              _response_buffer.add(res);
-            _response_length = _response_buffer.length;
+
+          _response_buffer.addAll(res);
+
+          _response_length = _response_buffer.length;
 
           if(_response_length >= 12){
 
@@ -269,7 +263,7 @@ class Connection {
 
               Response response = new Response(response_token, response_buf);
 
-              if(_cursor_cache.containsKey(response._token)){
+              if(_replyQueries[response._token]._cursor != null){
                 _handle_cursor_response(response);
               }
               //if for some reason there are other queries on the line...
@@ -292,15 +286,15 @@ class Connection {
       _check_error_response(Response response, RqlQuery term){
           var message;
           var frames;
-          if(response._type == p.Response_ResponseType.RUNTIME_ERROR){
+          if(response._type == p.Response_ResponseType.RUNTIME_ERROR.value){
               message = response._data[0];
               frames = response._backtrace;
               return new RqlRuntimeError(message, term, frames);
-          }else if(response._type == p.Response_ResponseType.COMPILE_ERROR){
+          }else if(response._type == p.Response_ResponseType.COMPILE_ERROR.value){
               message = response._data[0];
               frames = response._backtrace;
               return new RqlCompileError(message, term, frames);
-          }else if(response._type == p.Response_ResponseType.CLIENT_ERROR){
+          }else if(response._type == p.Response_ResponseType.CLIENT_ERROR.value){
               message = response._data[0];
               frames = response._backtrace;
               return new RqlClientError(message, term, frames);

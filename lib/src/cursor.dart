@@ -100,7 +100,6 @@ class Cursor extends IterableBase{
     }
 
     _each(Function cb){
-
       Completer c = new Completer();
 
       if(_responses.length >0 && c.isCompleted == false){
@@ -133,6 +132,10 @@ class Cursor extends IterableBase{
           }else
             res._each(cb);
         });
+      }
+      
+      if(_responses.length == 0 && _end_flag){
+        c.complete(null);
       }
       return c.future;
     }

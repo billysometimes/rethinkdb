@@ -4,7 +4,7 @@ import '../lib/rethinkdb_driver.dart';
 
 main(){
   
-  test('ParallelExecutrion',() async{
+  test('ParallelExecution',() async{
     bool isParallel = await pEx();
     expect(isParallel,equals(true));
   });

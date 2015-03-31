@@ -55,7 +55,6 @@ class Connection {
     int _port;
     String _db;
     String _auth_key;
-    //Map<int,Cursor> _cursor_cache = {};
 
     Completer _completer = new Completer();
 
@@ -70,6 +69,8 @@ class Connection {
 
     Connection(String this._db, String this._host, int this._port, String this._auth_key);
 
+    get isClosed => _socket == null;
+    
     use(String db){
         _db = db;
     }

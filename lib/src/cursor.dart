@@ -8,7 +8,6 @@ class Cursor extends IterableBase{
     List<Response> _responses = [];
     int _outstanding_requests = 0;
     bool _end_flag = false;
-    bool _connection_closed = false;
     EventEmitter _emitter = null;
 
     Cursor(Connection this._conn,Query this._query,Map this._opts);
@@ -100,43 +99,19 @@ class Cursor extends IterableBase{
     }
 
     _each(Function cb){
+
       Completer c = new Completer();
 
-      if(_responses.length >0 && c.isCompleted == false){
-      _conn._check_error_response(_responses[0], _query._term);
-      if(_responses[0]._type != p.Response_ResponseType.SUCCESS_PARTIAL.value &&
-         _responses[0]._type != p.Response_ResponseType.SUCCESS_SEQUENCE.value)
-           c.completeError(cb(new RqlDriverError("Unexpected response type received for cursor"),null));
-      }
+      _next().then((data){
+        if(data != null){
+          cb(data);
+          c.complete(_each(cb));
+        }else
+          c.complete();
+      }).catchError((err){
+        c.completeError(err);
+      });
 
-      if(_responses.length == 0 && _connection_closed && c.isCompleted == false)
-        c.completeError(cb(new RqlDriverError("Connection closed, cannot read cursor"),null));
-
-
-      if(_responses.length == 1 && c.isCompleted == false){
-        List response_data = _query._recursively_convert_pseudotypes(_responses.removeAt(0)._data, _opts);
-        c.complete(response_data.forEach((var e){
-          cb(e);
-        }));
-      }
-
-
-      if(_responses.length == 0 && !_end_flag){
-        _outstanding_requests++;
-
-        Query query = new Query(p.Query_QueryType.CONTINUE, this._query._token, null, null);
-        _conn._sendQueue.addLast(query);
-        _conn._send_query().then((res){
-          if(res is Map){
-            res['value']._each(cb);
-          }else
-            res._each(cb);
-        });
-      }
-      
-      if(_responses.length == 0 && _end_flag){
-        c.complete(null);
-      }
       return c.future;
     }
     
@@ -153,18 +128,36 @@ class Cursor extends IterableBase{
     _next(){
       Completer c = new Completer();
       
-      if(_responses.length >0 && c.isCompleted == false){
-            _conn._check_error_response(_responses[0], _query._term);
-            if(_responses[0]._type != p.Response_ResponseType.SUCCESS_PARTIAL.value &&
-               _responses[0]._type != p.Response_ResponseType.SUCCESS_SEQUENCE.value)
-                 c.completeError(new RqlDriverError("Unexpected response type received for cursor"));
+      if(_conn.isClosed){
+        if(c.isCompleted == false)
+          c.completeError(new RqlDriverError("Connection closed, cannot read cursor"),null);
       }
-      if(_responses.length == 0 && _connection_closed && c.isCompleted == false){
-             c.completeError(new RqlDriverError("Connection closed, cannot read cursor"));
 
-      }else if(_responses.length == 1 && c.isCompleted == false){
-         c.complete(_query._recursively_convert_pseudotypes(_responses.removeAt(0)._data.removeAt(0), _opts));
-      }else if(_responses.length == 0 && !_end_flag){
+      if(_responses.length > 0){
+        
+        try{
+          for(var i=0; i<_responses.length;i++)
+            _conn._check_error_response(_responses[0], _query._term);
+        }catch(e){
+          if(!c.isCompleted)
+            c.completeError(e);
+        }
+        
+        if(_responses[0]._type != p.Response_ResponseType.SUCCESS_PARTIAL.value &&
+           _responses[0]._type != p.Response_ResponseType.SUCCESS_SEQUENCE.value){
+          if(!c.isCompleted)
+            c.completeError(new RqlDriverError("Unexpected response type received for cursor"),null);
+        }
+        
+        var convertedData = _query._recursively_convert_pseudotypes(_responses[0]._data.removeAt(0), _opts);
+        if(_responses[0]._data.isEmpty){
+          _responses.removeAt(0);
+        }  
+        if(!c.isCompleted)
+          c.complete(convertedData);
+      }
+      
+      if(!_end_flag){
         _outstanding_requests++;
 
         Query query = new Query(p.Query_QueryType.CONTINUE, this._query._token, null, null);
@@ -173,6 +166,12 @@ class Cursor extends IterableBase{
           c.complete(_next());
         });
       }
+      
+      if(_end_flag && _responses.length == 0 && !c.isCompleted){
+        c.complete();
+      }
+      
+
       return c.future;
     
     }

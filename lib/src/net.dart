@@ -118,7 +118,7 @@ class Connection {
       }
       String responseString = UTF8.decode(response);
       if(responseString != "SUCCESS"){
-        Exception error = new RqlDriverError("Server dropped connection with message: $response");
+        Exception error = new RqlDriverError("Server dropped connection with message: $responseString");
         if(_listeners["error"] != null)
           _listeners["error"].forEach((func)=>func(error));
         _completer.completeError(error);

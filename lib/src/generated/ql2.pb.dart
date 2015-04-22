@@ -1,7 +1,7 @@
 ///
 //  Generated code. Do not modify.
 ///
-library q2;
+library ql2;
 
 import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart';
@@ -212,9 +212,7 @@ class Response_ResponseType extends ProtobufEnum {
   static const Response_ResponseType SUCCESS_ATOM = const Response_ResponseType._(1, 'SUCCESS_ATOM');
   static const Response_ResponseType SUCCESS_SEQUENCE = const Response_ResponseType._(2, 'SUCCESS_SEQUENCE');
   static const Response_ResponseType SUCCESS_PARTIAL = const Response_ResponseType._(3, 'SUCCESS_PARTIAL');
-  static const Response_ResponseType SUCCESS_FEED = const Response_ResponseType._(5, 'SUCCESS_FEED');
   static const Response_ResponseType WAIT_COMPLETE = const Response_ResponseType._(4, 'WAIT_COMPLETE');
-  static const Response_ResponseType SUCCESS_ATOM_FEED = const Response_ResponseType._(6, 'SUCCESS_ATOM_FEED');
   static const Response_ResponseType CLIENT_ERROR = const Response_ResponseType._(16, 'CLIENT_ERROR');
   static const Response_ResponseType COMPILE_ERROR = const Response_ResponseType._(17, 'COMPILE_ERROR');
   static const Response_ResponseType RUNTIME_ERROR = const Response_ResponseType._(18, 'RUNTIME_ERROR');
@@ -223,9 +221,7 @@ class Response_ResponseType extends ProtobufEnum {
     SUCCESS_ATOM,
     SUCCESS_SEQUENCE,
     SUCCESS_PARTIAL,
-    SUCCESS_FEED,
     WAIT_COMPLETE,
-    SUCCESS_ATOM_FEED,
     CLIENT_ERROR,
     COMPILE_ERROR,
     RUNTIME_ERROR,
@@ -237,9 +233,31 @@ class Response_ResponseType extends ProtobufEnum {
   const Response_ResponseType._(int v, String n) : super(v, n);
 }
 
+class Response_ResponseNote extends ProtobufEnum {
+  static const Response_ResponseNote SEQUENCE_FEED = const Response_ResponseNote._(1, 'SEQUENCE_FEED');
+  static const Response_ResponseNote ATOM_FEED = const Response_ResponseNote._(2, 'ATOM_FEED');
+  static const Response_ResponseNote ORDER_BY_LIMIT_FEED = const Response_ResponseNote._(3, 'ORDER_BY_LIMIT_FEED');
+  static const Response_ResponseNote UNIONED_FEED = const Response_ResponseNote._(4, 'UNIONED_FEED');
+  static const Response_ResponseNote INCLUDES_STATES = const Response_ResponseNote._(5, 'INCLUDES_STATES');
+
+  static const List<Response_ResponseNote> values = const <Response_ResponseNote> [
+    SEQUENCE_FEED,
+    ATOM_FEED,
+    ORDER_BY_LIMIT_FEED,
+    UNIONED_FEED,
+    INCLUDES_STATES,
+  ];
+
+  static final Map<int, Response_ResponseNote> _byValue = ProtobufEnum.initByValue(values);
+  static Response_ResponseNote valueOf(int value) => _byValue[value];
+
+  const Response_ResponseNote._(int v, String n) : super(v, n);
+}
+
 class Response extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Response')
     ..e(1, 'type', GeneratedMessage.OE, Response_ResponseType.SUCCESS_ATOM, (var v) => Response_ResponseType.valueOf(v))
+    ..a(6, 'notes', GeneratedMessage.PE, () => new PbList(), null, (var v) => Response_ResponseNote.valueOf(v))
     ..a(2, 'token', GeneratedMessage.O6, Int64.ZERO)
     ..m(3, 'response', Datum.create, Datum.createRepeated)
     ..a(4, 'backtrace', GeneratedMessage.OM, Backtrace.create, Backtrace.create)
@@ -258,6 +276,8 @@ class Response extends GeneratedMessage {
   void set type(Response_ResponseType v) { setField(1, v); }
   bool hasType() => hasField(1);
   void clearType() => clearField(1);
+
+  List<Response_ResponseNote> get notes => getField(6);
 
   Int64 get token => getField(2);
   void set token(Int64 v) { setField(2, v); }
@@ -417,7 +437,8 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType PLUCK = const Term_TermType._(33, 'PLUCK');
   static const Term_TermType WITHOUT = const Term_TermType._(34, 'WITHOUT');
   static const Term_TermType MERGE = const Term_TermType._(35, 'MERGE');
-  static const Term_TermType BETWEEN = const Term_TermType._(36, 'BETWEEN');
+  static const Term_TermType BETWEEN_DEPRECATED = const Term_TermType._(36, 'BETWEEN_DEPRECATED');
+  static const Term_TermType BETWEEN = const Term_TermType._(182, 'BETWEEN');
   static const Term_TermType REDUCE = const Term_TermType._(37, 'REDUCE');
   static const Term_TermType MAP = const Term_TermType._(38, 'MAP');
   static const Term_TermType FILTER = const Term_TermType._(39, 'FILTER');
@@ -541,6 +562,8 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType FILL = const Term_TermType._(167, 'FILL');
   static const Term_TermType GET_NEAREST = const Term_TermType._(168, 'GET_NEAREST');
   static const Term_TermType POLYGON_SUB = const Term_TermType._(171, 'POLYGON_SUB');
+  static const Term_TermType MINVAL = const Term_TermType._(180, 'MINVAL');
+  static const Term_TermType MAXVAL = const Term_TermType._(181, 'MAXVAL');
 
   static const List<Term_TermType> values = const <Term_TermType> [
     DATUM,
@@ -588,6 +611,7 @@ class Term_TermType extends ProtobufEnum {
     PLUCK,
     WITHOUT,
     MERGE,
+    BETWEEN_DEPRECATED,
     BETWEEN,
     REDUCE,
     MAP,
@@ -712,6 +736,8 @@ class Term_TermType extends ProtobufEnum {
     FILL,
     GET_NEAREST,
     POLYGON_SUB,
+    MINVAL,
+    MAXVAL,
   ];
 
   static final Map<int, Term_TermType> _byValue = ProtobufEnum.initByValue(values);

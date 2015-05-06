@@ -1254,6 +1254,10 @@ class Sample extends RqlMethodQuery{
     Sample(selection,int i):super([selection,i]);
 }
 
+class Uuid extends RqlQuery{
+  p.Term_TermType tt = p.Term_TermType.UUID;
+  Uuid():super();
+}
 class Json extends RqlTopLevelQuery{
     p.Term_TermType tt = p.Term_TermType.JSON;
 

@@ -316,5 +316,5 @@ RqlTimeName december = new RqlTimeName(p.Term_TermType.DECEMBER);
 RqlConstant minval = new RqlConstant(p.Term_TermType.MINVAL);
 RqlConstant maxval = new RqlConstant(p.Term_TermType.MAXVAL);
 
-
+Uuid uuid() => new Uuid();
 }

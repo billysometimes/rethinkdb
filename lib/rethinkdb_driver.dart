@@ -8,8 +8,6 @@ import 'package:crypto/crypto.dart';
 import 'dart:mirrors';
 import 'dart:convert';
 import 'dart:collection';
-import 'src/EventEmitter.dart';
-
 
 part 'src/ast.dart';
 part 'src/errors.dart';
@@ -28,7 +26,7 @@ class Rethinkdb{
  * authKey: the authentication key (default none).
  */
 Future<Connection> connect({String db, String host: "localhost", int port: 28015,
-  String authKey: ""}) =>  new Connection(db,host,port,authKey)._reconnect();
+  String authKey: ""}) =>  new Connection(db,host,port,authKey).reconnect();
 
 /**
  *Reference a database.This command can be chained with other commands to do further processing on the data.

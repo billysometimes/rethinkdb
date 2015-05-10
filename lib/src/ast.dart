@@ -107,7 +107,6 @@ class RqlQuery{
         return res;
     }
 
-    
     _recursively_convert_pseudotypes(obj, format_opts){
         if(obj is Map){
           obj.forEach((k,v){
@@ -115,9 +114,7 @@ class RqlQuery{
           });
           obj = _convert_pseudotype(obj, format_opts);
         }else if(obj is List){
-          obj.forEach((e){
-            e = _recursively_convert_pseudotypes(e,format_opts);
-          });
+          obj = obj.map((e) => _recursively_convert_pseudotypes(e,format_opts)).toList();
         }
         return obj;
     }
@@ -209,7 +206,7 @@ class RqlQuery{
     }
 
     _convert_pseudotype(Map obj, Map format_opts){
-        String reql_type = obj['\$reql_type\$'];
+        String reql_type = obj[r'$reql_type$'];
         if(reql_type != null){
             if(reql_type == 'TIME'){
                 if(format_opts == null || format_opts.isEmpty){

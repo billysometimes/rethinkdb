@@ -1,6 +1,6 @@
 part of rethinkdb;
 
-class Cursor implements Stream{
+class Cursor extends Stream{
 
     Connection _conn;
     Query _query;

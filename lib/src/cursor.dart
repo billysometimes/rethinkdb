@@ -11,7 +11,7 @@ class Cursor extends Stream{
     
     Cursor(Connection this._conn,Query this._query,Map this._opts);
 
-    _extend(Response response){
+    _extend(Response response) async {
         _end_flag = response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value;
         
         if(response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value &&
@@ -24,19 +24,21 @@ class Cursor extends Stream{
         }catch(e){
            _s.addError(e);
         }
-        
-          var convertedData = _query._recursively_convert_pseudotypes(response._data, _opts);
-          _s.addStream(new Stream.fromIterable(convertedData)).then((f){
-            if(!_end_flag){
-              _outstanding_requests++;
-              Query query = new Query(p.Query_QueryType.CONTINUE, this._query._token, null, null);
-              query._cursor = this;
-              _conn._sendQueue.addLast(query);
-              _conn._send_query();
-            }else{
-              _s.close();
-            }
-          });
+
+        var convertedData = _query._recursively_convert_pseudotypes(response._data, _opts);
+        var list = convertedData is List? convertedData: [convertedData];
+
+        await _s.addStream(new Stream.fromIterable(list));
+
+        if(!_end_flag){
+          _outstanding_requests++;
+          Query query = new Query(p.Query_QueryType.CONTINUE, this._query._token, null, null);
+          query._cursor = this;
+          _conn._sendQueue.addLast(query);
+          _conn._send_query();
+        }else{
+          _s.close();
+        }
     }
     
     StreamSubscription listen(Function onData,

@@ -24,7 +24,7 @@ class Cursor implements Stream{
         }catch(e){
            _s.addError(e);
         }
-        
+
         var convertedData = _query._recursively_convert_pseudotypes(response._data, _opts);
         var list = convertedData is List? convertedData: [convertedData];
 

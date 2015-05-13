@@ -539,9 +539,7 @@ class RqlQuery{
           options = argsList.removeLast();
         }
 
-        InstanceMirror im = reflect(this);
-
-        
+        InstanceMirror im = reflect(this);    
          
         if(!options.isEmpty)
           return im.invoke(methodName, [argsList, options]).reflectee;
@@ -896,16 +894,6 @@ class FunCall extends RqlQuery{
         temp.add(argslist);
 
       this.args.addAll(temp.map(_expr));
-    }
-    
-    static concatLists(l1,l2){
-      if(!(l1 is List)){
-        var p = [];
-        p.add(l1);
-        l1 = p;
-      }
-        l1.addAll(l2);
-      return l1;
     }
 
 }

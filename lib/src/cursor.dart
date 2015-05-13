@@ -51,30 +51,30 @@ class Cursor extends Stream{
 class Feed extends Cursor{
     Feed(conn, opts, query):super(conn, opts, query);
 
-    hasNext()=>throw new RqlDriverError("`hasNext` is not available for feeds.");
-    toArray()=>throw new RqlDriverError("`toArray` is not available for feeds.");
+    toSet()=>throw new RqlDriverError("`toSet` is not available for feeds.");
+    toList()=>throw new RqlDriverError("`toList` is not available for feeds.");
     toString() => "Instance of 'Feed'";
 }
 class UnionedFeed extends Cursor{
     UnionedFeed(conn, opts, query):super(conn, opts, query);
 
-    hasNext()=>throw new RqlDriverError("`hasNext` is not available for feeds.");
-    toArray()=>throw new RqlDriverError("`toArray` is not available for feeds.");
+    toSet()=>throw new RqlDriverError("`toSet` is not available for feeds.");
+    toList()=>throw new RqlDriverError("`toList` is not available for feeds.");
     toString() => "Instance of 'UnionedFeed'";
 }
 
 class AtomFeed extends Cursor{
   AtomFeed(conn, opts, query):super(conn, opts, query);
 
-  hasNext()=>throw new RqlDriverError("`hasNext` is not available for feeds.");
-  toArray()=>throw new RqlDriverError("`toArray` is not available for feeds.");
+  toSet()=>throw new RqlDriverError("`toSet` is not available for feeds.");
+  toList()=>throw new RqlDriverError("`toList` is not available for feeds.");
   toString() => "Instance of 'AtomFeed'";
 }
 
 class OrderByLimitFeed extends Cursor{
     OrderByLimitFeed(conn, opts, query):super(conn, opts, query);
 
-    hasNext()=>throw new RqlDriverError("`hasNext` is not available for feeds.");
-    toArray()=>throw new RqlDriverError("`toArray` is not available for feeds.");
+    toSet()=>throw new RqlDriverError("`toSet` is not available for feeds.");
+    toList()=>throw new RqlDriverError("`toList` is not available for feeds.");
     toString() => "Instance of 'OrderByLimitFeed'";
 }

@@ -14,8 +14,6 @@ part 'src/errors.dart';
 part 'src/net.dart';
 part 'src/cursor.dart';
 
-
-
 class Rethinkdb{
 // Connection Management
 /**
@@ -191,7 +189,7 @@ Random random([left,right, options]) => new Random(left,right,options);
  */
 Not not(args) => new Not(args);
 
-
+RqlMap map(seq,mappingFunction) => new RqlMap([seq],mappingFunction);
 
 /**
  * computes logical 'and' of two or more values
@@ -227,7 +225,7 @@ Downcase downcase(String str) => new Downcase(str);
 /**
  * Convert native dart object into a RqlObject
  */
-expr(val) => _expr(val);
+expr(val) => new RqlQuery()._expr(val);
 
 /**
  * Convert a GeoJSON object to a ReQL geometry object.
@@ -262,29 +260,23 @@ Binary binary(var data) => new Binary(data);
 
  noSuchMethod(Invocation invocation) {
        String methodName = MirrorSystem.getName(invocation.memberName);
-       List tmp = invocation.positionalArguments;
-             List args = [];
-             Map options = null;
-             for(var i=0; i < tmp.length; i++){
-               if(tmp[i] is Map && i == tmp.length-1)
-                 options = tmp[i];
-               else
-                 args.add(tmp[i]);
-             }
+       List args = new List.from(invocation.positionalArguments);
 
        switch(methodName){
          case "object":
            return this.object(args);
          case "rqlDo":
-           return this.rqlDo(args.sublist(0, args.length-1),args[args.length-1]);
+           return this.rqlDo(args.sublist(0, args.length-1),args.last);
          case "line":
-           return new Line(tmp);
+           return new Line(args);
          case "polygon":
-           return new Polygon(tmp);
+           return new Polygon(args);
          case "and":
-           return new And(tmp);
+           return new And(args);
          case "or":
-           return new Or(tmp);
+           return new Or(args);
+         case "map":
+           return new RqlMap(args.sublist(0,args.length-1),args.last);
          default:
            throw new RqlDriverError("Unknown method $methodName");
        }

@@ -1,40 +1,5 @@
 part of rethinkdb;
 
-_expr(val, [nesting_depth=20]){
-
-    if(nesting_depth <= 0)
-      throw new RqlDriverError("Nesting depth limit exceeded");
-
-    if(nesting_depth is int == false)
-        throw new RqlDriverError("Second argument to `r.expr` must be a number.");
-
-    if(val is RqlQuery)
-        return val;
-    else if(val is List){
-        val.forEach((v){
-          v = _expr(v,nesting_depth - 1);
-        });
-
-        return new MakeArray(val);
-    }
-    else if(val is Map){
-        Map obj = {};
-
-        val.forEach((k,v){
-          obj[k] = _expr(v,nesting_depth -1);
-        });
-
-        return new MakeObj(obj);
-    }
-    else if(val is Function)
-        return new Func(val);
-    else if(val is DateTime){
-       return new Time.nativeTime(val);
-    }
-    else
-      return new Datum(val);
-}
-
 class RqlQuery{
     p.Term_TermType tt;
 
@@ -44,6 +9,7 @@ class RqlQuery{
 
     RqlQuery([List args, Map optargs]){
         if(args != null)
+          
           args.forEach((e){
             if(_check_if_options(e,tt)){
               optargs = optargs == null ? e : optargs;
@@ -56,6 +22,42 @@ class RqlQuery{
           optargs.forEach((k,v){
            this.optargs[k] = _expr(v);
           });
+        //args = [new Args(args)];
+    }
+    
+    _expr(val, [nesting_depth=20]){
+
+        if(nesting_depth <= 0)
+          throw new RqlDriverError("Nesting depth limit exceeded");
+
+        if(nesting_depth is int == false)
+            throw new RqlDriverError("Second argument to `r.expr` must be a number.");
+
+        if(val is RqlQuery)
+            return val;
+        else if(val is List){
+            val.forEach((v){
+              v = _expr(v,nesting_depth - 1);
+            });
+            
+            return new MakeArray(val);
+        }
+        else if(val is Map){
+            Map obj = {};
+      
+            val.forEach((k,v){
+              obj[k] = _expr(v,nesting_depth -1);
+            });
+
+            return new MakeObj(obj);
+        }
+        else if(val is Function)
+            return new Func(val);
+        else if(val is DateTime){
+           return new Time.nativeTime(val);
+        }
+        else
+          return new Datum(val);
     }
 
 
@@ -142,32 +144,26 @@ class RqlQuery{
 
     _ivar_scan(query){
 
-      if(query is RqlQuery == false){
+      if(!(query is RqlQuery)){
          return false;
      }
 
      if(query is ImplicitVar){
          return true;
      }
-
-     for(var e in query.args){
-       if(_ivar_scan(e)){
-         return true;
-       }
+     if(query.args.any(_ivar_scan)){
+       return true;
      }
 
-
      var optArgKeys = query.optargs.keys;
-
-     for(var key in optArgKeys){
-       if(_ivar_scan(query.optargs[key])){
-         return true;
-       }
+     
+     if(optArgKeys.any(_ivar_scan)){
+       return true;
      }
        return false;
     }
 
-// Called on arguments that should be functions
+    // Called on arguments that should be functions
     _func_wrap(val){
      val = _expr(val);
      if(_ivar_scan(val)){
@@ -297,7 +293,13 @@ class RqlQuery{
 
     Without without(items) => new Without(_listify(items,this));
 
-    FunCall rqlDo(arg,[expression]) => new FunCall(_listify(arg,this),_func_wrap(expression));
+    FunCall rqlDo(arg,[expression]){
+      if(expression == null){
+        return new FunCall(this,_func_wrap(arg));
+      }else{
+        return new FunCall(_listify(arg,this),_func_wrap(expression));
+      }
+    }
 
     Default rqlDefault(args) => new Default(this,args);
 
@@ -358,7 +360,14 @@ class RqlQuery{
 
     Max max([args]) => new Max(this,args);
 
-    RqlMap map(mappingFunction) => new RqlMap(this,_func_wrap(mappingFunction));
+    RqlMap map(mappingFunction){
+    if(mappingFunction is List){
+      mappingFunction.insert(0,this);
+      var item = _func_wrap(mappingFunction.removeLast());      
+      return new RqlMap(mappingFunction,item);
+    }
+    return new RqlMap([this],mappingFunction);
+    }
 
     Filter filter(expr,[options]) => new Filter(this,_func_wrap(expr),options);
 
@@ -405,6 +414,18 @@ class RqlQuery{
 
           return new OrderBy(_listify(attrs,this),index);
         }
+    
+    operator +(other)=>this.add(other);
+    operator -(other)=>this.sub(other);
+    operator *(other)=>this.mul(other);
+    operator /(other)=>this.div(other);
+    operator ==(other)=>this.eq(other);
+    operator <=(other)=>this.le(other);
+    operator >=(other)=>this.ge(other);
+    operator <(other) =>this.lt(other);
+    operator >(other) =>this.gt(other);
+    operator %(other) =>this.mod(other);
+    operator [](attr) => this.pluck(attr);
 
     Between between(lowerKey,[upperKey,options]) => new Between(this,lowerKey,upperKey,options);
 
@@ -510,25 +531,21 @@ class RqlQuery{
       if(this._err_depth == 0){
         _err_depth++;
         Symbol methodName = invocation.memberName;
-        List tmp = invocation.positionalArguments;
-        
-        var args = [];
-        Map options = null;
-        tmp.forEach((arg){
-          args.add(arg);
-        });
+        List argsList = [];
+        argsList.addAll(invocation.positionalArguments);
+        Map options = {};
 
-        if(args.length > 1 && args[args.length-1] is Map){
-          options = args.removeAt(args.length-1);
+        if(argsList.length > 1 && argsList.last is Map){
+          options = argsList.removeLast();
         }
 
         InstanceMirror im = reflect(this);
 
-        args = new Args(args);
+        
          
-        if(options != null)
-          return im.invoke(methodName, [args, options]).reflectee;
-        return im.invoke(methodName, [args]).reflectee;
+        if(!options.isEmpty)
+          return im.invoke(methodName, [argsList, options]).reflectee;
+        return im.invoke(methodName, [argsList]).reflectee;
       }else{
         throw new RqlDriverError("${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
       }
@@ -620,6 +637,7 @@ class Var extends RqlQuery{
   Var(args):super([args]);
 
   call(arg) => new GetField(this,arg);
+  
 }
 
 class JavaScript extends RqlTopLevelQuery{
@@ -869,7 +887,26 @@ class DB extends RqlTopLevelQuery{
 class FunCall extends RqlQuery{
     p.Term_TermType tt = p.Term_TermType.FUNCALL;
 
-    FunCall(args,expression):super([expression,args]);
+    FunCall(argslist,expression):super([]){
+      List temp = [];
+      temp.add(expression);
+      if(argslist is List)
+        temp.addAll(argslist);
+      else
+        temp.add(argslist);
+
+      this.args.addAll(temp.map(_expr));
+    }
+    
+    static concatLists(l1,l2){
+      if(!(l1 is List)){
+        var p = [];
+        p.add(l1);
+        l1 = p;
+      }
+        l1.addAll(l2);
+      return l1;
+    }
 
 }
 
@@ -963,7 +1000,12 @@ class Max extends RqlMethodQuery{
 class RqlMap extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.MAP;
 
-    RqlMap(seq,mappingFunction):super([seq,mappingFunction]);
+    RqlMap(argslist,expression):super([]){
+      List temp = [];
+      temp.addAll(argslist);
+      temp.add(_func_wrap(expression));
+      this.args.addAll(temp.map(_expr));
+    }
 }
 
 class Filter extends RqlMethodQuery{
@@ -1395,7 +1437,7 @@ class ToEpochTime extends RqlMethodQuery{
 class Func extends RqlQuery{
     p.Term_TermType tt = p.Term_TermType.FUNC;
     Function fun;
-    static int nextId = 1;
+    static int nextId = 0;
     Func(this.fun):super([],null){
         ClosureMirror closure = reflect(fun);
         int x = closure.function.parameters.length;

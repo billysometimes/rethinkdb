@@ -76,9 +76,9 @@ class Connection {
     }
 
     Future<Connection> connect([bool noreply_wait=true]){
-      return(_reconnect(noreply_wait));
+      return(reconnect(noreply_wait));
     }
-    Future<Connection> _reconnect([bool noreply_wait=true]){
+    Future<Connection> reconnect([bool noreply_wait=true]){
 
         close(noreply_wait);
 

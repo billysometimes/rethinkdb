@@ -8,15 +8,11 @@ import 'package:crypto/crypto.dart';
 import 'dart:mirrors';
 import 'dart:convert';
 import 'dart:collection';
-import 'src/EventEmitter.dart';
-
 
 part 'src/ast.dart';
 part 'src/errors.dart';
 part 'src/net.dart';
 part 'src/cursor.dart';
-
-
 
 class Rethinkdb{
 // Connection Management
@@ -28,7 +24,7 @@ class Rethinkdb{
  * authKey: the authentication key (default none).
  */
 Future<Connection> connect({String db, String host: "localhost", int port: 28015,
-  String authKey: ""}) =>  new Connection(db,host,port,authKey)._reconnect();
+  String authKey: ""}) =>  new Connection(db,host,port,authKey).reconnect();
 
 /**
  *Reference a database.This command can be chained with other commands to do further processing on the data.
@@ -193,7 +189,7 @@ Random random([left,right, options]) => new Random(left,right,options);
  */
 Not not(args) => new Not(args);
 
-
+RqlMap map(seq,mappingFunction) => new RqlMap([seq],mappingFunction);
 
 /**
  * computes logical 'and' of two or more values
@@ -229,7 +225,7 @@ Downcase downcase(String str) => new Downcase(str);
 /**
  * Convert native dart object into a RqlObject
  */
-expr(val) => _expr(val);
+expr(val) => new RqlQuery()._expr(val);
 
 /**
  * Convert a GeoJSON object to a ReQL geometry object.
@@ -264,29 +260,23 @@ Binary binary(var data) => new Binary(data);
 
  noSuchMethod(Invocation invocation) {
        String methodName = MirrorSystem.getName(invocation.memberName);
-       List tmp = invocation.positionalArguments;
-             List args = [];
-             Map options = null;
-             for(var i=0; i < tmp.length; i++){
-               if(tmp[i] is Map && i == tmp.length-1)
-                 options = tmp[i];
-               else
-                 args.add(tmp[i]);
-             }
+       List args = new List.from(invocation.positionalArguments);
 
        switch(methodName){
          case "object":
            return this.object(args);
          case "rqlDo":
-           return this.rqlDo(args.sublist(0, args.length-1),args[args.length-1]);
+           return this.rqlDo(args.sublist(0, args.length-1),args.last);
          case "line":
-           return new Line(tmp);
+           return new Line(args);
          case "polygon":
-           return new Polygon(tmp);
+           return new Polygon(args);
          case "and":
-           return new And(tmp);
+           return new And(args);
          case "or":
-           return new Or(tmp);
+           return new Or(args);
+         case "map":
+           return new RqlMap(args.sublist(0,args.length-1),args.last);
          default:
            throw new RqlDriverError("Unknown method $methodName");
        }

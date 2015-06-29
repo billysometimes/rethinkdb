@@ -1,7 +1,7 @@
 Dart RethinkDB Driver
 =========
 
-A [Dart](http://www.dartlang.org) driver for [RethinkDB v2.0.1](http://www.rethinkdb.com).
+A [Dart](http://www.dartlang.org) driver for [RethinkDB v2.0.3](http://www.rethinkdb.com).
 
 
 Getting Started:

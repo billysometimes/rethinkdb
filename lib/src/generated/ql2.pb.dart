@@ -417,6 +417,9 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType MUL = const Term_TermType._(26, 'MUL');
   static const Term_TermType DIV = const Term_TermType._(27, 'DIV');
   static const Term_TermType MOD = const Term_TermType._(28, 'MOD');
+  static const Term_TermType FLOOR = const Term_TermType._(183, 'FLOOR');
+  static const Term_TermType CEIL = const Term_TermType._(184, 'CEIL');
+  static const Term_TermType ROUND = const Term_TermType._(185, 'ROUND');
   static const Term_TermType APPEND = const Term_TermType._(29, 'APPEND');
   static const Term_TermType PREPEND = const Term_TermType._(80, 'PREPEND');
   static const Term_TermType DIFFERENCE = const Term_TermType._(95, 'DIFFERENCE');
@@ -591,6 +594,9 @@ class Term_TermType extends ProtobufEnum {
     MUL,
     DIV,
     MOD,
+    FLOOR,
+    CEIL,
+    ROUND,
     APPEND,
     PREPEND,
     DIFFERENCE,

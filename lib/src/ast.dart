@@ -318,6 +318,12 @@ class RqlQuery{
 
     Append append(val) => new Append(this,val);
 
+    Floor floor(val) => new Floor(this, val);
+
+    Floor ceil(val) => new Ceil(this, val);
+
+    Floor round(val) => new Round(this, val);
+
     Prepend prepend(val) => new Prepend(this,val);
 
     Difference difference(List ar) => new Difference(this,ar);
@@ -757,6 +763,24 @@ class Append extends RqlMethodQuery{
     p.Term_TermType tt = p.Term_TermType.APPEND;
 
     Append(ar,val):super([ar,val]);
+}
+
+class Floor extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.FLOOR;
+
+  Floor(ar,val):super([ar,val]);
+}
+
+class Ceil extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.CEIL;
+
+  Ceil(ar,val):super([ar,val]);
+}
+
+class Round extends RqlMethodQuery{
+  p.Term_TermType tt = p.Term_TermType.ROUND;
+
+  Round(ar,val):super([ar,val]);
 }
 
 class Prepend extends RqlMethodQuery{

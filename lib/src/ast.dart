@@ -320,9 +320,9 @@ class RqlQuery{
 
     Floor floor(val) => new Floor(this, val);
 
-    Floor ceil(val) => new Ceil(this, val);
+    Ceil ceil(val) => new Ceil(this, val);
 
-    Floor round(val) => new Round(this, val);
+    Round round(val) => new Round(this, val);
 
     Prepend prepend(val) => new Prepend(this,val);
 

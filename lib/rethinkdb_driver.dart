@@ -23,7 +23,7 @@ class Rethinkdb{
  * db: the default database (defaults to test).
  * authKey: the authentication key (default none).
  */
-Future<Connection> connect({String db, String host: "localhost", int port: 28015,
+Future<Connection> connect({String db: 'test', String host: "localhost", int port: 28015,
   String authKey: ""}) =>  new Connection(db,host,port,authKey).reconnect();
 
 /**

@@ -1628,7 +1628,7 @@ class _RqlAllOptions {
         options = ['durability','return_changes'];
         break;
       case p.Term_TermType.TABLE:
-        options = ['use_outDated'];
+        options = ['read_mode'];
         break;
       case p.Term_TermType.INDEX_CREATE:
         options = ["multi"];
@@ -1673,7 +1673,7 @@ class _RqlAllOptions {
         options = ['index','max_results','max_dist','unit','geo_system'];
         break;
       case p.Term_TermType.RECONFIGURE:
-        options = ['shards', 'replicas', 'primary_replica_tag', 'dry_run'];
+        options = ['shards', 'replicas', 'primary_replica_tag', 'dry_run',"emergency_repair"];
         break;
       case p.Term_TermType.WAIT:
         options = ['wait_for', 'timeout'];

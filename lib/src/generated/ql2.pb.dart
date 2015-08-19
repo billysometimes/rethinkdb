@@ -233,6 +233,31 @@ class Response_ResponseType extends ProtobufEnum {
   const Response_ResponseType._(int v, String n) : super(v, n);
 }
 
+class Response_ErrorType extends ProtobufEnum {
+  static const Response_ErrorType INTERNAL = const Response_ErrorType._(1000000, 'INTERNAL');
+  static const Response_ErrorType RESOURCE_LIMIT = const Response_ErrorType._(2000000, 'RESOURCE_LIMIT');
+  static const Response_ErrorType QUERY_LOGIC = const Response_ErrorType._(3000000, 'QUERY_LOGIC');
+  static const Response_ErrorType NON_EXISTENCE = const Response_ErrorType._(3100000, 'NON_EXISTENCE');
+  static const Response_ErrorType OP_FAILED = const Response_ErrorType._(4100000, 'OP_FAILED');
+  static const Response_ErrorType OP_INDETERMINATE = const Response_ErrorType._(4200000, 'OP_INDETERMINATE');
+  static const Response_ErrorType USER = const Response_ErrorType._(5000000, 'USER');
+
+  static const List<Response_ErrorType> values = const <Response_ErrorType> [
+    INTERNAL,
+    RESOURCE_LIMIT,
+    QUERY_LOGIC,
+    NON_EXISTENCE,
+    OP_FAILED,
+    OP_INDETERMINATE,
+    USER,
+  ];
+
+  static final Map<int, Response_ErrorType> _byValue = ProtobufEnum.initByValue(values);
+  static Response_ErrorType valueOf(int value) => _byValue[value];
+
+  const Response_ErrorType._(int v, String n) : super(v, n);
+}
+
 class Response_ResponseNote extends ProtobufEnum {
   static const Response_ResponseNote SEQUENCE_FEED = const Response_ResponseNote._(1, 'SEQUENCE_FEED');
   static const Response_ResponseNote ATOM_FEED = const Response_ResponseNote._(2, 'ATOM_FEED');
@@ -257,6 +282,7 @@ class Response_ResponseNote extends ProtobufEnum {
 class Response extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Response')
     ..e(1, 'type', GeneratedMessage.OE, Response_ResponseType.SUCCESS_ATOM, (var v) => Response_ResponseType.valueOf(v))
+    ..e(7, 'errorType', GeneratedMessage.OE, Response_ErrorType.INTERNAL, (var v) => Response_ErrorType.valueOf(v))
     ..a(6, 'notes', GeneratedMessage.PE, () => new PbList(), null, (var v) => Response_ResponseNote.valueOf(v))
     ..a(2, 'token', GeneratedMessage.O6, Int64.ZERO)
     ..m(3, 'response', Datum.create, Datum.createRepeated)
@@ -276,6 +302,11 @@ class Response extends GeneratedMessage {
   void set type(Response_ResponseType v) { setField(1, v); }
   bool hasType() => hasField(1);
   void clearType() => clearField(1);
+
+  Response_ErrorType get errorType => getField(7);
+  void set errorType(Response_ErrorType v) { setField(7, v); }
+  bool hasErrorType() => hasField(7);
+  void clearErrorType() => clearField(7);
 
   List<Response_ResponseNote> get notes => getField(6);
 

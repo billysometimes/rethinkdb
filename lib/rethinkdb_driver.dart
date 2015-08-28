@@ -24,7 +24,7 @@ class Rethinkdb{
  * authKey: the authentication key (default none).
  */
 Future<Connection> connect({String db: 'test', String host: "localhost", int port: 28015,
-  String authKey: ""}) =>  new Connection(db,host,port,authKey).reconnect();
+  String authKey: "", Map ssl}) =>  new Connection(db,host,port,authKey, ssl:ssl).reconnect();
 
 /**
  *Reference a database.This command can be chained with other commands to do further processing on the data.

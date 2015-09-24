@@ -451,7 +451,7 @@ class RqlQuery{
 
     OuterJoin outerJoin(otherSequence, [predicate]) => new OuterJoin(this,otherSequence,predicate);
 
-    EqJoin eqJoin(leftAttr,[otherTable,options]) => new EqJoin(this,leftAttr,otherTable,options);
+    EqJoin eqJoin(leftAttr,[otherTable,options]) => new EqJoin(this,_func_wrap(leftAttr),otherTable,options);
 
     Zip zip() => new Zip(this);
 

@@ -155,7 +155,7 @@ class RqlQuery{
        return true;
      }
 
-     var optArgKeys = query.optargs.keys;
+     var optArgKeys = query.optargs.values;
      
      if(optArgKeys.any(_ivar_scan)){
        return true;

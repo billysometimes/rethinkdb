@@ -14,7 +14,6 @@ class RqlQuery{
             if(_check_if_options(e,tt)){
               optargs = optargs == null ? e : optargs;
             }else{
-            if(e != null)
               this.args.add(_expr(e));
             }
           });
@@ -22,7 +21,6 @@ class RqlQuery{
           optargs.forEach((k,v){
            this.optargs[k] = _expr(v);
           });
-        //args = [new Args(args)];
     }
     
     _expr(val, [nesting_depth=20]){

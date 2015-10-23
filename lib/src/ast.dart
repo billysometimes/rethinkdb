@@ -12,7 +12,7 @@ class RqlQuery{
           
           args.forEach((e){
             if(_check_if_options(e,tt)){
-              optargs = optargs == null ? e : optargs;
+              optargs ??= e;
             }else{
               this.args.add(_expr(e));
             }
@@ -21,6 +21,7 @@ class RqlQuery{
           optargs.forEach((k,v){
            this.optargs[k] = _expr(v);
           });
+        //args = [new Args(args)];
     }
     
     _expr(val, [nesting_depth=20]){
@@ -37,12 +38,12 @@ class RqlQuery{
             val.forEach((v){
               v = _expr(v,nesting_depth - 1);
             });
-            
+
             return new MakeArray(val);
         }
         else if(val is Map){
             Map obj = {};
-      
+
             val.forEach((k,v){
               obj[k] = _expr(v,nesting_depth -1);
             });
@@ -62,8 +63,8 @@ class RqlQuery{
     Future run(Connection c, [global_optargs]){
       if(c == null)
         throw new RqlDriverError("RqlQuery.run must be given a connection to run on.");
-      if(global_optargs == null)
-        global_optargs = {};
+
+        global_optargs ??= {};
       return c._start(this, global_optargs);
     }
 
@@ -107,7 +108,7 @@ class RqlQuery{
         return res;
     }
 
-    
+
     _recursively_convert_pseudotypes(obj, format_opts){
         if(obj is Map){
           obj.forEach((k,v){
@@ -121,7 +122,7 @@ class RqlQuery{
         }
         return obj;
     }
-    
+
     _listify(args,[parg]){
       if(args is List){
         args.insert(0,parg);
@@ -154,7 +155,7 @@ class RqlQuery{
      }
 
      var optArgKeys = query.optargs.values;
-     
+
      if(optArgKeys.any(_ivar_scan)){
        return true;
      }
@@ -176,16 +177,16 @@ class RqlQuery{
           throw new RqlDriverError('pseudo-type TIME object $obj does not have expected field "epoch_time".');
         }else{
           String s = obj["epoch_time"].toString();
-                   if(s.indexOf(".")>=0){
-                   List l = s.split('.');
-                   while(l[1].length < 3){
-                     l[1] = l[1]+"0";
-                   }
-                   s = l.join("");
-                   }else{
-                     s+="000";
-                   }
-            return new DateTime.fromMillisecondsSinceEpoch(int.parse(s));
+          if(s.indexOf(".")>=0){
+            List l = s.split('.');
+            while(l[1].length < 3){
+              l[1] = l[1]+"0";
+            }
+            s = l.join("");
+          }else{
+            s+="000";
+          }
+          return new DateTime.fromMillisecondsSinceEpoch(int.parse(s));
         }
     }
 
@@ -240,7 +241,7 @@ class RqlQuery{
     _reql_type_binary_to_bytes(Map obj){
       return CryptoUtils.base64StringToBytes(obj['data']);
     }
-    
+
     Update update(args, [options]) => new Update(this,_func_wrap(args),options);
 
 
@@ -271,7 +272,7 @@ class RqlQuery{
 
 
     Mod mod(other) => new Mod(this, other);
-    
+
     And and(other) =>new And([this, other]);
 
     Or or(other) => new Or([this, other]);
@@ -316,11 +317,11 @@ class RqlQuery{
 
     Append append(val) => new Append(this,val);
 
-    Floor floor(val) => new Floor(this, val);
+    Floor floor() => new Floor(this);
 
-    Ceil ceil(val) => new Ceil(this, val);
+    Ceil ceil() => new Ceil(this);
 
-    Round round(val) => new Round(this, val);
+    Round round() => new Round(this);
 
     Prepend prepend(val) => new Prepend(this,val);
 
@@ -367,7 +368,7 @@ class RqlQuery{
     RqlMap map(mappingFunction){
     if(mappingFunction is List){
       mappingFunction.insert(0,this);
-      var item = _func_wrap(mappingFunction.removeLast());      
+      var item = _func_wrap(mappingFunction.removeLast());
       return new RqlMap(mappingFunction,item);
     }
     return new RqlMap([this],mappingFunction);
@@ -418,7 +419,7 @@ class RqlQuery{
 
           return new OrderBy(_listify(attrs,this),index);
         }
-    
+
     operator +(other)=>this.add(other);
     operator -(other)=>this.sub(other);
     operator *(other)=>this.mul(other);
@@ -502,33 +503,33 @@ class RqlQuery{
     Seconds seconds() => new Seconds(this);
 
     InTimezone inTimezone(tz) => new InTimezone(this,tz);
-    
+
     Binary binary(data) => new Binary(data);
 
     Distance distance(geo,[opts]) => new Distance(this,geo,opts);
-    
+
     Fill fill() => new Fill(this);
-    
+
     ToGeoJson toGeojson(geo,[Map options]) => new ToGeoJson(this);
-    
+
     GetIntersecting getIntersecting(geo,[Map options]) => new GetIntersecting(this,geo,options);
-    
+
     GetNearest getNearest(point,[Map options]) => new GetNearest(this,point,options);
-    
+
     Includes includes(geo) => new Includes(this,geo);
-    
+
     Intersects intersects(geo) => new Intersects(this,geo);
-    
+
     PolygonSub polygonsub(Polygon poly) => new PolygonSub(this,poly);
-    
+
     Config config() => new Config(this);
-    
+
     Rebalance rebalance() => new Rebalance(this);
-    
+
     Reconfigure reconfigure(Map options) => new Reconfigure(this,options);
-    
+
     Status status() => new Status(this);
-    
+
     Wait wait([Map options]) => new Wait(this,options);
 
     noSuchMethod(Invocation invocation) {
@@ -543,8 +544,8 @@ class RqlQuery{
           options = argsList.removeLast();
         }
 
-        InstanceMirror im = reflect(this);    
-         
+        InstanceMirror im = reflect(this);
+
         if(!options.isEmpty)
           return im.invoke(methodName, [argsList, options]).reflectee;
         return im.invoke(methodName, [argsList]).reflectee;
@@ -639,7 +640,7 @@ class Var extends RqlQuery{
   Var(args):super([args]);
 
   call(arg) => new GetField(this,arg);
-  
+
 }
 
 class JavaScript extends RqlTopLevelQuery{
@@ -766,19 +767,19 @@ class Append extends RqlMethodQuery{
 class Floor extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.FLOOR;
 
-  Floor(ar,val):super([ar,val]);
+  Floor(ar):super([ar]);
 }
 
 class Ceil extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.CEIL;
 
-  Ceil(ar,val):super([ar,val]);
+  Ceil(ar):super([ar]);
 }
 
 class Round extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.ROUND;
 
-  Round(ar,val):super([ar,val]);
+  Round(ar):super([ar]);
 }
 
 class Prepend extends RqlMethodQuery{
@@ -834,7 +835,7 @@ class Limit extends RqlMethodQuery{
 }
 
 class GetField extends RqlBracketQuery{
-    p.Term_TermType tt = p.Term_TermType.GET_FIELD;
+    p.Term_TermType tt = p.Term_TermType.BRACKET;
 
     GetField(obj,field):super([obj,field]);
 }
@@ -934,7 +935,7 @@ class Table extends RqlQuery{
     IndexCreate indexCreate(indexName,[indexFunction,Map options]) => new IndexCreate(this,indexName,indexFunction,options);
 
     IndexDrop indexDrop(indexName) => new IndexDrop(this,indexName);
-    
+
     IndexRename indexRename(old_name,new_name) => new IndexRename(this,old_name,new_name);
 
     IndexStatus indexStatus([indexes]) => new IndexStatus(this,indexes);
@@ -1219,7 +1220,7 @@ class IndexDrop extends RqlMethodQuery{
 
 class IndexRename extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.INDEX_RENAME;
-  
+
   IndexRename(table,old_name,new_name) : super([table,old_name,new_name]);
 }
 
@@ -1485,109 +1486,109 @@ class Literal extends RqlTopLevelQuery{
 
 class Circle extends RqlTopLevelQuery{
   p.Term_TermType tt = p.Term_TermType.CIRCLE;
-  
+
   Circle(point, radius,[Map options]):super([point,radius],options);
 }
 
 class Distance extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.DISTANCE;
-  
+
   Distance(obj,geo,[Map options]):super([obj,geo],options);
 }
 
 class Fill extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.FILL;
-  
+
   Fill(obj):super([obj]);
 }
 
 class GeoJson extends RqlTopLevelQuery{
   p.Term_TermType tt = p.Term_TermType.GEOJSON;
-  
+
   GeoJson(Map geoJson):super([geoJson]);
 }
 
 class ToGeoJson extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.TO_GEOJSON;
-  
+
   ToGeoJson(obj):super([obj]);
 }
 
 class GetIntersecting extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.GET_INTERSECTING;
-  
+
   GetIntersecting(table,geo,[Map options]):super([table,geo],options);
 }
 
 class GetNearest extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.GET_NEAREST;
-  
+
   GetNearest(table,point,Map options):super([table,point],options);
 }
 
 class Includes extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.INCLUDES;
-  
+
   Includes(obj,geo):super([obj,geo]);
 }
 
 class Intersects extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.INTERSECTS;
-  
+
   Intersects(obj,geo):super([obj,geo]);
 }
 
 class Line extends RqlTopLevelQuery{
   p.Term_TermType tt = p.Term_TermType.LINE;
-  
+
   Line(points):super(points);
 }
 
 class Point extends RqlTopLevelQuery{
   p.Term_TermType tt = p.Term_TermType.POINT;
-  
+
   Point(long,lat):super([long,lat]);
 }
 
 class Polygon extends RqlTopLevelQuery{
   p.Term_TermType tt = p.Term_TermType.POLYGON;
-  
+
   Polygon(points):super(points);
 }
 
 class PolygonSub extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.POLYGON_SUB;
-  
+
   PolygonSub(Polygon poly1,Polygon poly2):super([poly1,poly2]);
 }
 
 class Config extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.CONFIG;
-  
+
   Config(obj):super([obj]);
 }
 
 class Rebalance extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.REBALANCE;
-  
+
   Rebalance(obj):super([obj]);
 }
 
 class Reconfigure extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.RECONFIGURE;
-  
+
   Reconfigure(obj,Map options):super([obj],options);
 }
 
 class Status extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.STATUS;
-  
+
   Status(obj):super([obj]);
 }
 
 class Wait extends RqlMethodQuery{
   p.Term_TermType tt = p.Term_TermType.WAIT;
-  
+
   Wait(obj,[Map options]):super([obj],options);
 }
 
@@ -1626,7 +1627,7 @@ class _RqlAllOptions {
         options = ['durability','return_changes'];
         break;
       case p.Term_TermType.TABLE:
-        options = ['use_outDated'];
+        options = ['read_mode'];
         break;
       case p.Term_TermType.INDEX_CREATE:
         options = ["multi"];
@@ -1671,7 +1672,7 @@ class _RqlAllOptions {
         options = ['index','max_results','max_dist','unit','geo_system'];
         break;
       case p.Term_TermType.RECONFIGURE:
-        options = ['shards', 'replicas', 'primary_replica_tag', 'dry_run'];
+        options = ['shards', 'replicas', 'primary_replica_tag', 'dry_run',"emergency_repair"];
         break;
       case p.Term_TermType.WAIT:
         options = ['wait_for', 'timeout'];

@@ -53,10 +53,24 @@ class RqlQuery{
         else if(val is Function)
             return new Func(val);
         else if(val is DateTime){
-           return new Time.nativeTime(val);
+          return new Time(val.year,val.month,val.day,_formatTimeZoneOffset(val),val.hour,val.minute,val.second);
         }
         else
           return new Datum(val);
+    }
+
+    String _formatTimeZoneOffset(DateTime val){
+
+      String tz = val.timeZoneOffset.inHours.toString();
+
+      if(!val.timeZoneOffset.inHours.isNegative)
+        tz = "+$tz";
+
+      if(tz.length == 2)
+        tz = tz.replaceRange(0,1,tz[0]+"0");
+
+      return tz;
+
     }
 
 
@@ -1410,8 +1424,6 @@ class Time extends RqlTopLevelQuery{
 
     Time(int year,int month,int day,String timezone,[int hour,int minute,num second]):super([year,month,day,hour,minute,second,timezone]);
 
-    Time.nativeTime(DateTime val):super([val.year,val.month,val.day,val.hour,val.minute,val.second,val.timeZoneOffset.inHours.toString().length >= 3 ? val.timeZoneOffset.inHours.toString() : val.timeZoneOffset.inHours.toString().replaceFirst("-", "-0")
-],null);
 }
 
 class RqlISO8601 extends RqlTopLevelQuery{

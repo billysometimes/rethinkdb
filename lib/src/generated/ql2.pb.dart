@@ -11,16 +11,21 @@ class VersionDummy_Version extends ProtobufEnum {
   static const VersionDummy_Version V0_2 = const VersionDummy_Version._(1915781601, 'V0_2');
   static const VersionDummy_Version V0_3 = const VersionDummy_Version._(1601562686, 'V0_3');
   static const VersionDummy_Version V0_4 = const VersionDummy_Version._(1074539808, 'V0_4');
+  static const VersionDummy_Version V1_0 = const VersionDummy_Version._(885177795, 'V1_0');
 
   static const List<VersionDummy_Version> values = const <VersionDummy_Version> [
     V0_1,
     V0_2,
     V0_3,
     V0_4,
+    V1_0,
   ];
 
-  static final Map<int, VersionDummy_Version> _byValue = ProtobufEnum.initByValue(values);
-  static VersionDummy_Version valueOf(int value) => _byValue[value];
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static VersionDummy_Version valueOf(int value) => _byValue[value] as VersionDummy_Version;
+  static void $checkItem(VersionDummy_Version v) {
+    if (v is !VersionDummy_Version) checkItemFailed(v, 'VersionDummy_Version');
+  }
 
   const VersionDummy_Version._(int v, String n) : super(v, n);
 }
@@ -34,8 +39,11 @@ class VersionDummy_Protocol extends ProtobufEnum {
     JSON,
   ];
 
-  static final Map<int, VersionDummy_Protocol> _byValue = ProtobufEnum.initByValue(values);
-  static VersionDummy_Protocol valueOf(int value) => _byValue[value];
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static VersionDummy_Protocol valueOf(int value) => _byValue[value] as VersionDummy_Protocol;
+  static void $checkItem(VersionDummy_Protocol v) {
+    if (v is !VersionDummy_Protocol) checkItemFailed(v, 'VersionDummy_Protocol');
+  }
 
   const VersionDummy_Protocol._(int v, String n) : super(v, n);
 }
@@ -52,31 +60,47 @@ class VersionDummy extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static VersionDummy create() => new VersionDummy();
   static PbList<VersionDummy> createRepeated() => new PbList<VersionDummy>();
+  static VersionDummy getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyVersionDummy();
+    return _defaultInstance;
+  }
+  static VersionDummy _defaultInstance;
+  static void $checkItem(VersionDummy v) {
+    if (v is !VersionDummy) checkItemFailed(v, 'VersionDummy');
+  }
 }
+
+class _ReadonlyVersionDummy extends VersionDummy with ReadonlyMessageMixin {}
 
 class Query_QueryType extends ProtobufEnum {
   static const Query_QueryType START = const Query_QueryType._(1, 'START');
   static const Query_QueryType CONTINUE = const Query_QueryType._(2, 'CONTINUE');
   static const Query_QueryType STOP = const Query_QueryType._(3, 'STOP');
   static const Query_QueryType NOREPLY_WAIT = const Query_QueryType._(4, 'NOREPLY_WAIT');
+  static const Query_QueryType SERVER_INFO = const Query_QueryType._(5, 'SERVER_INFO');
 
   static const List<Query_QueryType> values = const <Query_QueryType> [
     START,
     CONTINUE,
     STOP,
     NOREPLY_WAIT,
+    SERVER_INFO,
   ];
 
-  static final Map<int, Query_QueryType> _byValue = ProtobufEnum.initByValue(values);
-  static Query_QueryType valueOf(int value) => _byValue[value];
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static Query_QueryType valueOf(int value) => _byValue[value] as Query_QueryType;
+  static void $checkItem(Query_QueryType v) {
+    if (v is !Query_QueryType) checkItemFailed(v, 'Query_QueryType');
+  }
 
   const Query_QueryType._(int v, String n) : super(v, n);
 }
 
 class Query_AssocPair extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Query_AssocPair')
-    ..a(1, 'key', GeneratedMessage.OS)
-    ..a(2, 'val', GeneratedMessage.OM, Term.create, Term.create)
+    ..a/*<String>*/(1, 'key', PbFieldType.OS)
+    ..a/*<Term>*/(2, 'val', PbFieldType.OM, Term.getDefault, Term.create)
+    ..hasRequiredFields = false
   ;
 
   Query_AssocPair() : super();
@@ -86,26 +110,37 @@ class Query_AssocPair extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Query_AssocPair create() => new Query_AssocPair();
   static PbList<Query_AssocPair> createRepeated() => new PbList<Query_AssocPair>();
+  static Query_AssocPair getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyQuery_AssocPair();
+    return _defaultInstance;
+  }
+  static Query_AssocPair _defaultInstance;
+  static void $checkItem(Query_AssocPair v) {
+    if (v is !Query_AssocPair) checkItemFailed(v, 'Query_AssocPair');
+  }
 
-  String get key => getField(1);
-  void set key(String v) { setField(1, v); }
-  bool hasKey() => hasField(1);
+  String get key => $_get(0, 1, '');
+  void set key(String v) { $_setString(0, 1, v); }
+  bool hasKey() => $_has(0, 1);
   void clearKey() => clearField(1);
 
-  Term get val => getField(2);
+  Term get val => $_get(1, 2, null);
   void set val(Term v) { setField(2, v); }
-  bool hasVal() => hasField(2);
+  bool hasVal() => $_has(1, 2);
   void clearVal() => clearField(2);
 }
 
+class _ReadonlyQuery_AssocPair extends Query_AssocPair with ReadonlyMessageMixin {}
+
 class Query extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Query')
-    ..e(1, 'type', GeneratedMessage.OE, Query_QueryType.START, (var v) => Query_QueryType.valueOf(v))
-    ..a(2, 'query', GeneratedMessage.OM, Term.create, Term.create)
-    ..a(3, 'token', GeneratedMessage.O6, Int64.ZERO)
-    ..a(4, 'oBSOLETENoreply', GeneratedMessage.OB)
-    ..a(5, 'acceptsRJson', GeneratedMessage.OB)
-    ..m(6, 'globalOptargs', Query_AssocPair.create, Query_AssocPair.createRepeated)
+    ..e/*<Query_QueryType>*/(1, 'type', PbFieldType.OE, Query_QueryType.START, Query_QueryType.valueOf)
+    ..a/*<Term>*/(2, 'query', PbFieldType.OM, Term.getDefault, Term.create)
+    ..a/*<Int64>*/(3, 'token', PbFieldType.O6, Int64.ZERO)
+    ..a/*<bool>*/(4, 'oBSOLETENoreply', PbFieldType.OB)
+    ..a/*<bool>*/(5, 'acceptsRJson', PbFieldType.OB)
+    ..pp/*<Query_AssocPair>*/(6, 'globalOptargs', PbFieldType.PM, Query_AssocPair.$checkItem, Query_AssocPair.create)
+    ..hasRequiredFields = false
   ;
 
   Query() : super();
@@ -115,34 +150,44 @@ class Query extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Query create() => new Query();
   static PbList<Query> createRepeated() => new PbList<Query>();
+  static Query getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyQuery();
+    return _defaultInstance;
+  }
+  static Query _defaultInstance;
+  static void $checkItem(Query v) {
+    if (v is !Query) checkItemFailed(v, 'Query');
+  }
 
-  Query_QueryType get type => getField(1);
+  Query_QueryType get type => $_get(0, 1, null);
   void set type(Query_QueryType v) { setField(1, v); }
-  bool hasType() => hasField(1);
+  bool hasType() => $_has(0, 1);
   void clearType() => clearField(1);
 
-  Term get query => getField(2);
+  Term get query => $_get(1, 2, null);
   void set query(Term v) { setField(2, v); }
-  bool hasQuery() => hasField(2);
+  bool hasQuery() => $_has(1, 2);
   void clearQuery() => clearField(2);
 
-  Int64 get token => getField(3);
-  void set token(Int64 v) { setField(3, v); }
-  bool hasToken() => hasField(3);
+  Int64 get token => $_get(2, 3, null);
+  void set token(Int64 v) { $_setInt64(2, 3, v); }
+  bool hasToken() => $_has(2, 3);
   void clearToken() => clearField(3);
 
-  bool get oBSOLETENoreply => getField(4);
-  void set oBSOLETENoreply(bool v) { setField(4, v); }
-  bool hasOBSOLETENoreply() => hasField(4);
+  bool get oBSOLETENoreply => $_get(3, 4, false);
+  void set oBSOLETENoreply(bool v) { $_setBool(3, 4, v); }
+  bool hasOBSOLETENoreply() => $_has(3, 4);
   void clearOBSOLETENoreply() => clearField(4);
 
-  bool get acceptsRJson => getField(5);
-  void set acceptsRJson(bool v) { setField(5, v); }
-  bool hasAcceptsRJson() => hasField(5);
+  bool get acceptsRJson => $_get(4, 5, false);
+  void set acceptsRJson(bool v) { $_setBool(4, 5, v); }
+  bool hasAcceptsRJson() => $_has(4, 5);
   void clearAcceptsRJson() => clearField(5);
 
-  List<Query_AssocPair> get globalOptargs => getField(6);
+  List<Query_AssocPair> get globalOptargs => $_get(5, 6, null);
 }
+
+class _ReadonlyQuery extends Query with ReadonlyMessageMixin {}
 
 class Frame_FrameType extends ProtobufEnum {
   static const Frame_FrameType POS = const Frame_FrameType._(1, 'POS');
@@ -153,17 +198,20 @@ class Frame_FrameType extends ProtobufEnum {
     OPT,
   ];
 
-  static final Map<int, Frame_FrameType> _byValue = ProtobufEnum.initByValue(values);
-  static Frame_FrameType valueOf(int value) => _byValue[value];
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static Frame_FrameType valueOf(int value) => _byValue[value] as Frame_FrameType;
+  static void $checkItem(Frame_FrameType v) {
+    if (v is !Frame_FrameType) checkItemFailed(v, 'Frame_FrameType');
+  }
 
   const Frame_FrameType._(int v, String n) : super(v, n);
 }
 
 class Frame extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Frame')
-    ..e(1, 'type', GeneratedMessage.OE, Frame_FrameType.POS, (var v) => Frame_FrameType.valueOf(v))
-    ..a(2, 'pos', GeneratedMessage.O6, Int64.ZERO)
-    ..a(3, 'opt', GeneratedMessage.OS)
+    ..e/*<Frame_FrameType>*/(1, 'type', PbFieldType.OE, Frame_FrameType.POS, Frame_FrameType.valueOf)
+    ..a/*<Int64>*/(2, 'pos', PbFieldType.O6, Int64.ZERO)
+    ..a/*<String>*/(3, 'opt', PbFieldType.OS)
     ..hasRequiredFields = false
   ;
 
@@ -174,26 +222,36 @@ class Frame extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Frame create() => new Frame();
   static PbList<Frame> createRepeated() => new PbList<Frame>();
+  static Frame getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyFrame();
+    return _defaultInstance;
+  }
+  static Frame _defaultInstance;
+  static void $checkItem(Frame v) {
+    if (v is !Frame) checkItemFailed(v, 'Frame');
+  }
 
-  Frame_FrameType get type => getField(1);
+  Frame_FrameType get type => $_get(0, 1, null);
   void set type(Frame_FrameType v) { setField(1, v); }
-  bool hasType() => hasField(1);
+  bool hasType() => $_has(0, 1);
   void clearType() => clearField(1);
 
-  Int64 get pos => getField(2);
-  void set pos(Int64 v) { setField(2, v); }
-  bool hasPos() => hasField(2);
+  Int64 get pos => $_get(1, 2, null);
+  void set pos(Int64 v) { $_setInt64(1, 2, v); }
+  bool hasPos() => $_has(1, 2);
   void clearPos() => clearField(2);
 
-  String get opt => getField(3);
-  void set opt(String v) { setField(3, v); }
-  bool hasOpt() => hasField(3);
+  String get opt => $_get(2, 3, '');
+  void set opt(String v) { $_setString(2, 3, v); }
+  bool hasOpt() => $_has(2, 3);
   void clearOpt() => clearField(3);
 }
 
+class _ReadonlyFrame extends Frame with ReadonlyMessageMixin {}
+
 class Backtrace extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Backtrace')
-    ..m(1, 'frames', Frame.create, Frame.createRepeated)
+    ..pp/*<Frame>*/(1, 'frames', PbFieldType.PM, Frame.$checkItem, Frame.create)
     ..hasRequiredFields = false
   ;
 
@@ -204,15 +262,26 @@ class Backtrace extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Backtrace create() => new Backtrace();
   static PbList<Backtrace> createRepeated() => new PbList<Backtrace>();
+  static Backtrace getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyBacktrace();
+    return _defaultInstance;
+  }
+  static Backtrace _defaultInstance;
+  static void $checkItem(Backtrace v) {
+    if (v is !Backtrace) checkItemFailed(v, 'Backtrace');
+  }
 
-  List<Frame> get frames => getField(1);
+  List<Frame> get frames => $_get(0, 1, null);
 }
+
+class _ReadonlyBacktrace extends Backtrace with ReadonlyMessageMixin {}
 
 class Response_ResponseType extends ProtobufEnum {
   static const Response_ResponseType SUCCESS_ATOM = const Response_ResponseType._(1, 'SUCCESS_ATOM');
   static const Response_ResponseType SUCCESS_SEQUENCE = const Response_ResponseType._(2, 'SUCCESS_SEQUENCE');
   static const Response_ResponseType SUCCESS_PARTIAL = const Response_ResponseType._(3, 'SUCCESS_PARTIAL');
   static const Response_ResponseType WAIT_COMPLETE = const Response_ResponseType._(4, 'WAIT_COMPLETE');
+  static const Response_ResponseType SERVER_INFO = const Response_ResponseType._(5, 'SERVER_INFO');
   static const Response_ResponseType CLIENT_ERROR = const Response_ResponseType._(16, 'CLIENT_ERROR');
   static const Response_ResponseType COMPILE_ERROR = const Response_ResponseType._(17, 'COMPILE_ERROR');
   static const Response_ResponseType RUNTIME_ERROR = const Response_ResponseType._(18, 'RUNTIME_ERROR');
@@ -222,15 +291,49 @@ class Response_ResponseType extends ProtobufEnum {
     SUCCESS_SEQUENCE,
     SUCCESS_PARTIAL,
     WAIT_COMPLETE,
+    SERVER_INFO,
     CLIENT_ERROR,
     COMPILE_ERROR,
     RUNTIME_ERROR,
   ];
 
-  static final Map<int, Response_ResponseType> _byValue = ProtobufEnum.initByValue(values);
-  static Response_ResponseType valueOf(int value) => _byValue[value];
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static Response_ResponseType valueOf(int value) => _byValue[value] as Response_ResponseType;
+  static void $checkItem(Response_ResponseType v) {
+    if (v is !Response_ResponseType) checkItemFailed(v, 'Response_ResponseType');
+  }
 
   const Response_ResponseType._(int v, String n) : super(v, n);
+}
+
+class Response_ErrorType extends ProtobufEnum {
+  static const Response_ErrorType INTERNAL = const Response_ErrorType._(1000000, 'INTERNAL');
+  static const Response_ErrorType RESOURCE_LIMIT = const Response_ErrorType._(2000000, 'RESOURCE_LIMIT');
+  static const Response_ErrorType QUERY_LOGIC = const Response_ErrorType._(3000000, 'QUERY_LOGIC');
+  static const Response_ErrorType NON_EXISTENCE = const Response_ErrorType._(3100000, 'NON_EXISTENCE');
+  static const Response_ErrorType OP_FAILED = const Response_ErrorType._(4100000, 'OP_FAILED');
+  static const Response_ErrorType OP_INDETERMINATE = const Response_ErrorType._(4200000, 'OP_INDETERMINATE');
+  static const Response_ErrorType USER = const Response_ErrorType._(5000000, 'USER');
+  static const Response_ErrorType PERMISSION_ERROR = const Response_ErrorType._(6000000, 'PERMISSION_ERROR');
+
+  static const List<Response_ErrorType> values = const <Response_ErrorType> [
+    INTERNAL,
+    RESOURCE_LIMIT,
+    QUERY_LOGIC,
+    NON_EXISTENCE,
+    OP_FAILED,
+    OP_INDETERMINATE,
+    USER,
+    PERMISSION_ERROR,
+  ];
+
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static Response_ErrorType valueOf(int value) => _byValue[value] as Response_ErrorType;
+  static void $checkItem(Response_ErrorType v) {
+    if (v is !Response_ErrorType) checkItemFailed(v, 'Response_ErrorType');
+  }
+
+  const Response_ErrorType._(int v, String n) : super(v, n);
 }
 
 class Response_ResponseNote extends ProtobufEnum {
@@ -248,20 +351,25 @@ class Response_ResponseNote extends ProtobufEnum {
     INCLUDES_STATES,
   ];
 
-  static final Map<int, Response_ResponseNote> _byValue = ProtobufEnum.initByValue(values);
-  static Response_ResponseNote valueOf(int value) => _byValue[value];
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static Response_ResponseNote valueOf(int value) => _byValue[value] as Response_ResponseNote;
+  static void $checkItem(Response_ResponseNote v) {
+    if (v is !Response_ResponseNote) checkItemFailed(v, 'Response_ResponseNote');
+  }
 
   const Response_ResponseNote._(int v, String n) : super(v, n);
 }
 
 class Response extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Response')
-    ..e(1, 'type', GeneratedMessage.OE, Response_ResponseType.SUCCESS_ATOM, (var v) => Response_ResponseType.valueOf(v))
-    ..a(6, 'notes', GeneratedMessage.PE, () => new PbList(), null, (var v) => Response_ResponseNote.valueOf(v))
-    ..a(2, 'token', GeneratedMessage.O6, Int64.ZERO)
-    ..m(3, 'response', Datum.create, Datum.createRepeated)
-    ..a(4, 'backtrace', GeneratedMessage.OM, Backtrace.create, Backtrace.create)
-    ..a(5, 'profile', GeneratedMessage.OM, Datum.create, Datum.create)
+    ..e/*<Response_ResponseType>*/(1, 'type', PbFieldType.OE, Response_ResponseType.SUCCESS_ATOM, Response_ResponseType.valueOf)
+    ..a/*<Int64>*/(2, 'token', PbFieldType.O6, Int64.ZERO)
+    ..pp/*<Datum>*/(3, 'response', PbFieldType.PM, Datum.$checkItem, Datum.create)
+    ..a/*<Backtrace>*/(4, 'backtrace', PbFieldType.OM, Backtrace.getDefault, Backtrace.create)
+    ..a/*<Datum>*/(5, 'profile', PbFieldType.OM, Datum.getDefault, Datum.create)
+    ..pp/*<Response_ResponseNote>*/(6, 'notes', PbFieldType.PE, Response_ResponseNote.$checkItem, null, Response_ResponseNote.valueOf)
+    ..e/*<Response_ErrorType>*/(7, 'errorType', PbFieldType.OE, Response_ErrorType.INTERNAL, Response_ErrorType.valueOf)
+    ..hasRequiredFields = false
   ;
 
   Response() : super();
@@ -271,31 +379,46 @@ class Response extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Response create() => new Response();
   static PbList<Response> createRepeated() => new PbList<Response>();
+  static Response getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyResponse();
+    return _defaultInstance;
+  }
+  static Response _defaultInstance;
+  static void $checkItem(Response v) {
+    if (v is !Response) checkItemFailed(v, 'Response');
+  }
 
-  Response_ResponseType get type => getField(1);
+  Response_ResponseType get type => $_get(0, 1, null);
   void set type(Response_ResponseType v) { setField(1, v); }
-  bool hasType() => hasField(1);
+  bool hasType() => $_has(0, 1);
   void clearType() => clearField(1);
 
-  List<Response_ResponseNote> get notes => getField(6);
-
-  Int64 get token => getField(2);
-  void set token(Int64 v) { setField(2, v); }
-  bool hasToken() => hasField(2);
+  Int64 get token => $_get(1, 2, null);
+  void set token(Int64 v) { $_setInt64(1, 2, v); }
+  bool hasToken() => $_has(1, 2);
   void clearToken() => clearField(2);
 
-  List<Datum> get response => getField(3);
+  List<Datum> get response => $_get(2, 3, null);
 
-  Backtrace get backtrace => getField(4);
+  Backtrace get backtrace => $_get(3, 4, null);
   void set backtrace(Backtrace v) { setField(4, v); }
-  bool hasBacktrace() => hasField(4);
+  bool hasBacktrace() => $_has(3, 4);
   void clearBacktrace() => clearField(4);
 
-  Datum get profile => getField(5);
+  Datum get profile => $_get(4, 5, null);
   void set profile(Datum v) { setField(5, v); }
-  bool hasProfile() => hasField(5);
+  bool hasProfile() => $_has(4, 5);
   void clearProfile() => clearField(5);
+
+  List<Response_ResponseNote> get notes => $_get(5, 6, null);
+
+  Response_ErrorType get errorType => $_get(6, 7, null);
+  void set errorType(Response_ErrorType v) { setField(7, v); }
+  bool hasErrorType() => $_has(6, 7);
+  void clearErrorType() => clearField(7);
 }
+
+class _ReadonlyResponse extends Response with ReadonlyMessageMixin {}
 
 class Datum_DatumType extends ProtobufEnum {
   static const Datum_DatumType R_NULL = const Datum_DatumType._(1, 'R_NULL');
@@ -316,16 +439,20 @@ class Datum_DatumType extends ProtobufEnum {
     R_JSON,
   ];
 
-  static final Map<int, Datum_DatumType> _byValue = ProtobufEnum.initByValue(values);
-  static Datum_DatumType valueOf(int value) => _byValue[value];
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static Datum_DatumType valueOf(int value) => _byValue[value] as Datum_DatumType;
+  static void $checkItem(Datum_DatumType v) {
+    if (v is !Datum_DatumType) checkItemFailed(v, 'Datum_DatumType');
+  }
 
   const Datum_DatumType._(int v, String n) : super(v, n);
 }
 
 class Datum_AssocPair extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Datum_AssocPair')
-    ..a(1, 'key', GeneratedMessage.OS)
-    ..a(2, 'val', GeneratedMessage.OM, Datum.create, Datum.create)
+    ..a/*<String>*/(1, 'key', PbFieldType.OS)
+    ..a/*<Datum>*/(2, 'val', PbFieldType.OM, Datum.getDefault, Datum.create)
+    ..hasRequiredFields = false
   ;
 
   Datum_AssocPair() : super();
@@ -335,27 +462,37 @@ class Datum_AssocPair extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Datum_AssocPair create() => new Datum_AssocPair();
   static PbList<Datum_AssocPair> createRepeated() => new PbList<Datum_AssocPair>();
+  static Datum_AssocPair getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyDatum_AssocPair();
+    return _defaultInstance;
+  }
+  static Datum_AssocPair _defaultInstance;
+  static void $checkItem(Datum_AssocPair v) {
+    if (v is !Datum_AssocPair) checkItemFailed(v, 'Datum_AssocPair');
+  }
 
-  String get key => getField(1);
-  void set key(String v) { setField(1, v); }
-  bool hasKey() => hasField(1);
+  String get key => $_get(0, 1, '');
+  void set key(String v) { $_setString(0, 1, v); }
+  bool hasKey() => $_has(0, 1);
   void clearKey() => clearField(1);
 
-  Datum get val => getField(2);
+  Datum get val => $_get(1, 2, null);
   void set val(Datum v) { setField(2, v); }
-  bool hasVal() => hasField(2);
+  bool hasVal() => $_has(1, 2);
   void clearVal() => clearField(2);
 }
 
+class _ReadonlyDatum_AssocPair extends Datum_AssocPair with ReadonlyMessageMixin {}
+
 class Datum extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Datum')
-    ..e(1, 'type', GeneratedMessage.OE, Datum_DatumType.R_NULL, (var v) => Datum_DatumType.valueOf(v))
-    ..a(2, 'rBool', GeneratedMessage.OB)
-    ..a(3, 'rNum', GeneratedMessage.OD)
-    ..a(4, 'rStr', GeneratedMessage.OS)
-    ..m(5, 'rArray', Datum.create, Datum.createRepeated)
-    ..m(6, 'rObject', Datum_AssocPair.create, Datum_AssocPair.createRepeated)
-    ..hasExtensions = true
+    ..e/*<Datum_DatumType>*/(1, 'type', PbFieldType.OE, Datum_DatumType.R_NULL, Datum_DatumType.valueOf)
+    ..a/*<bool>*/(2, 'rBool', PbFieldType.OB)
+    ..a/*<double>*/(3, 'rNum', PbFieldType.OD)
+    ..a/*<String>*/(4, 'rStr', PbFieldType.OS)
+    ..pp/*<Datum>*/(5, 'rArray', PbFieldType.PM, Datum.$checkItem, Datum.create)
+    ..pp/*<Datum_AssocPair>*/(6, 'rObject', PbFieldType.PM, Datum_AssocPair.$checkItem, Datum_AssocPair.create)
+    ..hasRequiredFields = false
   ;
 
   Datum() : super();
@@ -365,31 +502,41 @@ class Datum extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Datum create() => new Datum();
   static PbList<Datum> createRepeated() => new PbList<Datum>();
+  static Datum getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyDatum();
+    return _defaultInstance;
+  }
+  static Datum _defaultInstance;
+  static void $checkItem(Datum v) {
+    if (v is !Datum) checkItemFailed(v, 'Datum');
+  }
 
-  Datum_DatumType get type => getField(1);
+  Datum_DatumType get type => $_get(0, 1, null);
   void set type(Datum_DatumType v) { setField(1, v); }
-  bool hasType() => hasField(1);
+  bool hasType() => $_has(0, 1);
   void clearType() => clearField(1);
 
-  bool get rBool => getField(2);
-  void set rBool(bool v) { setField(2, v); }
-  bool hasRBool() => hasField(2);
+  bool get rBool => $_get(1, 2, false);
+  void set rBool(bool v) { $_setBool(1, 2, v); }
+  bool hasRBool() => $_has(1, 2);
   void clearRBool() => clearField(2);
 
-  double get rNum => getField(3);
-  void set rNum(double v) { setField(3, v); }
-  bool hasRNum() => hasField(3);
+  double get rNum => $_get(2, 3, null);
+  void set rNum(double v) { $_setDouble(2, 3, v); }
+  bool hasRNum() => $_has(2, 3);
   void clearRNum() => clearField(3);
 
-  String get rStr => getField(4);
-  void set rStr(String v) { setField(4, v); }
-  bool hasRStr() => hasField(4);
+  String get rStr => $_get(3, 4, '');
+  void set rStr(String v) { $_setString(3, 4, v); }
+  bool hasRStr() => $_has(3, 4);
   void clearRStr() => clearField(4);
 
-  List<Datum> get rArray => getField(5);
+  List<Datum> get rArray => $_get(4, 5, null);
 
-  List<Datum_AssocPair> get rObject => getField(6);
+  List<Datum_AssocPair> get rObject => $_get(5, 6, null);
 }
+
+class _ReadonlyDatum extends Datum with ReadonlyMessageMixin {}
 
 class Term_TermType extends ProtobufEnum {
   static const Term_TermType DATUM = const Term_TermType._(1, 'DATUM');
@@ -434,6 +581,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType CONTAINS = const Term_TermType._(93, 'CONTAINS');
   static const Term_TermType GET_FIELD = const Term_TermType._(31, 'GET_FIELD');
   static const Term_TermType KEYS = const Term_TermType._(94, 'KEYS');
+  static const Term_TermType VALUES = const Term_TermType._(186, 'VALUES');
   static const Term_TermType OBJECT = const Term_TermType._(143, 'OBJECT');
   static const Term_TermType HAS_FIELDS = const Term_TermType._(32, 'HAS_FIELDS');
   static const Term_TermType WITH_FIELDS = const Term_TermType._(96, 'WITH_FIELDS');
@@ -444,6 +592,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType BETWEEN = const Term_TermType._(182, 'BETWEEN');
   static const Term_TermType REDUCE = const Term_TermType._(37, 'REDUCE');
   static const Term_TermType MAP = const Term_TermType._(38, 'MAP');
+  static const Term_TermType FOLD = const Term_TermType._(187, 'FOLD');
   static const Term_TermType FILTER = const Term_TermType._(39, 'FILTER');
   static const Term_TermType CONCAT_MAP = const Term_TermType._(40, 'CONCAT_MAP');
   static const Term_TermType ORDER_BY = const Term_TermType._(41, 'ORDER_BY');
@@ -480,6 +629,7 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType RECONFIGURE = const Term_TermType._(176, 'RECONFIGURE');
   static const Term_TermType REBALANCE = const Term_TermType._(179, 'REBALANCE');
   static const Term_TermType SYNC = const Term_TermType._(138, 'SYNC');
+  static const Term_TermType GRANT = const Term_TermType._(188, 'GRANT');
   static const Term_TermType INDEX_CREATE = const Term_TermType._(75, 'INDEX_CREATE');
   static const Term_TermType INDEX_DROP = const Term_TermType._(76, 'INDEX_DROP');
   static const Term_TermType INDEX_LIST = const Term_TermType._(77, 'INDEX_LIST');
@@ -611,6 +761,7 @@ class Term_TermType extends ProtobufEnum {
     CONTAINS,
     GET_FIELD,
     KEYS,
+    VALUES,
     OBJECT,
     HAS_FIELDS,
     WITH_FIELDS,
@@ -621,6 +772,7 @@ class Term_TermType extends ProtobufEnum {
     BETWEEN,
     REDUCE,
     MAP,
+    FOLD,
     FILTER,
     CONCAT_MAP,
     ORDER_BY,
@@ -657,6 +809,7 @@ class Term_TermType extends ProtobufEnum {
     RECONFIGURE,
     REBALANCE,
     SYNC,
+    GRANT,
     INDEX_CREATE,
     INDEX_DROP,
     INDEX_LIST,
@@ -746,16 +899,20 @@ class Term_TermType extends ProtobufEnum {
     MAXVAL,
   ];
 
-  static final Map<int, Term_TermType> _byValue = ProtobufEnum.initByValue(values);
-  static Term_TermType valueOf(int value) => _byValue[value];
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static Term_TermType valueOf(int value) => _byValue[value] as Term_TermType;
+  static void $checkItem(Term_TermType v) {
+    if (v is !Term_TermType) checkItemFailed(v, 'Term_TermType');
+  }
 
   const Term_TermType._(int v, String n) : super(v, n);
 }
 
 class Term_AssocPair extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Term_AssocPair')
-    ..a(1, 'key', GeneratedMessage.OS)
-    ..a(2, 'val', GeneratedMessage.OM, Term.create, Term.create)
+    ..a/*<String>*/(1, 'key', PbFieldType.OS)
+    ..a/*<Term>*/(2, 'val', PbFieldType.OM, Term.getDefault, Term.create)
+    ..hasRequiredFields = false
   ;
 
   Term_AssocPair() : super();
@@ -765,25 +922,35 @@ class Term_AssocPair extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Term_AssocPair create() => new Term_AssocPair();
   static PbList<Term_AssocPair> createRepeated() => new PbList<Term_AssocPair>();
+  static Term_AssocPair getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyTerm_AssocPair();
+    return _defaultInstance;
+  }
+  static Term_AssocPair _defaultInstance;
+  static void $checkItem(Term_AssocPair v) {
+    if (v is !Term_AssocPair) checkItemFailed(v, 'Term_AssocPair');
+  }
 
-  String get key => getField(1);
-  void set key(String v) { setField(1, v); }
-  bool hasKey() => hasField(1);
+  String get key => $_get(0, 1, '');
+  void set key(String v) { $_setString(0, 1, v); }
+  bool hasKey() => $_has(0, 1);
   void clearKey() => clearField(1);
 
-  Term get val => getField(2);
+  Term get val => $_get(1, 2, null);
   void set val(Term v) { setField(2, v); }
-  bool hasVal() => hasField(2);
+  bool hasVal() => $_has(1, 2);
   void clearVal() => clearField(2);
 }
 
+class _ReadonlyTerm_AssocPair extends Term_AssocPair with ReadonlyMessageMixin {}
+
 class Term extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('Term')
-    ..e(1, 'type', GeneratedMessage.OE, Term_TermType.DATUM, (var v) => Term_TermType.valueOf(v))
-    ..a(2, 'datum', GeneratedMessage.OM, Datum.create, Datum.create)
-    ..m(3, 'args', Term.create, Term.createRepeated)
-    ..m(4, 'optargs', Term_AssocPair.create, Term_AssocPair.createRepeated)
-    ..hasExtensions = true
+    ..e/*<Term_TermType>*/(1, 'type', PbFieldType.OE, Term_TermType.DATUM, Term_TermType.valueOf)
+    ..a/*<Datum>*/(2, 'datum', PbFieldType.OM, Datum.getDefault, Datum.create)
+    ..pp/*<Term>*/(3, 'args', PbFieldType.PM, Term.$checkItem, Term.create)
+    ..pp/*<Term_AssocPair>*/(4, 'optargs', PbFieldType.PM, Term_AssocPair.$checkItem, Term_AssocPair.create)
+    ..hasRequiredFields = false
   ;
 
   Term() : super();
@@ -793,19 +960,403 @@ class Term extends GeneratedMessage {
   BuilderInfo get info_ => _i;
   static Term create() => new Term();
   static PbList<Term> createRepeated() => new PbList<Term>();
+  static Term getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyTerm();
+    return _defaultInstance;
+  }
+  static Term _defaultInstance;
+  static void $checkItem(Term v) {
+    if (v is !Term) checkItemFailed(v, 'Term');
+  }
 
-  Term_TermType get type => getField(1);
+  Term_TermType get type => $_get(0, 1, null);
   void set type(Term_TermType v) { setField(1, v); }
-  bool hasType() => hasField(1);
+  bool hasType() => $_has(0, 1);
   void clearType() => clearField(1);
 
-  Datum get datum => getField(2);
+  Datum get datum => $_get(1, 2, null);
   void set datum(Datum v) { setField(2, v); }
-  bool hasDatum() => hasField(2);
+  bool hasDatum() => $_has(1, 2);
   void clearDatum() => clearField(2);
 
-  List<Term> get args => getField(3);
+  List<Term> get args => $_get(2, 3, null);
 
-  List<Term_AssocPair> get optargs => getField(4);
+  List<Term_AssocPair> get optargs => $_get(3, 4, null);
 }
+
+class _ReadonlyTerm extends Term with ReadonlyMessageMixin {}
+
+const VersionDummy$json = const {
+  '1': 'VersionDummy',
+  '4': const [VersionDummy_Version$json, VersionDummy_Protocol$json],
+};
+
+const VersionDummy_Version$json = const {
+  '1': 'Version',
+  '2': const [
+    const {'1': 'V0_1', '2': 1063369270},
+    const {'1': 'V0_2', '2': 1915781601},
+    const {'1': 'V0_3', '2': 1601562686},
+    const {'1': 'V0_4', '2': 1074539808},
+    const {'1': 'V1_0', '2': 885177795},
+  ],
+};
+
+const VersionDummy_Protocol$json = const {
+  '1': 'Protocol',
+  '2': const [
+    const {'1': 'PROTOBUF', '2': 656407617},
+    const {'1': 'JSON', '2': 2120839367},
+  ],
+};
+
+const Query$json = const {
+  '1': 'Query',
+  '2': const [
+    const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.Query.QueryType'},
+    const {'1': 'query', '3': 2, '4': 1, '5': 11, '6': '.Term'},
+    const {'1': 'token', '3': 3, '4': 1, '5': 3},
+    const {'1': 'OBSOLETE_noreply', '3': 4, '4': 1, '5': 8, '7': 'false'},
+    const {'1': 'accepts_r_json', '3': 5, '4': 1, '5': 8, '7': 'false'},
+    const {'1': 'global_optargs', '3': 6, '4': 3, '5': 11, '6': '.Query.AssocPair'},
+  ],
+  '3': const [Query_AssocPair$json],
+  '4': const [Query_QueryType$json],
+};
+
+const Query_AssocPair$json = const {
+  '1': 'AssocPair',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 9},
+    const {'1': 'val', '3': 2, '4': 1, '5': 11, '6': '.Term'},
+  ],
+};
+
+const Query_QueryType$json = const {
+  '1': 'QueryType',
+  '2': const [
+    const {'1': 'START', '2': 1},
+    const {'1': 'CONTINUE', '2': 2},
+    const {'1': 'STOP', '2': 3},
+    const {'1': 'NOREPLY_WAIT', '2': 4},
+    const {'1': 'SERVER_INFO', '2': 5},
+  ],
+};
+
+const Frame$json = const {
+  '1': 'Frame',
+  '2': const [
+    const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.Frame.FrameType'},
+    const {'1': 'pos', '3': 2, '4': 1, '5': 3},
+    const {'1': 'opt', '3': 3, '4': 1, '5': 9},
+  ],
+  '4': const [Frame_FrameType$json],
+};
+
+const Frame_FrameType$json = const {
+  '1': 'FrameType',
+  '2': const [
+    const {'1': 'POS', '2': 1},
+    const {'1': 'OPT', '2': 2},
+  ],
+};
+
+const Backtrace$json = const {
+  '1': 'Backtrace',
+  '2': const [
+    const {'1': 'frames', '3': 1, '4': 3, '5': 11, '6': '.Frame'},
+  ],
+};
+
+const Response$json = const {
+  '1': 'Response',
+  '2': const [
+    const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.Response.ResponseType'},
+    const {'1': 'error_type', '3': 7, '4': 1, '5': 14, '6': '.Response.ErrorType'},
+    const {'1': 'notes', '3': 6, '4': 3, '5': 14, '6': '.Response.ResponseNote'},
+    const {'1': 'token', '3': 2, '4': 1, '5': 3},
+    const {'1': 'response', '3': 3, '4': 3, '5': 11, '6': '.Datum'},
+    const {'1': 'backtrace', '3': 4, '4': 1, '5': 11, '6': '.Backtrace'},
+    const {'1': 'profile', '3': 5, '4': 1, '5': 11, '6': '.Datum'},
+  ],
+  '4': const [Response_ResponseType$json, Response_ErrorType$json, Response_ResponseNote$json],
+};
+
+const Response_ResponseType$json = const {
+  '1': 'ResponseType',
+  '2': const [
+    const {'1': 'SUCCESS_ATOM', '2': 1},
+    const {'1': 'SUCCESS_SEQUENCE', '2': 2},
+    const {'1': 'SUCCESS_PARTIAL', '2': 3},
+    const {'1': 'WAIT_COMPLETE', '2': 4},
+    const {'1': 'SERVER_INFO', '2': 5},
+    const {'1': 'CLIENT_ERROR', '2': 16},
+    const {'1': 'COMPILE_ERROR', '2': 17},
+    const {'1': 'RUNTIME_ERROR', '2': 18},
+  ],
+};
+
+const Response_ErrorType$json = const {
+  '1': 'ErrorType',
+  '2': const [
+    const {'1': 'INTERNAL', '2': 1000000},
+    const {'1': 'RESOURCE_LIMIT', '2': 2000000},
+    const {'1': 'QUERY_LOGIC', '2': 3000000},
+    const {'1': 'NON_EXISTENCE', '2': 3100000},
+    const {'1': 'OP_FAILED', '2': 4100000},
+    const {'1': 'OP_INDETERMINATE', '2': 4200000},
+    const {'1': 'USER', '2': 5000000},
+    const {'1': 'PERMISSION_ERROR', '2': 6000000},
+  ],
+};
+
+const Response_ResponseNote$json = const {
+  '1': 'ResponseNote',
+  '2': const [
+    const {'1': 'SEQUENCE_FEED', '2': 1},
+    const {'1': 'ATOM_FEED', '2': 2},
+    const {'1': 'ORDER_BY_LIMIT_FEED', '2': 3},
+    const {'1': 'UNIONED_FEED', '2': 4},
+    const {'1': 'INCLUDES_STATES', '2': 5},
+  ],
+};
+
+const Datum$json = const {
+  '1': 'Datum',
+  '2': const [
+    const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.Datum.DatumType'},
+    const {'1': 'r_bool', '3': 2, '4': 1, '5': 8},
+    const {'1': 'r_num', '3': 3, '4': 1, '5': 1},
+    const {'1': 'r_str', '3': 4, '4': 1, '5': 9},
+    const {'1': 'r_array', '3': 5, '4': 3, '5': 11, '6': '.Datum'},
+    const {'1': 'r_object', '3': 6, '4': 3, '5': 11, '6': '.Datum.AssocPair'},
+  ],
+  '3': const [Datum_AssocPair$json],
+  '4': const [Datum_DatumType$json],
+};
+
+const Datum_AssocPair$json = const {
+  '1': 'AssocPair',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 9},
+    const {'1': 'val', '3': 2, '4': 1, '5': 11, '6': '.Datum'},
+  ],
+};
+
+const Datum_DatumType$json = const {
+  '1': 'DatumType',
+  '2': const [
+    const {'1': 'R_NULL', '2': 1},
+    const {'1': 'R_BOOL', '2': 2},
+    const {'1': 'R_NUM', '2': 3},
+    const {'1': 'R_STR', '2': 4},
+    const {'1': 'R_ARRAY', '2': 5},
+    const {'1': 'R_OBJECT', '2': 6},
+    const {'1': 'R_JSON', '2': 7},
+  ],
+};
+
+const Term$json = const {
+  '1': 'Term',
+  '2': const [
+    const {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.Term.TermType'},
+    const {'1': 'datum', '3': 2, '4': 1, '5': 11, '6': '.Datum'},
+    const {'1': 'args', '3': 3, '4': 3, '5': 11, '6': '.Term'},
+    const {'1': 'optargs', '3': 4, '4': 3, '5': 11, '6': '.Term.AssocPair'},
+  ],
+  '3': const [Term_AssocPair$json],
+  '4': const [Term_TermType$json],
+};
+
+const Term_AssocPair$json = const {
+  '1': 'AssocPair',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 9},
+    const {'1': 'val', '3': 2, '4': 1, '5': 11, '6': '.Term'},
+  ],
+};
+
+const Term_TermType$json = const {
+  '1': 'TermType',
+  '2': const [
+    const {'1': 'DATUM', '2': 1},
+    const {'1': 'MAKE_ARRAY', '2': 2},
+    const {'1': 'MAKE_OBJ', '2': 3},
+    const {'1': 'VAR', '2': 10},
+    const {'1': 'JAVASCRIPT', '2': 11},
+    const {'1': 'UUID', '2': 169},
+    const {'1': 'HTTP', '2': 153},
+    const {'1': 'ERROR', '2': 12},
+    const {'1': 'IMPLICIT_VAR', '2': 13},
+    const {'1': 'DB', '2': 14},
+    const {'1': 'TABLE', '2': 15},
+    const {'1': 'GET', '2': 16},
+    const {'1': 'GET_ALL', '2': 78},
+    const {'1': 'EQ', '2': 17},
+    const {'1': 'NE', '2': 18},
+    const {'1': 'LT', '2': 19},
+    const {'1': 'LE', '2': 20},
+    const {'1': 'GT', '2': 21},
+    const {'1': 'GE', '2': 22},
+    const {'1': 'NOT', '2': 23},
+    const {'1': 'ADD', '2': 24},
+    const {'1': 'SUB', '2': 25},
+    const {'1': 'MUL', '2': 26},
+    const {'1': 'DIV', '2': 27},
+    const {'1': 'MOD', '2': 28},
+    const {'1': 'FLOOR', '2': 183},
+    const {'1': 'CEIL', '2': 184},
+    const {'1': 'ROUND', '2': 185},
+    const {'1': 'APPEND', '2': 29},
+    const {'1': 'PREPEND', '2': 80},
+    const {'1': 'DIFFERENCE', '2': 95},
+    const {'1': 'SET_INSERT', '2': 88},
+    const {'1': 'SET_INTERSECTION', '2': 89},
+    const {'1': 'SET_UNION', '2': 90},
+    const {'1': 'SET_DIFFERENCE', '2': 91},
+    const {'1': 'SLICE', '2': 30},
+    const {'1': 'SKIP', '2': 70},
+    const {'1': 'LIMIT', '2': 71},
+    const {'1': 'OFFSETS_OF', '2': 87},
+    const {'1': 'CONTAINS', '2': 93},
+    const {'1': 'GET_FIELD', '2': 31},
+    const {'1': 'KEYS', '2': 94},
+    const {'1': 'VALUES', '2': 186},
+    const {'1': 'OBJECT', '2': 143},
+    const {'1': 'HAS_FIELDS', '2': 32},
+    const {'1': 'WITH_FIELDS', '2': 96},
+    const {'1': 'PLUCK', '2': 33},
+    const {'1': 'WITHOUT', '2': 34},
+    const {'1': 'MERGE', '2': 35},
+    const {'1': 'BETWEEN_DEPRECATED', '2': 36},
+    const {'1': 'BETWEEN', '2': 182},
+    const {'1': 'REDUCE', '2': 37},
+    const {'1': 'MAP', '2': 38},
+    const {'1': 'FOLD', '2': 187},
+    const {'1': 'FILTER', '2': 39},
+    const {'1': 'CONCAT_MAP', '2': 40},
+    const {'1': 'ORDER_BY', '2': 41},
+    const {'1': 'DISTINCT', '2': 42},
+    const {'1': 'COUNT', '2': 43},
+    const {'1': 'IS_EMPTY', '2': 86},
+    const {'1': 'UNION', '2': 44},
+    const {'1': 'NTH', '2': 45},
+    const {'1': 'BRACKET', '2': 170},
+    const {'1': 'INNER_JOIN', '2': 48},
+    const {'1': 'OUTER_JOIN', '2': 49},
+    const {'1': 'EQ_JOIN', '2': 50},
+    const {'1': 'ZIP', '2': 72},
+    const {'1': 'RANGE', '2': 173},
+    const {'1': 'INSERT_AT', '2': 82},
+    const {'1': 'DELETE_AT', '2': 83},
+    const {'1': 'CHANGE_AT', '2': 84},
+    const {'1': 'SPLICE_AT', '2': 85},
+    const {'1': 'COERCE_TO', '2': 51},
+    const {'1': 'TYPE_OF', '2': 52},
+    const {'1': 'UPDATE', '2': 53},
+    const {'1': 'DELETE', '2': 54},
+    const {'1': 'REPLACE', '2': 55},
+    const {'1': 'INSERT', '2': 56},
+    const {'1': 'DB_CREATE', '2': 57},
+    const {'1': 'DB_DROP', '2': 58},
+    const {'1': 'DB_LIST', '2': 59},
+    const {'1': 'TABLE_CREATE', '2': 60},
+    const {'1': 'TABLE_DROP', '2': 61},
+    const {'1': 'TABLE_LIST', '2': 62},
+    const {'1': 'CONFIG', '2': 174},
+    const {'1': 'STATUS', '2': 175},
+    const {'1': 'WAIT', '2': 177},
+    const {'1': 'RECONFIGURE', '2': 176},
+    const {'1': 'REBALANCE', '2': 179},
+    const {'1': 'SYNC', '2': 138},
+    const {'1': 'GRANT', '2': 188},
+    const {'1': 'INDEX_CREATE', '2': 75},
+    const {'1': 'INDEX_DROP', '2': 76},
+    const {'1': 'INDEX_LIST', '2': 77},
+    const {'1': 'INDEX_STATUS', '2': 139},
+    const {'1': 'INDEX_WAIT', '2': 140},
+    const {'1': 'INDEX_RENAME', '2': 156},
+    const {'1': 'FUNCALL', '2': 64},
+    const {'1': 'BRANCH', '2': 65},
+    const {'1': 'OR', '2': 66},
+    const {'1': 'AND', '2': 67},
+    const {'1': 'FOR_EACH', '2': 68},
+    const {'1': 'FUNC', '2': 69},
+    const {'1': 'ASC', '2': 73},
+    const {'1': 'DESC', '2': 74},
+    const {'1': 'INFO', '2': 79},
+    const {'1': 'MATCH', '2': 97},
+    const {'1': 'UPCASE', '2': 141},
+    const {'1': 'DOWNCASE', '2': 142},
+    const {'1': 'SAMPLE', '2': 81},
+    const {'1': 'DEFAULT', '2': 92},
+    const {'1': 'JSON', '2': 98},
+    const {'1': 'TO_JSON_STRING', '2': 172},
+    const {'1': 'ISO8601', '2': 99},
+    const {'1': 'TO_ISO8601', '2': 100},
+    const {'1': 'EPOCH_TIME', '2': 101},
+    const {'1': 'TO_EPOCH_TIME', '2': 102},
+    const {'1': 'NOW', '2': 103},
+    const {'1': 'IN_TIMEZONE', '2': 104},
+    const {'1': 'DURING', '2': 105},
+    const {'1': 'DATE', '2': 106},
+    const {'1': 'TIME_OF_DAY', '2': 126},
+    const {'1': 'TIMEZONE', '2': 127},
+    const {'1': 'YEAR', '2': 128},
+    const {'1': 'MONTH', '2': 129},
+    const {'1': 'DAY', '2': 130},
+    const {'1': 'DAY_OF_WEEK', '2': 131},
+    const {'1': 'DAY_OF_YEAR', '2': 132},
+    const {'1': 'HOURS', '2': 133},
+    const {'1': 'MINUTES', '2': 134},
+    const {'1': 'SECONDS', '2': 135},
+    const {'1': 'TIME', '2': 136},
+    const {'1': 'MONDAY', '2': 107},
+    const {'1': 'TUESDAY', '2': 108},
+    const {'1': 'WEDNESDAY', '2': 109},
+    const {'1': 'THURSDAY', '2': 110},
+    const {'1': 'FRIDAY', '2': 111},
+    const {'1': 'SATURDAY', '2': 112},
+    const {'1': 'SUNDAY', '2': 113},
+    const {'1': 'JANUARY', '2': 114},
+    const {'1': 'FEBRUARY', '2': 115},
+    const {'1': 'MARCH', '2': 116},
+    const {'1': 'APRIL', '2': 117},
+    const {'1': 'MAY', '2': 118},
+    const {'1': 'JUNE', '2': 119},
+    const {'1': 'JULY', '2': 120},
+    const {'1': 'AUGUST', '2': 121},
+    const {'1': 'SEPTEMBER', '2': 122},
+    const {'1': 'OCTOBER', '2': 123},
+    const {'1': 'NOVEMBER', '2': 124},
+    const {'1': 'DECEMBER', '2': 125},
+    const {'1': 'LITERAL', '2': 137},
+    const {'1': 'GROUP', '2': 144},
+    const {'1': 'SUM', '2': 145},
+    const {'1': 'AVG', '2': 146},
+    const {'1': 'MIN', '2': 147},
+    const {'1': 'MAX', '2': 148},
+    const {'1': 'SPLIT', '2': 149},
+    const {'1': 'UNGROUP', '2': 150},
+    const {'1': 'RANDOM', '2': 151},
+    const {'1': 'CHANGES', '2': 152},
+    const {'1': 'ARGS', '2': 154},
+    const {'1': 'BINARY', '2': 155},
+    const {'1': 'GEOJSON', '2': 157},
+    const {'1': 'TO_GEOJSON', '2': 158},
+    const {'1': 'POINT', '2': 159},
+    const {'1': 'LINE', '2': 160},
+    const {'1': 'POLYGON', '2': 161},
+    const {'1': 'DISTANCE', '2': 162},
+    const {'1': 'INTERSECTS', '2': 163},
+    const {'1': 'INCLUDES', '2': 164},
+    const {'1': 'CIRCLE', '2': 165},
+    const {'1': 'GET_INTERSECTING', '2': 166},
+    const {'1': 'FILL', '2': 167},
+    const {'1': 'GET_NEAREST', '2': 168},
+    const {'1': 'POLYGON_SUB', '2': 171},
+    const {'1': 'MINVAL', '2': 180},
+    const {'1': 'MAXVAL', '2': 181},
+  ],
+};
 

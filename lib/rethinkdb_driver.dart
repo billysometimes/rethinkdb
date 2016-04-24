@@ -91,7 +91,21 @@ Time time(int year,[int month,int day,String timezone,int hour,int minute,num se
  * Create a time object from a Dart DateTime object.
  *
  */
-Time nativeTime(DateTime time) => new Time.nativeTime(time);
+Time nativeTime(DateTime val) => new Time(val.year,val.month,val.day,_formatTimeZoneOffset(val),val.hour,val.minute,val.second);
+
+String _formatTimeZoneOffset(DateTime val){
+
+  String tz = val.timeZoneOffset.inHours.toString();
+
+  if(!val.timeZoneOffset.inHours.isNegative)
+    tz = "+$tz";
+
+  if(tz.length == 2)
+    tz = tz.replaceRange(0,1,tz[0]+"0");
+
+  return tz;
+
+}
 
 /**
  * Create a time object based on an iso8601 date-time string (e.g. '2013-01-01T01:01:01+00:00').

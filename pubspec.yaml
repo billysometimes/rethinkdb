@@ -4,5 +4,7 @@ author: William Welch <billywelch@gmail.com>
 description: Dart driver for RethinkDB.
 homepage: https://github.com/billysometimes/rethinkdb
 documentation: https://github.com/billysometimes/rethinkdb
+environment:
+  sdk: ">=1.13.0 <2.0.0"
 dependencies:
   protobuf: "^0.5.1+2"

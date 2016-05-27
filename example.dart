@@ -628,5 +628,5 @@ exampleCommands(conn) {
   //r.uuid('foo').run(conn).then((response) => print(response));
 
   /**binary**/
-  r.binary("this data in binary").run(conn).then((response) => print(response));
+  //r.binary("this data in binary").run(conn).then((response) => print(response));
 }

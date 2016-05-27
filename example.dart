@@ -15,12 +15,6 @@ main() {
 }
 
 exampleCommands(conn) {
-  r
-      .expr({'a': 1, 'b': 2})
-      .values()
-      .run(conn)
-      .then((res) => print(res))
-      .catchError((err) => print('ok' + err));
   /**use() changes the default database on the connection**/
 
   //conn.use("app_db");
@@ -31,7 +25,12 @@ exampleCommands(conn) {
   //  print("wait complete");
   //});
 
-  //conn.close();
+  /** server() lists information about the rethinkdb server **/
+
+  //conn.server().then((serverInfo){
+  //  print(serverInfo);
+  //  conn.close();
+  //});
 
   /**addListener adds a listener to a close,connect,or error event**/
   //conn.addListener("close",()=>print("connection closed"));
@@ -382,6 +381,11 @@ exampleCommands(conn) {
   /**keys returns the keys for a row**/
 
   //r.table("animals").get("cheetah").keys().run(conn).then((response)=>print(response));
+
+  /**values returns the values for an object**/
+
+  //r.expr({'a':1,'b':2}).values().run(conn)
+  // .then((response)=>print(response));
 
   /**literal replace an object in an update instead of merging**/
 

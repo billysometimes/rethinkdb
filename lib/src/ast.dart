@@ -243,7 +243,7 @@ class RqlQuery {
   }
 
   _reql_type_binary_to_bytes(Map obj) {
-    return CryptoUtils.base64StringToBytes(obj['data']);
+    return BASE64.decode(obj['data']);
   }
 
   Update update(args, [options]) => new Update(this, _func_wrap(args), options);

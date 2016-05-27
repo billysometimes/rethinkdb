@@ -1329,7 +1329,7 @@ class Sample extends RqlMethodQuery {
 
 class Uuid extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.UUID;
-  Uuid() : super();
+  Uuid(str) : super(str == null ? [] : [str]);
 }
 
 class Json extends RqlTopLevelQuery {

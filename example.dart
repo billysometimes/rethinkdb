@@ -621,6 +621,12 @@ exampleCommands(conn) {
 
   /**for more information check out the rethinkdb javascript API.**/
 
+  /** uuid returns a uuid string**/
+  //r.uuid().run(conn).then((response) => print(response));
+
+  /**you can pass uuid a string and it will return the SHA-1 hash**/
+  //r.uuid('foo').run(conn).then((response) => print(response));
+
   /**binary**/
   //r.binary("this data in binary").run(conn).then((response)=>print(response));
 }

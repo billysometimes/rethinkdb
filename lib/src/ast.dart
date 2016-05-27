@@ -1661,7 +1661,7 @@ class _RqlAllOptions {
         options = ['default'];
         break;
       case p.Term_TermType.EQ_JOIN:
-        options = ['index'];
+        options = ['index', 'ordered'];
         break;
       case p.Term_TermType.SLICE:
         options = ['left_bound', 'right_bound'];

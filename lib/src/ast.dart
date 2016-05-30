@@ -445,7 +445,7 @@ class RqlQuery {
     return new Count(this, _func_wrap(filter));
   }
 
-  Union union(sequence) => new Union(this, sequence);
+  Union union(sequence, opts) => new Union(this, [sequence, opts]);
 
   InnerJoin innerJoin(otherSequence, [predicate]) =>
       new InnerJoin(this, otherSequence, predicate);
@@ -551,9 +551,7 @@ class RqlQuery {
 
       InstanceMirror im = reflect(this);
 
-      if (!options.isEmpty)
-        return im.invoke(methodName, [argsList, options]).reflectee;
-      return im.invoke(methodName, [argsList]).reflectee;
+      return im.invoke(methodName, [argsList, options]).reflectee;
     } else {
       throw new RqlDriverError(
           "${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
@@ -661,6 +659,12 @@ class Changes extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.CHANGES;
 
   Changes([arg, opts]) : super([arg], opts);
+}
+
+class Grant extends RqlMethodQuery {
+  p.Term_TermType tt = p.Term_TermType.GRANT;
+
+  Grant([scope, user, options]) : super([scope, user], options);
 }
 
 class Default extends RqlMethodQuery {
@@ -909,6 +913,8 @@ class DB extends RqlTopLevelQuery {
 
   Table table(String tableName, [Map options]) =>
       new Table.fromDB(this, tableName, options);
+
+  Grant grant(String user, [Map options]) => new Grant(this, user, options);
 }
 
 class FunCall extends RqlQuery {
@@ -935,6 +941,8 @@ class Table extends RqlQuery {
       : super([db, tableName], options);
 
   Insert insert(records, [options]) => new Insert(this, records, options);
+
+  Grant grant(user, [options]) => new Grant(this, records, options);
 
   IndexList indexList() => new IndexList(this);
 
@@ -1660,8 +1668,14 @@ class _RqlAllOptions {
       case p.Term_TermType.FILTER:
         options = ['default'];
         break;
+      case p.Term_TermType.CHANGES:
+        options = ['includeOffsets', 'includeTypes'];
+        break
       case p.Term_TermType.EQ_JOIN:
         options = ['index', 'ordered'];
+        break;
+      case p.Term_TermType.UNION:
+        options = ['interleave'];
         break;
       case p.Term_TermType.SLICE:
         options = ['left_bound', 'right_bound'];

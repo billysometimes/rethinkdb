@@ -327,6 +327,14 @@ class Connection {
     return _socket.address.address;
   }
 
+  clientPort() {
+    return _socket.port;
+  }
+
+  clientAddress() {
+    return _socket.address.address;
+  }
+
   noreplyWait() {
     RqlQuery query =
         new Query(p.Query_QueryType.NOREPLY_WAIT, _getToken(), null, null);

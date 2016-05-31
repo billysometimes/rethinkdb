@@ -1669,7 +1669,11 @@ class _RqlAllOptions {
         break;
       case p.Term_TermType.CHANGES:
         options = ['includeOffsets', 'includeTypes'];
+<<<<<<< HEAD
         break;
+=======
+        break
+>>>>>>> 6b5c043dfa47ff7a99403f595f8916792e7ddcc5
       case p.Term_TermType.EQ_JOIN:
         options = ['index', 'ordered'];
         break;

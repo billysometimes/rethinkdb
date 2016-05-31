@@ -7,7 +7,7 @@ main() {
 * connect(db: "Website_DB", port: 8000, host: "127.0.0.1", authKey: "some key").then(...)
 */
   r
-      .connect(db: "test", port: 28015)
+      .connect(db: "test", port: 28015, password: '')
       .then((connection) => exampleCommands(connection))
       .catchError((err) {
     print(err);
@@ -27,7 +27,7 @@ exampleCommands(conn) {
 
   /** server() lists information about the rethinkdb server **/
 
-  //conn.server().then((serverInfo){
+  //conn.server().then((serverInfo) {
   //  print(serverInfo);
   //  conn.close();
   //});

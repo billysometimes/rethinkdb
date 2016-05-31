@@ -7,6 +7,8 @@ import 'src/generated/ql2.pb.dart' as p;
 import 'dart:mirrors';
 import 'dart:convert';
 import 'dart:collection';
+import 'package:crypto/crypto.dart';
+import 'dart:math' as math;
 
 part 'src/ast.dart';
 part 'src/errors.dart';
@@ -20,14 +22,16 @@ class Rethinkdb {
  * host: the host to connect to (default localhost).
  * port: the port to connect on (default 28015).
  * db: the default database (defaults to test).
- * authKey: the authentication key (default none).
+ * user: the user name for the db (defaults to admin).
+ * password: password for the user (default "").
  */
   Future<Connection> connect(
           {String db: 'test',
           String host: "localhost",
           int port: 28015,
-          String authKey: ""}) =>
-      new Connection(db, host, port, authKey).reconnect();
+          String user: "admin",
+          String password: ""}) =>
+      new Connection(db, host, port, user, password).reconnect();
 
 /**
  *Reference a database.This command can be chained with other commands to do further processing on the data.
@@ -121,8 +125,8 @@ class Rethinkdb {
  * If you pass an ISO 8601 date-time without a time zone, you must specify the time zone with the optarg default_timezone.
  *
  */
-  RqlISO8601 ISO8601(String stringTime, [default_time_zone = "Z"]) =>
-      new RqlISO8601(stringTime, default_time_zone);
+  RqlISO8601 ISO8601(String stringTime, [defaultTimeZone = "Z"]) =>
+      new RqlISO8601(stringTime, defaultTimeZone);
 
 /**
  * Create a time object based on seconds since epoch.

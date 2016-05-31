@@ -8,3 +8,4 @@ environment:
   sdk: ">=1.13.0 <2.0.0"
 dependencies:
   protobuf: "^0.5.1+2"
+  crypto: "^1.1.1"

@@ -6,7 +6,7 @@ class Cursor extends Stream {
   Map _opts;
   int _outstandingRequests = 0;
   bool _endFlag = false;
-  StreamController _s = new StreamController<Map>();
+  StreamController _s = new StreamController();
 
   Cursor(Connection this._conn, Query this._query, Map this._opts);
 

@@ -57,6 +57,16 @@ class Rethinkdb {
  */
   DbList dbList() => new DbList();
 
+  Range range([start, end]) {
+    if (start == null) {
+      return new Range.asStream();
+    } else if (end == null) {
+      return new Range(start);
+    } else {
+      return new Range.withStart(start, end);
+    }
+  }
+
 /**
  * Select all documents in a table. This command can be chained with other commands to do further processing on the data.
  */

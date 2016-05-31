@@ -357,6 +357,9 @@ class RqlQuery {
   Slice slice(int start, [end, Map options]) =>
       new Slice(this, start, end, options);
 
+  Fold fold(base, function, [options]) =>
+      new Fold(this, base, function, options);
+
   Skip skip(int i) => new Skip(this, i);
 
   Limit limit(int i) => new Limit(this, i);
@@ -658,6 +661,12 @@ class Changes extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.CHANGES;
 
   Changes([arg, opts]) : super([arg], opts);
+}
+
+class Fold extends RqlMethodQuery {
+  p.Term_TermType tt = p.Term_TermType.FOLD;
+
+  Fold(seq, base, func, [opts]) : super([seq, base, func], opts);
 }
 
 class Grant extends RqlMethodQuery {
@@ -1206,6 +1215,16 @@ class DbList extends RqlTopLevelQuery {
   DbList() : super();
 }
 
+class Range extends RqlTopLevelQuery {
+  p.Term_TermType tt = p.Term_TermType.RANGE;
+
+  Range(end) : super([end]);
+
+  Range.asStream() : super([]);
+
+  Range.withStart(start, end) : super([start, end]);
+}
+
 class TableCreate extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.TABLE_CREATE;
 
@@ -1669,11 +1688,7 @@ class _RqlAllOptions {
         break;
       case p.Term_TermType.CHANGES:
         options = ['includeOffsets', 'includeTypes'];
-<<<<<<< HEAD
         break;
-=======
-        break
->>>>>>> 6b5c043dfa47ff7a99403f595f8916792e7ddcc5
       case p.Term_TermType.EQ_JOIN:
         options = ['index', 'ordered'];
         break;

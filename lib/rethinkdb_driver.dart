@@ -30,8 +30,9 @@ class Rethinkdb {
           String host: "localhost",
           int port: 28015,
           String user: "admin",
-          String password: ""}) =>
-      new Connection(db, host, port, user, password).reconnect();
+          String password: "",
+          Map ssl: null}) =>
+      new Connection(db, host, port, user, password, ssl).reconnect();
 
 /**
  *Reference a database.This command can be chained with other commands to do further processing on the data.
@@ -104,30 +105,25 @@ class Rethinkdb {
  * Create a time object for a specific time.
  */
   Time time(int year,
-          [int month,
+          int month,
           int day,
-          String timezone,
-          int hour,
-          int minute,
-          num second]) =>
-      new Time(year, month, day, timezone, hour, minute, second);
+          {String timezone: 'Z',
+          int hour: null,
+          int minute: null,
+          num second: null}){
+            if(second != null)
+              return new Time(new Args([year, month, day, hour, minute, second, timezone]));
+            else
+              return new Time(new Args([year, month, day, timezone]));
+
+          }
+
 
 /**
  * Create a time object from a Dart DateTime object.
  *
  */
-  Time nativeTime(DateTime val) => new Time(val.year, val.month, val.day,
-      _formatTimeZoneOffset(val), val.hour, val.minute, val.second);
-
-  String _formatTimeZoneOffset(DateTime val) {
-    String tz = val.timeZoneOffset.inHours.toString();
-
-    if (!val.timeZoneOffset.inHours.isNegative) tz = "+$tz";
-
-    if (tz.length == 2) tz = tz.replaceRange(0, 1, tz[0] + "0");
-
-    return tz;
-  }
+  Time nativeTime(DateTime val) => expr(val);
 
 /**
  * Create a time object based on an iso8601 date-time string (e.g. '2013-01-01T01:01:01+00:00').
@@ -310,6 +306,8 @@ class Rethinkdb {
         return new Or(args);
       case "map":
         return new RqlMap(args.sublist(0, args.length - 1), args.last);
+      case "branch":
+        return new Branch.fromArgs(new Args(args));
       default:
         throw new RqlDriverError("Unknown method $methodName");
     }

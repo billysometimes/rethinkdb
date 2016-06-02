@@ -33,3 +33,8 @@ or if you are a developer:
   ```
     import 'package:rethinkdb_driver/rethinkdb_driver.dart';
   ```
+
+  to run tests execute the following command from the project root:
+  ```
+  pub run test test/*  
+  ```

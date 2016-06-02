@@ -59,6 +59,7 @@ class Connection {
   int _protocolVersion = 0;
   String _clientFirstMessage;
   Digest _serverSignature;
+  Map _sslOpts;
 
   Completer _completer = new Completer();
 
@@ -70,8 +71,9 @@ class Connection {
 
   final Map<String, List> _listeners = new Map<String, List>();
 
+
   Connection(String this._db, String this._host, int this._port,
-      String this._user, String this._password);
+      String this._user, String this._password, Map this._sslOpts);
 
   get isClosed => _socket == null;
 
@@ -95,8 +97,15 @@ class Connection {
 
     if (_listeners["connect"] != null)
       _listeners["connect"].forEach((func) => func());
+    var _sock = Socket.connect(_host, _port);
 
-    Socket.connect(_host, _port).then((socket) {
+    if(_sslOpts != null && _sslOpts.containsKey('ca')){
+      SecurityContext context = new SecurityContext()
+    ..setTrustedCertificates(_sslOpts['ca']);
+      _sock = SecureSocket.connect(_host, _port, context: context);
+    }
+
+    _sock.then((socket) {
       _socket = socket;
       _socket.listen(_handleResponse);
 

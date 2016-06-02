@@ -9,3 +9,5 @@ environment:
 dependencies:
   protobuf: "^0.5.1+2"
   crypto: "^1.1.1"
+dev_dependencies:
+  test: "^0.12.13+4"

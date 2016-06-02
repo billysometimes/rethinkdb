@@ -42,6 +42,8 @@ class Cursor extends Stream {
     });
   }
 
+  Future close() => _s.close();
+  
   StreamSubscription listen(Function onData,
       {Function onError, Function onDone, bool cancelOnError}) {
     return _s.stream.listen(onData,

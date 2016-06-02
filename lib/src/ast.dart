@@ -49,8 +49,8 @@ class RqlQuery {
     } else if (val is Function)
       return new Func(val);
     else if (val is DateTime) {
-      return new Time(val.year, val.month, val.day, _formatTimeZoneOffset(val),
-          val.hour, val.minute, val.second);
+      return new Time(new Args([val.year, val.month, val.day,
+          val.hour, val.minute, val.second, _formatTimeZoneOffset(val)]));
     } else
       return new Datum(val);
   }
@@ -1244,7 +1244,7 @@ class TableDrop extends RqlMethodQuery {
 class TableList extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.TABLE_LIST;
 
-  TableList([db]) : super([db]);
+  TableList([db]) : super(db == null ? [] : [db]);
 }
 
 class IndexCreate extends RqlMethodQuery {
@@ -1297,6 +1297,7 @@ class Branch extends RqlTopLevelQuery {
 
   Branch(predicate, trueBranch, falseBranch)
       : super([predicate, trueBranch, falseBranch]);
+  Branch.fromArgs(Args args) : super([args]);
 }
 
 class Or extends RqlBoolOperQuery {
@@ -1456,9 +1457,20 @@ class Binary extends RqlTopLevelQuery {
 class Time extends RqlTopLevelQuery {
   p.Term_TermType tt = p.Term_TermType.TIME;
 
-  Time(int year, int month, int day, String timezone,
-      [int hour, int minute, num second])
-      : super([year, month, day, hour, minute, second, timezone]);
+  Time(Args args)
+      : super([args]);
+
+  Time.withHour(int year, int month, int day, String timezone,
+      int hour)
+      : super([year, month, day, hour, timezone]);
+
+  Time.withMinute(int year, int month, int day, String timezone,
+          int hour, int minute)
+          : super([year, month, day, hour, minute, timezone]);
+
+  Time.withSecond(int year, int month, int day, String timezone,
+                  int hour, int minute, int second)
+                  : super([year, month, day, hour, minute, second, timezone]);
 }
 
 class RqlISO8601 extends RqlTopLevelQuery {
@@ -1705,7 +1717,7 @@ class _RqlAllOptions {
         options = ['float'];
         break;
       case p.Term_TermType.ISO8601:
-        options = ['default_timezone', 'return_vals'];
+        options = ['default_timezone'];
         break;
       case p.Term_TermType.DURING:
         options = ['left_bound', 'right_bound'];

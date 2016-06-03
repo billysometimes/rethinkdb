@@ -894,6 +894,23 @@ main() {
           }));
     });
   });
+
+  test("remove the test database", () {
+    r.dbDrop(testDbName).run(connection).then((Map response) {
+      expect(response.keys.length, equals(3));
+      expect(response.containsKey('config_changes'), equals(true));
+      expect(response['dbs_dropped'], equals(1));
+      expect(response['tables_dropped'], equals(0));
+
+      Map config_changes = response['config_changes'][0];
+      expect(config_changes.keys.length, equals(2));
+      expect(config_changes['new_val'], equals(null));
+      Map old_val = config_changes['old_val'];
+      expect(old_val.containsKey('id'), equals(true));
+      expect(old_val.containsKey('name'), equals(true));
+      expect(old_val['name'], equals(testDbName));
+    });
+  });
   /**TO TEST:
     test with orderby r.asc(attr)
     test with orderby r.desc(attr)

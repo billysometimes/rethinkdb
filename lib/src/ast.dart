@@ -49,8 +49,15 @@ class RqlQuery {
     } else if (val is Function)
       return new Func(val);
     else if (val is DateTime) {
-      return new Time(new Args([val.year, val.month, val.day,
-          val.hour, val.minute, val.second, _formatTimeZoneOffset(val)]));
+      return new Time(new Args([
+        val.year,
+        val.month,
+        val.day,
+        val.hour,
+        val.minute,
+        val.second,
+        _formatTimeZoneOffset(val)
+      ]));
     } else
       return new Datum(val);
   }
@@ -654,7 +661,13 @@ class UserError extends RqlTopLevelQuery {
 class Random extends RqlTopLevelQuery {
   p.Term_TermType tt = p.Term_TermType.RANDOM;
 
-  Random([left, right, optargs]) : super([left, right], optargs);
+  Random(optargs) : super([], optargs == null ? {} : optargs);
+
+  Random.leftBound(left, optargs)
+      : super([left], optargs == null ? {} : optargs);
+
+  Random.rightBound(left, right, optargs)
+      : super([left, right], optargs == null ? {} : optargs);
 }
 
 class Changes extends RqlMethodQuery {
@@ -728,7 +741,7 @@ class Ge extends RqlBiCompareOperQuery {
 class Not extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.NOT;
 
-  Not(args) : super([args]);
+  Not([args]) : super([args]);
 }
 
 class Add extends RqlBiOperQuery {
@@ -1457,20 +1470,18 @@ class Binary extends RqlTopLevelQuery {
 class Time extends RqlTopLevelQuery {
   p.Term_TermType tt = p.Term_TermType.TIME;
 
-  Time(Args args)
-      : super([args]);
+  Time(Args args) : super([args]);
 
-  Time.withHour(int year, int month, int day, String timezone,
-      int hour)
+  Time.withHour(int year, int month, int day, String timezone, int hour)
       : super([year, month, day, hour, timezone]);
 
-  Time.withMinute(int year, int month, int day, String timezone,
-          int hour, int minute)
-          : super([year, month, day, hour, minute, timezone]);
+  Time.withMinute(
+      int year, int month, int day, String timezone, int hour, int minute)
+      : super([year, month, day, hour, minute, timezone]);
 
-  Time.withSecond(int year, int month, int day, String timezone,
-                  int hour, int minute, int second)
-                  : super([year, month, day, hour, minute, second, timezone]);
+  Time.withSecond(int year, int month, int day, String timezone, int hour,
+      int minute, int second)
+      : super([year, month, day, hour, minute, second, timezone]);
 }
 
 class RqlISO8601 extends RqlTopLevelQuery {

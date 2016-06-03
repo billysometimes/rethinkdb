@@ -58,6 +58,10 @@ class Rethinkdb {
  */
   DbList dbList() => new DbList();
 
+/**
+ * Returns a rang bewteen the start and end values. If no start or
+ * end are specified, an 'infinite' stream will be returned.
+ */
   Range range([start, end]) {
     if (start == null) {
       return new Range.asStream();
@@ -104,20 +108,17 @@ class Rethinkdb {
 /**
  * Create a time object for a specific time.
  */
-  Time time(int year,
-          int month,
-          int day,
-          {String timezone: 'Z',
-          int hour: null,
-          int minute: null,
-          num second: null}){
-            if(second != null)
-              return new Time(new Args([year, month, day, hour, minute, second, timezone]));
-            else
-              return new Time(new Args([year, month, day, timezone]));
-
-          }
-
+  Time time(int year, int month, int day,
+      {String timezone: 'Z',
+      int hour: null,
+      int minute: null,
+      num second: null}) {
+    if (second != null)
+      return new Time(
+          new Args([year, month, day, hour, minute, second, timezone]));
+    else
+      return new Time(new Args([year, month, day, timezone]));
+  }
 
 /**
  * Create a time object from a Dart DateTime object.
@@ -174,19 +175,19 @@ class Rethinkdb {
  */
   Json json(String json) => new Json(json, {});
 
-/**
- * Count the total size of the group.
- */
+  /**
+   * Count the total size of the group.
+   */
   Map count = {"COUNT": true};
 
-/**
- * Compute the sum of the given field in the group.
- */
+  /**
+   * Compute the sum of the given field in the group.
+   */
   Map sum(String attr) => {'SUM': attr};
 
-/**
- * Compute the average value of the given attribute for the group.
- */
+  /**
+   * Compute the average value of the given attribute for the group.
+   */
   Map avg(String attr) => {"AVG": attr};
 
 /**
@@ -213,13 +214,25 @@ class Rethinkdb {
 /**
  * Generates a random number between two bounds
  */
-  Random random([left, right, options]) => new Random(left, right, options);
+  Random random([left, right, options]) {
+    if (right != null)
+      return new Random.rightBound(left, right, options);
+    else if (left != null)
+      return new Random.leftBound(left, options);
+    else
+      return new Random(options);
+  }
 
 /**
  * Returns logical inverse of the arguments given
  */
-  Not not(args) => new Not(args);
+  Not not([value]) => new Not(value == null ? true : value);
 
+/**
+ * Executes the mappingFunction for each item in a sequence or array
+ * and returns the transformed array. multiple sequences and arrays
+ * may be passed
+ */
   RqlMap map(seq, mappingFunction) => new RqlMap([seq], mappingFunction);
 
 /**
@@ -233,23 +246,9 @@ class Rethinkdb {
   Or or(obj1, obj2) => new Or([obj1, obj2]);
 
 /**
- * Returns the type of the value
- */
-
-/**
  * Replace an object in a field instead of merging it with an existing object in a [merge] or [update] operation.
  */
   Literal literal(args) => new Literal(args);
-
-/**
- * change the string to uppercase
- */
-  Upcase upcase(String str) => new Upcase(str);
-
-  /**
-  * Change a string to lowercase
-  */
-  Downcase downcase(String str) => new Downcase(str);
 
 /**
  * Convert native dart object into a RqlObject

@@ -71,7 +71,6 @@ class Connection {
 
   final Map<String, List> _listeners = new Map<String, List>();
 
-
   Connection(String this._db, String this._host, int this._port,
       String this._user, String this._password, Map this._sslOpts);
 
@@ -99,9 +98,9 @@ class Connection {
       _listeners["connect"].forEach((func) => func());
     var _sock = Socket.connect(_host, _port);
 
-    if(_sslOpts != null && _sslOpts.containsKey('ca')){
+    if (_sslOpts != null && _sslOpts.containsKey('ca')) {
       SecurityContext context = new SecurityContext()
-    ..setTrustedCertificates(_sslOpts['ca']);
+        ..setTrustedCertificates(_sslOpts['ca']);
       _sock = SecureSocket.connect(_host, _port, context: context);
     }
 

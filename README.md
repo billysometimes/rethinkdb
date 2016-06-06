@@ -37,6 +37,8 @@ or if you are a developer:
   ```
 
   to run tests execute the following command from the project root:
+  **warning: tests are run against a live database, but they do attempt to
+  clean up after themselves**
   ```
-  pub run test test/*  
+  pub run test  
   ```

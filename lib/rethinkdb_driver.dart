@@ -267,6 +267,12 @@ class Rethinkdb {
       new Circle(point, radius, options);
 
 /**
+ * Compute the distance between a point and a geometry object
+ */
+
+Distance distance(geo1, geo2, [Map options]) => new Distance(geo1, geo2, options);
+
+/**
  * Construct a geometric line
  */
   Line line(point1, point2) => new Line([point1, point2]);

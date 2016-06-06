@@ -523,7 +523,7 @@ class RqlQuery {
 
   Fill fill() => new Fill(this);
 
-  ToGeoJson toGeojson(geo, [Map options]) => new ToGeoJson(this);
+  ToGeoJson toGeojson() => new ToGeoJson(this);
 
   GetIntersecting getIntersecting(geo, [Map options]) =>
       new GetIntersecting(this, geo, options);

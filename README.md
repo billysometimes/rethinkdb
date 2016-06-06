@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/billysometimes/rethinkdb.svg?branch=adding-unit-tests)](https://travis-ci.org/billysometimes/rethinkdb)
+
 Dart RethinkDB Driver
 =========
 

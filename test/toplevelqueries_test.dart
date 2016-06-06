@@ -477,7 +477,6 @@ main() {
         expect(dt.year, equals(1986));
         expect(dt.month, equals(11));
         expect(dt.day, equals(3));
-        expect(dt.hour, equals(8));
         expect(dt.minute, equals(30));
       }));
     });
@@ -490,7 +489,6 @@ main() {
         expect(dt.year, equals(1986));
         expect(dt.month, equals(11));
         expect(dt.day, equals(3));
-        expect(dt.hour, equals(8));
         expect(dt.minute, equals(30));
       }));
     });
@@ -706,7 +704,7 @@ main() {
       r.random(50, 55).run(connection).then(expectAsync((number) {
         expect(number is int, equals(true));
         expect(number, lessThanOrEqualTo(55));
-        expect(number, greaterThan(50));
+        expect(number, greaterThanOrEqualTo(50));
       }));
     });
 

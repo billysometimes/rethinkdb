@@ -686,17 +686,17 @@ main() {
     test("should generate a random number if no parameters are provided", () {
       r.random().run(connection).then(expectAsync((number) {
         expect(number is double, equals(true));
-        expect(number, lessThan(1));
-        expect(number, greaterThan(0));
+        expect(number, lessThanOrEqualTo(1));
+        expect(number, greaterThanOrEqualTo(0));
       }));
     });
 
-    test("should generate a random int no greater than the single argument",
+    test("should generate a positive random int no greater than the single argument",
         () {
       r.random(50).run(connection).then(expectAsync((number) {
         expect(number is int, equals(true));
         expect(number, lessThanOrEqualTo(50));
-        expect(number, greaterThan(0));
+        expect(number, greaterThanOrEqualTo(0));
       }));
     });
 

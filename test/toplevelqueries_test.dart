@@ -714,8 +714,8 @@ main() {
           .run(connection)
           .then(expectAsync((number) {
             expect(number is double, equals(true));
-            expect(number, lessThan(55));
-            expect(number, greaterThan(50));
+            expect(number, lessThanOrEqualTo(55));
+            expect(number, greaterThanOrEqualTo(50));
           }));
     });
   });

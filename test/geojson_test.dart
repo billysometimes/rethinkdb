@@ -156,7 +156,7 @@ main() {
       }));
   });
 
-  test("should return false if a geometry includes some other geometry",(){
+  test("should return false if a geometry does not include some other geometry",(){
     var point1 = r.point(-0,0);
     var point2 = r.point(-100,90);
     r.circle(point1, 1).includes(point2).run(connection).then(expectAsync((bool doesInclude){
@@ -175,6 +175,37 @@ main() {
     })).catchError((err)=>print(err.message));
   });
 });
+
+group("intersects command -> ",(){
+  test("should return true if a geometry intersects some other geometry",(){
+    Point point1 = r.point(-117.220406,32.719464);
+    Line line = r.line(r.point(-117.206201,32.725186), r.point(0,1));
+    r.circle(point1, 2000).intersects(line).run(connection).then(expectAsync((bool doesIntersect){
+      expect(doesIntersect, equals(true));
+    }));
+  });
+
+  test("should return false if a geometry does not intersect some other geometry",(){
+    Point point1 = r.point(-117.220406,32.719464);
+    Line line = r.line(r.point(20,20), r.point(0,1));
+    r.circle(point1, 1).intersects(line).run(connection).then(expectAsync((bool doesIntersect){
+      expect(doesIntersect, equals(false));
+    }));
+  });
+
+  test("should filter a sequence to only contain items that intersect some other geometry",(){
+    var point1 = r.point(0,0);
+    var point2 = r.point(33,30);
+    var point3 = r.point(-17,3);
+    var point4 = r.point(101,90);
+    var point5 = r.point(-100,90);
+    Line line = r.line(r.point(0,0),r.point(20,20));
+    r.expr([r.circle(point1, 2),r.circle(point2,2), r.circle(point3,2),r.circle(point4,2)]).intersects(point5).run(connection).then(expectAsync((List intersecting){
+      expect(intersecting.length == 1, equals(true));
+    })).catchError((err)=>print(err.message));
+  });
+});
+
 }
 //TODO on line tests test fill
 //TODO make a table to test getIntersecting and getNearest

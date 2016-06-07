@@ -535,7 +535,7 @@ class RqlQuery {
 
   Intersects intersects(geo) => new Intersects(this, geo);
 
-  PolygonSub polygonsub(Polygon poly) => new PolygonSub(this, poly);
+  PolygonSub polygonSub(var poly) => new PolygonSub(this, poly);
 
   Config config() => new Config(this);
 
@@ -1628,7 +1628,7 @@ class Polygon extends RqlTopLevelQuery {
 class PolygonSub extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.POLYGON_SUB;
 
-  PolygonSub(Polygon poly1, Polygon poly2) : super([poly1, poly2]);
+  PolygonSub(var poly1, var poly2) : super([poly1, poly2]);
 }
 
 class Config extends RqlMethodQuery {

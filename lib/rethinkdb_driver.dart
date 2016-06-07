@@ -285,7 +285,7 @@ Distance distance(geo1, geo2, [Map options]) => new Distance(geo1, geo2, options
 /**
  * Construct a geometric polygon
  */
-  Polygon polygon(point1, point2) => new Polygon([point1, point2]);
+  Polygon polygon(point1, point2, point3) => new Polygon([point1, point2, point3]);
 
 /**
  * Encapsulate binary data within a query.

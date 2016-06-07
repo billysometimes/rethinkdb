@@ -19,10 +19,10 @@ main() {
       connection.close();
   });
   group("circle command -> ",(){
+    int long = -90;
+    int lat = 0;
+    int rad = 5;
     test("should create a polygon given an array containing longitude and latitude and also a radius",(){
-      int long = -90;
-      int lat = 0;
-      int rad = 5;
       r.circle([long,lat],rad).run(connection).then(expectAsync((Map response){
         expect(response.containsKey('coordinates'), equals(true));
         expect(response.containsKey('type'), equals(true));
@@ -30,9 +30,6 @@ main() {
       }));
     });
     test("should create a polygon given a point and also a radius",(){
-      int long = -90;
-      int lat = 0;
-      int rad = 5;
       Point p = r.point(long, lat);
       r.circle(p,rad).run(connection).then(expectAsync((Map response){
         expect(response.containsKey('coordinates'), equals(true));
@@ -41,9 +38,6 @@ main() {
       }));
     });
     test("should create a polygon with a specified number of vertices",(){
-      int long = -90;
-      int lat = 0;
-      int rad = 5;
       Point p = r.point(long, lat);
 
       r.circle(p,rad, {'num_vertices':4}).run(connection).then(expectAsync((Map response){
@@ -55,9 +49,7 @@ main() {
     });
 
     test("should create a polygon with a specified geo_system",(){
-      int long = -90;
-      int lat = 0;
-      int rad = 1;
+      rad = 1;
       Point p = r.point(long, lat);
 
       r.circle(p,rad, {'geo_system':'unit_sphere'}).run(connection).then(expectAsync((Map response){
@@ -68,9 +60,7 @@ main() {
     });
 
     test("should create a polygon with a specified unit",(){
-      int long = -90;
-      int lat = 0;
-      int rad = 1;
+      rad = 1;
       Point p = r.point(long, lat);
 
       r.circle(p,rad, {'num_vertices':3,'unit':'nm'}).run(connection).then(expectAsync((Map response){
@@ -81,9 +71,6 @@ main() {
     });
 
     test("should create an unfilled line", (){
-      int long = -90;
-      int lat = 0;
-      int rad = 5;
       Point p = r.point(long, lat);
 
       r.circle(p,rad, {'num_vertices':4,'fill':false}).run(connection).then(expectAsync((Map response){
@@ -94,29 +81,22 @@ main() {
     });
   });
 
+  Circle c = r.circle([-90,0],1);
+  Point p = r.point(0,-90);
   group("distance command -> ",(){
     test("should compute the distance between a point and a polygon",(){
-      Circle c = r.circle([-90,0],1);
-      Point p = r.point(0,-90);
-
       r.distance(p,c).run(connection).then(expectAsync((num distance){
         expect(distance, equals(10001964.729312724));
       }));
     });
 
     test("should compute the distance for a given geo_system",(){
-      Circle c = r.circle([-90,0],1);
-      Point p = r.point(0,-90);
-
       r.distance(p,c,{'geo_system':'unit_sphere'}).run(connection).then(expectAsync((num distance){
         expect(distance, equals(1.5707961689526464));
       }));
     });
 
     test("should compute the distance for a given unit",(){
-      Circle c = r.circle([-90,0],1);
-      Point p = r.point(0,-90);
-
       r.distance(p,c,{'geo_system':'unit_sphere','unit':'ft'}).run(connection).then(expectAsync((num distance){
         expect(distance, equals(5.153530738033616));
       }));
@@ -149,27 +129,27 @@ main() {
 
   group("includes command -> ",(){
     test("should return true if a geometry includes some other geometry",(){
-      var point1 = r.point(-117.220406,32.719464);
-      var point2 = r.point(-117.206201,32.725186);
+      Point point1 = r.point(-117.220406,32.719464);
+      Point point2 = r.point(-117.206201,32.725186);
       r.circle(point1, 2000).includes(point2).run(connection).then(expectAsync((bool doesInclude){
         expect(doesInclude, equals(true));
       }));
   });
 
   test("should return false if a geometry does not include some other geometry",(){
-    var point1 = r.point(-0,0);
-    var point2 = r.point(-100,90);
+    Point point1 = r.point(-0,0);
+    Point point2 = r.point(-100,90);
     r.circle(point1, 1).includes(point2).run(connection).then(expectAsync((bool doesInclude){
       expect(doesInclude, equals(false));
     }));
   });
 
   test("should filter a sequence to only contain items that include some other geometry",(){
-    var point1 = r.point(-0,0);
-    var point2 = r.point(-1,1);
-    var point3 = r.point(-99,90);
-    var point4 = r.point(101,90);
-    var point5 = r.point(-100,90);
+    Point point1 = r.point(-0,0);
+    Point point2 = r.point(-1,1);
+    Point point3 = r.point(-99,90);
+    Point point4 = r.point(101,90);
+    Point point5 = r.point(-100,90);
     r.expr([r.circle(point1, 2),r.circle(point2,2), r.circle(point3,2),r.circle(point4,2)]).includes(point5).run(connection).then(expectAsync((List included){
       expect(included.length == 2, equals(true));
     })).catchError((err)=>print(err.message));
@@ -194,14 +174,14 @@ group("intersects command -> ",(){
   });
 
   test("should filter a sequence to only contain items that intersect some other geometry",(){
-    var point1 = r.point(0,0);
-    var point2 = r.point(33,30);
-    var point3 = r.point(-17,3);
-    var point4 = r.point(101,90);
-    var point5 = r.point(-100,90);
-    Line line = r.line(r.point(0,0),r.point(20,20));
-    r.expr([r.circle(point1, 2),r.circle(point2,2), r.circle(point3,2),r.circle(point4,2)]).intersects(point5).run(connection).then(expectAsync((List intersecting){
-      expect(intersecting.length == 1, equals(true));
+    var point1 = r.point(0, 0);
+    var point2 = r.point(33, 30);
+    var point3 = r.point(-17, 3);
+    var point4 = r.point(20, 20);
+    var point5 = r.point(-100, 90);
+    Line line = r.line(point1, point2);
+    r.expr([point1, point2, point3, point4, point5]).intersects(line).run(connection).then(expectAsync((List intersecting){
+      expect(intersecting.length == 2, equals(true));
     })).catchError((err)=>print(err.message));
   });
 });
@@ -263,6 +243,54 @@ test("point command -> should create a point given a longitude and latitude",(){
     expect(point.containsKey('type'),equals(true));
     expect(point['type'],equals('Point'));
   }));
+});
+
+group("polygon command -> ",(){
+  test("should create a polygon given three long/lat arrays",(){
+    r.polygon([0,0], [40,40], [20,0]).run(connection).then(expectAsync((Map poly){
+      expect(poly.containsKey('coordinates'), equals(true));
+      expect(poly['coordinates'][0].length, equals(4));
+      expect(poly.containsKey('type'),equals(true));
+      expect(poly['type'],equals('Polygon'));
+    }));
+  });
+  test("should create a polygon given many long/lat arrays",(){
+    r.polygon([0,0], [40,40], [20,0],[50,-10], [-90,80]).run(connection).then(expectAsync((Map poly){
+      expect(poly.containsKey('coordinates'), equals(true));
+      expect(poly['coordinates'][0].length, equals(6));
+      expect(poly.containsKey('type'),equals(true));
+      expect(poly['type'],equals('Polygon'));
+    }));
+  });
+  Point point1 = r.point(0,0);
+  Point point2 = r.point(40,0);
+  Point point3 = r.point(40,40);
+  Point point4 = r.point(20,50);
+  Point point5 = r.point(0,40);
+  test("should create a polygon given three points",(){
+      r.polygon(point1, point2, point3).run(connection).then(expectAsync((Map poly){
+        expect(poly.containsKey('coordinates'), equals(true));
+        expect(poly['coordinates'][0].length, equals(4));
+        expect(poly.containsKey('type'),equals(true));
+        expect(poly['type'],equals('Polygon'));
+      }));
+    });
+    test("should create a polygon given many points",(){
+      r.polygon(point1, point2, point3, point4, point5).run(connection).then(expectAsync((Map poly){
+        expect(poly.containsKey('coordinates'), equals(true));
+        expect(poly['coordinates'][0].length, equals(6));
+        expect(poly.containsKey('type'),equals(true));
+        expect(poly['type'],equals('Polygon'));
+      }));
+  });
+  test("should allow a subPolygon to be removed from a polygon",(){
+    r.polygon(point1, point2, point3, point4, point5).polygonSub(r.circle(r.point(20,20),1)).run(connection).then(expectAsync((Map poly){
+      expect(poly.containsKey('coordinates'), equals(true));
+      expect(poly['coordinates'][0].length, equals(6));
+      expect(poly.containsKey('type'),equals(true));
+      expect(poly['type'],equals('Polygon'));
+    }));
+});
 });
 
 }

@@ -206,6 +206,64 @@ group("intersects command -> ",(){
   });
 });
 
+group("line command -> ",(){
+  test("should create a line from two long/lat arrays",(){
+    r.line([0,0],[-20,-90]).run(connection).then(expectAsync((Map line){
+      expect(line.containsKey('coordinates'), equals(true));
+      expect(line['coordinates'], equals([[0, 0], [-20, -90]]));
+      expect(line.containsKey('type'),equals(true));
+      expect(line['type'],equals('LineString'));
+    }));
+  });
+  test("should create a line from many long/lat arrays",(){
+    r.line([0,0],[-20,-90], [3,3]).run(connection).then(expectAsync((Map line){
+      expect(line.containsKey('coordinates'), equals(true));
+      expect(line['coordinates'], equals([[0, 0], [-20, -90], [3,3]]));
+      expect(line.containsKey('type'),equals(true));
+      expect(line['type'],equals('LineString'));
+    }));
+  });
+  test("should create a line from two points",(){
+    r.line(r.point(0,0),r.point(-20,-90)).run(connection).then(expectAsync((Map line){
+      expect(line.containsKey('coordinates'), equals(true));
+      expect(line['coordinates'], equals([[0, 0], [-20, -90]]));
+      expect(line.containsKey('type'),equals(true));
+      expect(line['type'],equals('LineString'));
+    }));
+  });
+  test("should create a line from many points",(){
+    r.line(r.point(0,0),r.point(-20,-90), r.point(3,3)).run(connection).then(expectAsync((Map line){
+      expect(line.containsKey('coordinates'), equals(true));
+      expect(line['coordinates'], equals([[0, 0], [-20, -90], [3,3]]));
+      expect(line.containsKey('type'),equals(true));
+      expect(line['type'],equals('LineString'));
+    }));
+  });
+  test("should create a line from a combination of arrays and points",(){
+    r.line(r.point(0,0),[-20,-90], r.point(3,3)).run(connection).then(expectAsync((Map line){
+      expect(line.containsKey('coordinates'), equals(true));
+      expect(line['coordinates'], equals([[0, 0], [-20, -90], [3,3]]));
+      expect(line.containsKey('type'),equals(true));
+      expect(line['type'],equals('LineString'));
+    }));
+  });
+  test("should be able to fill() to create a polygon from a line",(){
+    r.line(r.point(0,0),[-20,-90], r.point(3,3)).fill().run(connection).then(expectAsync((Map line){
+      expect(line.containsKey('coordinates'), equals(true));
+      expect(line['coordinates'], equals( [[[0, 0], [-20, -90], [3, 3], [0, 0]]]));
+      expect(line.containsKey('type'),equals(true));
+      expect(line['type'],equals('Polygon'));
+    }));
+  });
+});
+test("point command -> should create a point given a longitude and latitude",(){
+  r.point(90,90).run(connection).then(expectAsync((Map point){
+    expect(point.containsKey('coordinates'), equals(true));
+    expect(point['coordinates'], equals([90, 90]));
+    expect(point.containsKey('type'),equals(true));
+    expect(point['type'],equals('Point'));
+  }));
+});
+
 }
-//TODO on line tests test fill
 //TODO make a table to test getIntersecting and getNearest

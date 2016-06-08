@@ -9,15 +9,41 @@ main() {
   bool shouldDropTable = false;
   var connection;
 
-  setUp(() {
-    return r.connect().then((conn) {
-      connection = conn;
-    });
-  });
 
-  tearDown(() {
-      connection.close();
-  });
+    setUp(() {
+      return r.connect().then((conn) {
+        connection = conn;
+        if (testDbName == null) {
+          return r.uuid().run(connection).then((String useDb) {
+            testDbName = 'unit_test_db' + useDb.replaceAll("-", "");
+            return r.dbCreate(testDbName).run(connection).then((createdDb) {
+              if (databaseName == null) {
+                return r.uuid().run(connection).then((String dbName) {
+                  databaseName = "test_database_" + dbName.replaceAll("-", "");
+                  if (tableName == null) {
+                    return r.uuid().run(connection).then((String tblName) {
+                      tableName = "test_table_" + tblName.replaceAll("-", "");
+                    });
+                  }
+                });
+              }
+            });
+          });
+        }
+        connection.use(testDbName);
+      });
+    });
+
+    tearDown(() {
+      if (shouldDropTable) {
+        shouldDropTable = false;
+        return r.tableDrop(tableName).run(connection).then((d) {
+          connection.close();
+        });
+      } else {
+        connection.close();
+      }
+    });
   group("circle command -> ",(){
     int long = -90;
     int lat = 0;
@@ -293,5 +319,36 @@ group("polygon command -> ",(){
 });
 });
 
+test("getIntersecting command -> should return a cursor containing all intersecting records of a table",()async{
+
+  List insertedData = [
+    {'location':r.polygon(r.point(0,0),r.point(40,0),r.point(40,40),r.point(0,40)),'name':'a'},
+    {'location':r.polygon(r.point(40,0),r.point(80,0),r.point(80,40),r.point(40,40)),'name':'a'},
+    {'location':r.polygon(r.point(40,40),r.point(80,40),r.point(80,80),r.point(40,80)),'name':'a'}
+  ];
+
+  try{
+    await r.tableCreate(tableName).run(connection);
+    await r.table(tableName).indexCreate('location',{'geo':true}).run(connection);
+    await r.table(tableName).indexWait('location').run(connection);
+    await r.table(tableName).insert(insertedData).run(connection);
+    Cursor intersecting = await r.table(tableName).getIntersecting(r.circle(r.point(40,20),1),{'index':'location'}).run(connection);
+    intersecting.toList().then(expectAsync((List v){
+      expect(v.length, equals(2));
+    }));
+  }catch(err){
+    print(err.message);
+  }
+});
+group("getNearest command -> ",(){
+  test("should get a list of documents nearest a point",(){
+    r.table(tableName).getNearest(r.point(80.5,20),{'index':'location'}).run(connection)
+    .then(expectAsync((List l){
+      expect(l is List, equals(true));
+      expect(l.length, equals(1));
+    }));
+  });
+  //TODO test the rest of the options
+});
 }
 //TODO make a table to test getIntersecting and getNearest

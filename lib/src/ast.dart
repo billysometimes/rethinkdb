@@ -233,8 +233,15 @@ class RqlQuery {
           throw new RqlDriverError(
               "Unknown group_format run option ${formatOpts['group_format']}.");
       } else if (reqlType == "BINARY") {
-        if (formatOpts == null || formatOpts["binary_format"] == "native")
-          return _reqlTypeBinaryToBytes(obj);
+        if (formatOpts == null || formatOpts["binary_format"] == "native"){
+            /**the official drivers decode the BASE64 string to binary data
+            *this driver currently has a bug with its [_reqlTypeBinaryToBytes]
+            * function so for the short term we will just return the BASE64 string
+            **/
+            //return _reqlTypeBinaryToBytes(obj);
+            return obj['data'];
+
+        }
         else
           throw new RqlDriverError(
               "Unknown binary_format run option: ${formatOpts["binary_format"]}");
@@ -248,7 +255,7 @@ class RqlQuery {
 
     return obj;
   }
-
+  //TODO this is broken
   _reqlTypeBinaryToBytes(Map obj) {
     return BASE64.decode(obj['data']);
   }
@@ -525,7 +532,7 @@ class RqlQuery {
 
   ToGeoJson toGeojson() => new ToGeoJson(this);
 
-  GetIntersecting getIntersecting(geo, [Map options]) =>
+  GetIntersecting getIntersecting(geo, Map options) =>
       new GetIntersecting(this, geo, options);
 
   GetNearest getNearest(point, [Map options]) =>
@@ -967,8 +974,13 @@ class Table extends RqlQuery {
 
   IndexList indexList() => new IndexList(this);
 
-  IndexCreate indexCreate(indexName, [indexFunction, Map options]) =>
-      new IndexCreate(this, indexName, indexFunction, options);
+  IndexCreate indexCreate(indexName, [indexFunction, Map options]){
+    if(indexFunction != null && indexFunction is Map){
+        return new IndexCreate(this, indexName, indexFunction);
+      }
+    return new IndexCreate.withIndexFunction(this, indexName, indexFunction, options);
+  }
+
 
   IndexDrop indexDrop(indexName) => new IndexDrop(this, indexName);
 
@@ -1263,7 +1275,10 @@ class TableList extends RqlMethodQuery {
 class IndexCreate extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.INDEX_CREATE;
 
-  IndexCreate(tbl, index, [indexFunction, Map options])
+  IndexCreate(tbl, index, [Map options])
+      : super([tbl, index], options);
+
+  IndexCreate.withIndexFunction(tbl, index, [indexFunction, Map options])
       : super([tbl, index, indexFunction], options);
 }
 
@@ -1296,7 +1311,7 @@ class IndexWait extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.INDEX_WAIT;
 
   IndexWait(tbl, indexList)
-      : super([tbl, indexList is List ? new Args(indexList) : indexList]);
+      : super([tbl, indexList]);
 }
 
 class Sync extends RqlMethodQuery {

@@ -38,8 +38,6 @@ exampleCommands(conn) {
 
   //conn.connect();
 
-  //TODO event emitter for cursor
-
   /**dbCreate() takes a string for the name of the database to be created and returns a CreatedResponse**/
 
   //r.dbCreate("test").run(conn).then(_handleMessage).catchError(_handleError);

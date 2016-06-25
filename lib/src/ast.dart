@@ -239,7 +239,9 @@ class RqlQuery {
             * for some reason, when trying to convert the index function for
             * `indexWait` commands, we get a FormatException.
             *  so for the short term we will just return the BASE64 string
+            *  with a TODO to find out what is wrong and fix it.
             **/
+
           try {
             return _reqlTypeBinaryToBytes(obj);
           } on FormatException catch (e) {
@@ -259,7 +261,6 @@ class RqlQuery {
     return obj;
   }
 
-  //TODO this is broken
   _reqlTypeBinaryToBytes(Map obj) {
     return BASE64.decode(obj['data']);
   }

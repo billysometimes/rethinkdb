@@ -47,10 +47,10 @@ main() {
         .tableList()
         .run(connection)
         .then((d) {})
-        .catchError((err) {
+        .catchError(expectAsync((err) {
       expect(err is Exception, equals(true));
       expect(err.message, equals('Database `fake2834723895` does not exist.'));
-    });
+    }));
   });
 
   group("dbCreate command -> ", () {
@@ -75,17 +75,17 @@ main() {
           .dbCreate(databaseName)
           .run(connection)
           .then((Map response) {})
-          .catchError((err) {
+          .catchError(expectAsync((err) {
         expect(err is Exception, equals(true));
         expect(
             err.message, equals('Database `${databaseName}` already exists.'));
-      });
+      }));
     });
   });
 
   group("dbDrop command -> ", () {
     test("r.dbDrop should drop a database", () {
-      r.dbDrop(databaseName).run(connection).then((Map response) {
+      r.dbDrop(databaseName).run(connection).then(expectAsync((Map response) {
         expect(response.keys.length, equals(3));
         expect(response.containsKey('config_changes'), equals(true));
         expect(response['dbs_dropped'], equals(1));
@@ -98,7 +98,7 @@ main() {
         expect(old_val.containsKey('id'), equals(true));
         expect(old_val.containsKey('name'), equals(true));
         expect(old_val['name'], equals(databaseName));
-      });
+      }));
     });
 
     test("r.dbDrop should error if the database does not exist", () {
@@ -106,18 +106,18 @@ main() {
           .dbDrop(databaseName)
           .run(connection)
           .then((Map response) {})
-          .catchError((err) {
+          .catchError(expectAsync((err) {
         expect(
             err.message, equals('Database `${databaseName}` does not exist.'));
-      });
+      }));
     });
   });
 
   test("r.dbList should list all databases", () {
-    r.dbList().run(connection).then((List response) {
+    r.dbList().run(connection).then(expectAsync((List response) {
       expect(response is List, equals(true));
       expect(response.indexOf('rethinkdb'), greaterThan(-1));
-    });
+    }));
   });
 
   group("range command -> ", () {
@@ -152,12 +152,16 @@ main() {
 
   group("table command -> ", () {
     test("table should return a cursor containing all records for a table", () {
-      r.db('rethinkdb').table('stats').run(connection).then((Cursor cur) {
+      r
+          .db('rethinkdb')
+          .table('stats')
+          .run(connection)
+          .then(expectAsync((Cursor cur) {
         cur.listen((Map item) {
           expect(item.containsKey('id'), equals(true));
           expect(item.containsKey('query_engine'), equals(true));
         });
-      });
+      }));
     });
 
     test("table should allow for `read_mode: single` option", () {
@@ -165,12 +169,12 @@ main() {
           .db('rethinkdb')
           .table('stats', {'read_mode': 'single'})
           .run(connection)
-          .then((Cursor cur) {
+          .then(expectAsync((Cursor cur) {
             cur.listen((Map item) {
               expect(item.containsKey('id'), equals(true));
               expect(item.containsKey('query_engine'), equals(true));
             });
-          });
+          }));
     });
 
     test("table should allow for `read_mode: majority` option", () {
@@ -178,12 +182,12 @@ main() {
           .db('rethinkdb')
           .table('stats', {'read_mode': 'majority'})
           .run(connection)
-          .then((Cursor cur) {
+          .then(expectAsync((Cursor cur) {
             cur.listen((Map item) {
               expect(item.containsKey('id'), equals(true));
               expect(item.containsKey('query_engine'), equals(true));
             });
-          });
+          }));
     });
 
     test("table should allow for `read_mode: outdated` option", () {
@@ -191,12 +195,12 @@ main() {
           .db('rethinkdb')
           .table('stats', {'read_mode': 'outdated'})
           .run(connection)
-          .then((Cursor cur) {
+          .then(expectAsync((Cursor cur) {
             cur.listen((Map item) {
               expect(item.containsKey('id'), equals(true));
               expect(item.containsKey('query_engine'), equals(true));
             });
-          });
+          }));
     });
 
     test("table should catch invalid read_mode option", () {
@@ -205,12 +209,12 @@ main() {
           .table('stats', {'read_mode': 'badReadMode'})
           .run(connection)
           .then((Cursor cur) {})
-          .catchError((err) {
+          .catchError(expectAsync((err) {
             expect(
                 err.message,
                 equals(
                     'Read mode `badReadMode` unrecognized (options are "majority", "single", and "outdated").'));
-          });
+          }));
     });
 
     test("table should allow for `identifier_format: name` option", () {
@@ -218,12 +222,12 @@ main() {
           .db('rethinkdb')
           .table('stats', {'identifier_format': 'name'})
           .run(connection)
-          .then((Cursor cur) {
+          .then(expectAsync((Cursor cur) {
             cur.listen((Map item) {
               expect(item.containsKey('id'), equals(true));
               expect(item.containsKey('query_engine'), equals(true));
             });
-          });
+          }));
     });
 
     test("table should allow for `identifier_format: uuid` option", () {
@@ -231,12 +235,12 @@ main() {
           .db('rethinkdb')
           .table('stats', {'identifier_format': 'uuid'})
           .run(connection)
-          .then((Cursor cur) {
+          .then(expectAsync((Cursor cur) {
             cur.listen((Map item) {
               expect(item.containsKey('id'), equals(true));
               expect(item.containsKey('query_engine'), equals(true));
             });
-          });
+          }));
     });
 
     test("table should catch invalid identifier_format option", () {
@@ -245,12 +249,12 @@ main() {
           .table('stats', {'identifier_format': 'badFormat'})
           .run(connection)
           .then((Cursor cur) {})
-          .catchError((err) {
+          .catchError(expectAsync((err) {
             expect(
                 err.message,
                 equals(
                     'Identifier format `badFormat` unrecognized (options are "name" and "uuid").'));
-          });
+          }));
     });
 
     test("table should catch bad options", () {
@@ -259,10 +263,10 @@ main() {
           .table('stats', {'fake_option': 'bad_value'})
           .run(connection)
           .then((Cursor cur) {})
-          .catchError((err) {
+          .catchError(expectAsync((err) {
             expect(err.message,
                 equals('Unrecognized optional argument `fake_option`.'));
-          });
+          }));
     });
   });
 
@@ -891,20 +895,11 @@ main() {
   });
 
   test("remove the test database", () {
-    r.dbDrop(testDbName).run(connection).then((Map response) {
-      expect(response.keys.length, equals(3));
+    r.dbDrop(testDbName).run(connection).then(expectAsync((Map response) {
       expect(response.containsKey('config_changes'), equals(true));
       expect(response['dbs_dropped'], equals(1));
       expect(response['tables_dropped'], equals(0));
-
-      Map config_changes = response['config_changes'][0];
-      expect(config_changes.keys.length, equals(2));
-      expect(config_changes['new_val'], equals(null));
-      Map old_val = config_changes['old_val'];
-      expect(old_val.containsKey('id'), equals(true));
-      expect(old_val.containsKey('name'), equals(true));
-      expect(old_val['name'], equals(testDbName));
-    });
+    }));
   });
   /**TO TEST:
     test with orderby r.asc(attr)

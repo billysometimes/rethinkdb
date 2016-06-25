@@ -494,4 +494,12 @@ main() {
           }));
     });
   });
+
+  test("remove the test database", () {
+    r.dbDrop(testDbName).run(connection).then(expectAsync((Map response) {
+      expect(response.containsKey('config_changes'), equals(true));
+      expect(response['dbs_dropped'], equals(1));
+      expect(response['tables_dropped'], equals(1));
+    }));
+  });
 }

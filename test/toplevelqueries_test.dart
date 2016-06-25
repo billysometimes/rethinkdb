@@ -9,34 +9,31 @@ main() {
   bool shouldDropTable = false;
   var connection;
 
-  setUp(() {
-    return r.connect().then((conn) {
-      connection = conn;
-      if (testDbName == null) {
-        return r.uuid().run(connection).then((String useDb) {
-          testDbName = 'unit_test_db' + useDb.replaceAll("-", "");
-          return r.dbCreate(testDbName).run(connection).then((createdDb) {
-            if (databaseName == null) {
-              return r.uuid().run(connection).then((String dbName) {
-                databaseName = "test_database_" + dbName.replaceAll("-", "");
-                if (tableName == null) {
-                  return r.uuid().run(connection).then((String tblName) {
-                    tableName = "test_table_" + tblName.replaceAll("-", "");
-                  });
-                }
-              });
-            }
-          });
-        });
-      }
-      connection.use(testDbName);
-    });
+  setUp(() async {
+    connection = await r.connect();
+
+    if (testDbName == null) {
+      String useDb = await r.uuid().run(connection);
+      testDbName = 'unit_test_db' + useDb.replaceAll("-", "");
+      await r.dbCreate(testDbName).run(connection);
+    }
+
+    if (databaseName == null) {
+      String dbName = await r.uuid().run(connection);
+      databaseName = "test_database_" + dbName.replaceAll("-", "");
+    }
+
+    if (tableName == null) {
+      String tblName = await r.uuid().run(connection);
+      tableName = "test_table_" + tblName.replaceAll("-", "");
+    }
+    connection.use(testDbName);
   });
 
   tearDown(() {
     if (shouldDropTable) {
       shouldDropTable = false;
-      return r.tableDrop(tableName).run(connection).then((d) {
+      return r.tableDrop(tableName).run(connection).then((_) {
         connection.close();
       });
     } else {
@@ -499,7 +496,6 @@ main() {
     DateTime dateTime = new DateTime.fromMillisecondsSinceEpoch(531360000000);
 
     r.epochTime(531360000).run(connection).then(expectAsync((DateTime dt) {
-      print(dt);
       expect(dt.year, equals(dateTime.year));
       expect(dt.month, equals(dateTime.month));
       expect(dt.day, equals(dateTime.day));
@@ -691,7 +687,8 @@ main() {
       }));
     });
 
-    test("should generate a positive random int no greater than the single argument",
+    test(
+        "should generate a positive random int no greater than the single argument",
         () {
       r.random(50).run(connection).then(expectAsync((number) {
         expect(number is int, equals(true));

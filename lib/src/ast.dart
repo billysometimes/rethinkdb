@@ -980,7 +980,9 @@ class Table extends RqlQuery {
   IndexList indexList() => new IndexList(this);
 
   IndexCreate indexCreate(indexName, [indexFunction, Map options]) {
-    if (indexFunction != null && indexFunction is Map) {
+    if (indexFunction == null && options == null) {
+      return new IndexCreate(this, indexName);
+    } else if (indexFunction != null && indexFunction is Map) {
       return new IndexCreate(this, indexName, indexFunction);
     }
     return new IndexCreate.withIndexFunction(
@@ -989,12 +991,22 @@ class Table extends RqlQuery {
 
   IndexDrop indexDrop(indexName) => new IndexDrop(this, indexName);
 
-  IndexRename indexRename(oldName, newName) =>
-      new IndexRename(this, oldName, newName);
+  IndexRename indexRename(oldName, newName, [Map options]) =>
+      new IndexRename(this, oldName, newName, options);
 
-  IndexStatus indexStatus([indexes]) => new IndexStatus(this, indexes);
+  IndexStatus indexStatus([indexes]) {
+    if (indexes == null) {
+      return new IndexStatus.all(this);
+    }
+    return new IndexStatus(this, indexes);
+  }
 
-  IndexWait indexWait([indexes]) => new IndexWait(this, indexes);
+  IndexWait indexWait([indexes]) {
+    if (indexes == null) {
+      return new IndexWait.all(this);
+    }
+    return new IndexWait(this, indexes);
+  }
 
   Update update(args, [options]) => new Update(this, _funcWrap(args), options);
 
@@ -1011,6 +1023,22 @@ class Table extends RqlQuery {
 
   InnerJoin innerJoin(otherSeq, [predicate]) =>
       new InnerJoin(this, otherSeq, predicate);
+
+  noSuchMethod(Invocation invocation) {
+    if (this._errDepth == 0) {
+      _errDepth++;
+      Symbol methodName = invocation.memberName;
+      List argsList = [];
+      argsList.addAll(invocation.positionalArguments);
+
+      InstanceMirror im = reflect(this);
+
+      return im.invoke(methodName, [argsList]).reflectee;
+    } else {
+      throw new RqlDriverError(
+          "${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
+    }
+  }
 }
 
 class Get extends RqlMethodQuery {
@@ -1295,7 +1323,8 @@ class IndexDrop extends RqlMethodQuery {
 class IndexRename extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.INDEX_RENAME;
 
-  IndexRename(table, oldName, newName) : super([table, oldName, newName]);
+  IndexRename(table, oldName, newName, options)
+      : super([table, oldName, newName], options);
 }
 
 class IndexList extends RqlMethodQuery {
@@ -1309,12 +1338,15 @@ class IndexStatus extends RqlMethodQuery {
 
   IndexStatus(tbl, indexList)
       : super([tbl, indexList is List ? new Args(indexList) : indexList]);
+  IndexStatus.all(tbl) : super([tbl]);
 }
 
 class IndexWait extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.INDEX_WAIT;
 
-  IndexWait(tbl, indexList) : super([tbl, indexList]);
+  IndexWait(tbl, indexList)
+      : super([tbl, indexList is List ? new Args(indexList) : indexList]);
+  IndexWait.all(tbl) : super([tbl]);
 }
 
 class Sync extends RqlMethodQuery {

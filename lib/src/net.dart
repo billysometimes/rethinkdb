@@ -34,16 +34,18 @@ class Response {
   var _data;
   var _backtrace;
   var _profile;
+  int _errorType;
   List _notes = [];
 
   Response(int this._token, String jsonStr) {
     if (jsonStr.length > 0) {
       Map fullResponse = JSON.decode(jsonStr);
-      this._type = fullResponse["t"];
-      this._data = fullResponse["r"];
-      this._backtrace = fullResponse["b"];
-      this._profile = fullResponse["p"];
-      this._notes = fullResponse["n"];
+      this._type = fullResponse['t'];
+      this._data = fullResponse['r'];
+      this._backtrace = fullResponse['b'];
+      this._profile = fullResponse['p'];
+      this._notes = fullResponse['n'];
+      this._errorType = fullResponse['e'];
     }
   }
 }
@@ -398,7 +400,26 @@ class Connection {
     if (response._type == p.Response_ResponseType.RUNTIME_ERROR.value) {
       message = response._data.first;
       frames = response._backtrace;
-      return new RqlRuntimeError(message, term, frames);
+      int errType = response._errorType;
+      if (errType == p.Response_ErrorType.INTERNAL.value) {
+        return new ReqlInternalError(message, term, frames);
+      } else if (errType == p.Response_ErrorType.RESOURCE_LIMIT.value) {
+        return new ReqlResourceLimitError(message, term, frames);
+      } else if (errType == p.Response_ErrorType.QUERY_LOGIC.value) {
+        return new ReqlQueryLogicError(message, term, frames);
+      } else if (errType == p.Response_ErrorType.NON_EXISTENCE.value) {
+        return new ReqlNonExistenceError(message, term, frames);
+      } else if (errType == p.Response_ErrorType.OP_FAILED.value) {
+        return new ReqlOpFailedError(message, term, frames);
+      } else if (errType == p.Response_ErrorType.OP_INDETERMINATE.value) {
+        return new ReqlOpIndeterminateError(message, term, frames);
+      } else if (errType == p.Response_ErrorType.USER.value) {
+        return new ReqlUserError(message, term, frames);
+      } else if (errType == p.Response_ErrorType.PERMISSION_ERROR.value) {
+        return new ReqlPermissionError(message, term, frames);
+      } else {
+        return new RqlRuntimeError(message, term, frames);
+      }
     } else if (response._type == p.Response_ResponseType.COMPILE_ERROR.value) {
       message = response._data.first;
       frames = response._backtrace;

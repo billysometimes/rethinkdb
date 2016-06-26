@@ -270,7 +270,8 @@ class Rethinkdb {
  * Compute the distance between a point and a geometry object
  */
 
-Distance distance(geo1, geo2, [Map options]) => new Distance(geo1, geo2, options);
+  Distance distance(geo1, geo2, [Map options]) =>
+      new Distance(geo1, geo2, options);
 
 /**
  * Construct a geometric line
@@ -285,7 +286,8 @@ Distance distance(geo1, geo2, [Map options]) => new Distance(geo1, geo2, options
 /**
  * Construct a geometric polygon
  */
-  Polygon polygon(point1, point2, point3) => new Polygon([point1, point2, point3]);
+  Polygon polygon(point1, point2, point3) =>
+      new Polygon([point1, point2, point3]);
 
 /**
  * Encapsulate binary data within a query.

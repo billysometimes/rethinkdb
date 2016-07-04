@@ -748,19 +748,13 @@ main() {
     }));
   });
   /**TO TEST:
-    test with orderby r.asc(attr)
-    test with orderby r.desc(attr)
+    test with orderby: r.asc(attr)
+    test with orderby: r.desc(attr)
     r.http(url)
-    r.circle(point, radius)
-    r.line(point1, point2)
-    r.point
-    r.polygon(point1, point2)
-    test with update and merge r.literal(args)
 
-    test with filter or something r.row;
-    test with time r.monday ... r.sunday;
-    test with time r.january .. r.december;
-    test with between r.minval;
-    test with between r.maxval
-    r.expr(val);**/
+    test with filter or something: r.row;
+    test with time: r.monday ... r.sunday;
+    test with time: r.january .. r.december;
+    test with between: r.minval;
+    test with between: r.maxval**/
 }

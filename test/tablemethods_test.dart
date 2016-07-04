@@ -181,25 +181,25 @@ main() {
     test("should create a new index with an index function as `r.row`", () {
       r
           .table('unitTestTable3')
-          .indexCreate('surname', r.row('name')('last'))
+          .indexCreate('surname1', r.row('name')('last'))
           .run(connection)
           .then(expectAsync((ind) {
         expect(ind['created'], equals(1));
       })).catchError((err) => print(err));
-    }, skip: "r.row isn't working");
+    });
 
     test("should create a new compound index with an index", () {
       //TODO fix compound indexes...
       r
           .table('unitTestTable3')
           .indexCreate('surnameAndBirthYear',
-              [(name) => name('last'), (birthday) => birthday('year')])
+              [r.row('name')('last'), r.row('birthday')('year')])
           .run(connection)
           .then(expectAsync((ind) {
             expect(ind['created'], equals(1));
           }))
           .catchError((err) => print(err));
-    }, skip: "compound indexes aren't working");
+    });
 
     test("should create multi index", () {
       r
@@ -230,7 +230,7 @@ main() {
         .run(connection)
         .then(expectAsync((List indexes) {
       expect(indexes is List, equals(true));
-      expect(indexes.length, equals(3));
+      expect(indexes.length, equals(5));
     })).catchError((err) => print(err));
   });
 
@@ -266,7 +266,7 @@ main() {
           .run(connection)
           .then(expectAsync((indexes) {
         expect(indexes is List, equals(true));
-        expect(indexes.length, equals(2));
+        expect(indexes.length, equals(4));
       }));
     });
     test("should return status of a single index", () {
@@ -301,7 +301,7 @@ main() {
           .run(connection)
           .then(expectAsync((response) {
         expect(response is List, equals(true));
-        expect(response.length, equals(2));
+        expect(response.length, equals(4));
       }));
     });
 

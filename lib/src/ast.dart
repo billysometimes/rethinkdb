@@ -986,7 +986,7 @@ class Table extends RqlQuery {
       return new IndexCreate(this, indexName, indexFunction);
     }
     return new IndexCreate.withIndexFunction(
-        this, indexName, indexFunction, options);
+        this, indexName, _funcWrap(indexFunction), options);
   }
 
   IndexDrop indexDrop(indexName) => new IndexDrop(this, indexName);

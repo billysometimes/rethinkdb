@@ -14,7 +14,7 @@ The driver api tries to align with the javascript and python RethinkDB drivers. 
 to include this driver in your own project add the package to your pubspec.yaml file:
 ```
 dependencies:
-  rethinkdb_driver: '^2.3.0'
+  rethinkdb_driver: '^2.3.1'
 ```
 
 or to use bleeding edge:
@@ -37,7 +37,7 @@ or if you are a developer:
   ```
 
   to run tests execute the following command from the project root:
-  
+
   **warning: tests are run against a live database, but they do attempt to
   clean up after themselves**
   ```

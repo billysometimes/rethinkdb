@@ -573,7 +573,12 @@ class RqlQuery {
 
       InstanceMirror im = reflect(this);
 
-      return im.invoke(methodName, [argsList, options]).reflectee;
+      List invocationParams = [argsList];
+      if(options.isNotEmpty){
+        invocationParams.add(options);
+      }
+
+      return im.invoke(methodName, invocationParams).reflectee;
     } else {
       throw new RqlDriverError(
           "${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");

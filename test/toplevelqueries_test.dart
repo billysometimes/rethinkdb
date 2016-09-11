@@ -754,7 +754,5 @@ main() {
 
     test with filter or something: r.row;
     test with time: r.monday ... r.sunday;
-    test with time: r.january .. r.december;
-    test with between: r.minval;
-    test with between: r.maxval**/
+    test with time: r.january .. r.december;**/
 }

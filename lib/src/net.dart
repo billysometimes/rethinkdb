@@ -179,8 +179,7 @@ class Connection {
         });
 
         if (authMap.containsKey('r')) {
-          String salt = new String.fromCharCodes(
-              BASE64.decode(authMap['s']));
+          String salt = new String.fromCharCodes(BASE64.decode(authMap['s']));
 
           var gen = new PBKDF2(hash: sha256);
 
@@ -188,8 +187,7 @@ class Connection {
 
           String clientFinalMessageWithoutProof = "c=biws,r=" + authMap['r'];
 
-          List<int> saltedPassword =
-            gen.generateKey(_password, salt, i, 32);
+          List<int> saltedPassword = gen.generateKey(_password, salt, i, 32);
 
           Digest clientKey =
               new Hmac(sha256, saltedPassword).convert("Client Key".codeUnits);

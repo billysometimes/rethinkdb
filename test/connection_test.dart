@@ -5,23 +5,22 @@ import '../lib/rethinkdb_driver.dart';
 main() {
   Rethinkdb r = new Rethinkdb();
 
-  test("connect() connects with defaults if no params are passed", () async{
+  test("connect() connects with defaults if no params are passed", () async {
     Connection c = await r.connect();
     expect(c, isNot(null));
     c.close();
   });
 
   test("connect() connects with non-default if params are passed", () async {
-    Connection conn = await r
-        .connect(
-            db: 'testDB',
-            host: "localhost",
-            port: 28015,
-            user: "admin",
-            password: "");
+    Connection conn = await r.connect(
+        db: 'testDB',
+        host: "localhost",
+        port: 28015,
+        user: "admin",
+        password: "");
 
-      expect(conn, isNot(null));
-      conn.close();
+    expect(conn, isNot(null));
+    conn.close();
   });
 
   test("connection should run onconnect and onclose listeners", () async {

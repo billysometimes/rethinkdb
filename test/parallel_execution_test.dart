@@ -5,7 +5,7 @@ import '../lib/rethinkdb_driver.dart';
 main() {
   test('ParallelExecution', () async {
     bool isParallel = await pEx();
-  expect(isParallel, equals(true));
+    expect(isParallel, equals(true));
   }, timeout: new Timeout.factor(4));
 }
 
@@ -39,19 +39,19 @@ _queryWhileWriting(conn, r) async {
 
   print('json built, starting write');
 
-  r.table("bigTable").insert(bigJson).run(conn).then((d){
+  r.table("bigTable").insert(bigJson).run(conn).then((d) {
     print('write done');
     //remove test tables after test complete
     return r.tableDrop("bigTable").run(conn);
-  }).then((_){
+  }).then((_) {
     return r.tableDrop("emptyTable").run(conn);
-  }).then((_){
+  }).then((_) {
     conn.close();
     return testCompleter.complete(total != null);
   });
 
   //run another query while the insert is running
-  r.table("emptyTable").count().run(conn).then((t){
+  r.table("emptyTable").count().run(conn).then((t) {
     total = t;
     print('total in emptyTable: $total');
   });

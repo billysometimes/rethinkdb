@@ -42,13 +42,11 @@ main() {
     test(
         "should create a polygon given an array containing longitude and latitude and also a radius",
         () async {
-          Map response = await r
-            .circle([long, lat], rad)
-            .run(connection);
+      Map response = await r.circle([long, lat], rad).run(connection);
 
-          expect(response.containsKey('coordinates'), equals(true));
-          expect(response.containsKey('type'), equals(true));
-          expect(response['type'], equals('Polygon'));
+      expect(response.containsKey('coordinates'), equals(true));
+      expect(response.containsKey('type'), equals(true));
+      expect(response['type'], equals('Polygon'));
     });
 
     test("should create a polygon given a point and also a radius", () async {
@@ -60,12 +58,12 @@ main() {
       expect(response['type'], equals('Polygon'));
     });
 
-    test("should create a polygon with a specified number of vertices", () async {
+    test("should create a polygon with a specified number of vertices",
+        () async {
       Point p = r.point(long, lat);
 
-      Map response = await r
-          .circle(p, rad, {'num_vertices': 4})
-          .run(connection);
+      Map response =
+          await r.circle(p, rad, {'num_vertices': 4}).run(connection);
 
       expect(response.containsKey('coordinates'), equals(true));
       expect(response['coordinates'][0].length, equals(5));
@@ -77,9 +75,8 @@ main() {
       rad = 1;
       Point p = r.point(long, lat);
 
-      Map response = await r
-          .circle(p, rad, {'geo_system': 'unit_sphere'})
-          .run(connection);
+      Map response =
+          await r.circle(p, rad, {'geo_system': 'unit_sphere'}).run(connection);
 
       expect(response.containsKey('coordinates'), equals(true));
       expect(response.containsKey('type'), equals(true));
@@ -91,8 +88,7 @@ main() {
       Point p = r.point(long, lat);
 
       Map response = await r
-          .circle(p, rad, {'num_vertices': 3, 'unit': 'nm'})
-          .run(connection);
+          .circle(p, rad, {'num_vertices': 3, 'unit': 'nm'}).run(connection);
 
       expect(response.containsKey('coordinates'), equals(true));
       expect(response.containsKey('type'), equals(true));
@@ -103,8 +99,7 @@ main() {
       Point p = r.point(long, lat);
 
       Map response = await r
-          .circle(p, rad, {'num_vertices': 4, 'fill': false})
-          .run(connection);
+          .circle(p, rad, {'num_vertices': 4, 'fill': false}).run(connection);
 
       expect(response.containsKey('coordinates'), equals(true));
       expect(response.containsKey('type'), equals(true));
@@ -123,28 +118,24 @@ main() {
     });
 
     test("should compute the distance for a given geo_system", () async {
-      num distance = await r
-          .distance(p, c, {'geo_system': 'unit_sphere'})
-          .run(connection);
+      num distance =
+          await r.distance(p, c, {'geo_system': 'unit_sphere'}).run(connection);
 
       expect(distance, equals(1.5707961689526464));
     });
 
     test("should compute the distance for a given unit", () async {
-      num distance = await r
-          .distance(p, c, {'geo_system': 'unit_sphere', 'unit': 'ft'})
-          .run(connection);
+      num distance = await r.distance(
+          p, c, {'geo_system': 'unit_sphere', 'unit': 'ft'}).run(connection);
       expect(distance, equals(5.153530738033616));
     });
   });
 
   test("geojson command -> ", () async {
-    var rqlGeo = await r
-        .geojson({
-          'type': 'Point',
-          'coordinates': [-122.423246, 37.779388]
-        })
-        .run(connection);
+    var rqlGeo = await r.geojson({
+      'type': 'Point',
+      'coordinates': [-122.423246, 37.779388]
+    }).run(connection);
     expect(rqlGeo.containsKey('coordinates'), equals(true));
     expect(rqlGeo['type'], equals('Point'));
   });
@@ -161,13 +152,12 @@ main() {
   });
 
   group("includes command -> ", () {
-    test("should return true if a geometry includes some other geometry", () async {
+    test("should return true if a geometry includes some other geometry",
+        () async {
       Point point1 = r.point(-117.220406, 32.719464);
       Point point2 = r.point(-117.206201, 32.725186);
-      bool doesInclude = await r
-          .circle(point1, 2000)
-          .includes(point2)
-          .run(connection);
+      bool doesInclude =
+          await r.circle(point1, 2000).includes(point2).run(connection);
 
       expect(doesInclude, equals(true));
     });
@@ -177,10 +167,8 @@ main() {
         () async {
       Point point1 = r.point(-0, 0);
       Point point2 = r.point(-100, 90);
-      bool doesInclude = await r
-          .circle(point1, 1)
-          .includes(point2)
-          .run(connection);
+      bool doesInclude =
+          await r.circle(point1, 1).includes(point2).run(connection);
 
       expect(doesInclude, equals(false));
     });
@@ -208,13 +196,12 @@ main() {
   });
 
   group("intersects command -> ", () {
-    test("should return true if a geometry intersects some other geometry", () async {
+    test("should return true if a geometry intersects some other geometry",
+        () async {
       Point point1 = r.point(-117.220406, 32.719464);
       Line line = r.line(r.point(-117.206201, 32.725186), r.point(0, 1));
-      bool doesIntersect = await r
-          .circle(point1, 2000)
-          .intersects(line)
-          .run(connection);
+      bool doesIntersect =
+          await r.circle(point1, 2000).intersects(line).run(connection);
 
       expect(doesIntersect, equals(true));
     });
@@ -224,10 +211,8 @@ main() {
         () async {
       Point point1 = r.point(-117.220406, 32.719464);
       Line line = r.line(r.point(20, 20), r.point(0, 1));
-      bool doesIntersect = await r
-          .circle(point1, 1)
-          .intersects(line)
-          .run(connection);
+      bool doesIntersect =
+          await r.circle(point1, 1).intersects(line).run(connection);
 
       expect(doesIntersect, equals(false));
     });
@@ -264,9 +249,7 @@ main() {
       expect(line['type'], equals('LineString'));
     });
     test("should create a line from many long/lat arrays", () async {
-      Map line = await r
-          .line([0, 0], [-20, -90], [3, 3])
-          .run(connection);
+      Map line = await r.line([0, 0], [-20, -90], [3, 3]).run(connection);
 
       expect(line.containsKey('coordinates'), equals(true));
       expect(
@@ -280,9 +263,7 @@ main() {
       expect(line['type'], equals('LineString'));
     });
     test("should create a line from two points", () async {
-      Map line = await r
-          .line(r.point(0, 0), r.point(-20, -90))
-          .run(connection);
+      Map line = await r.line(r.point(0, 0), r.point(-20, -90)).run(connection);
 
       expect(line.containsKey('coordinates'), equals(true));
       expect(
@@ -310,7 +291,8 @@ main() {
       expect(line.containsKey('type'), equals(true));
       expect(line['type'], equals('LineString'));
     });
-    test("should create a line from a combination of arrays and points", () async {
+    test("should create a line from a combination of arrays and points",
+        () async {
       Map line = await r
           .line(r.point(0, 0), [-20, -90], r.point(3, 3))
           .run(connection);
@@ -359,9 +341,7 @@ main() {
 
   group("polygon command -> ", () {
     test("should create a polygon given three long/lat arrays", () async {
-      Map poly = await r
-          .polygon([0, 0], [40, 40], [20, 0])
-          .run(connection);
+      Map poly = await r.polygon([0, 0], [40, 40], [20, 0]).run(connection);
       expect(poly.containsKey('coordinates'), equals(true));
       expect(poly['coordinates'][0].length, equals(4));
       expect(poly.containsKey('type'), equals(true));
@@ -369,9 +349,8 @@ main() {
     });
 
     test("should create a polygon given many long/lat arrays", () async {
-      Map poly = await r
-          .polygon([0, 0], [40, 40], [20, 0], [50, -10], [-90, 80])
-          .run(connection);
+      Map poly = await r.polygon(
+          [0, 0], [40, 40], [20, 0], [50, -10], [-90, 80]).run(connection);
 
       expect(poly.containsKey('coordinates'), equals(true));
       expect(poly['coordinates'][0].length, equals(6));
@@ -385,9 +364,7 @@ main() {
     Point point4 = r.point(20, 50);
     Point point5 = r.point(0, 40);
     test("should create a polygon given three points", () async {
-      Map poly = await r
-          .polygon(point1, point2, point3)
-          .run(connection);
+      Map poly = await r.polygon(point1, point2, point3).run(connection);
 
       expect(poly.containsKey('coordinates'), equals(true));
       expect(poly['coordinates'][0].length, equals(4));
@@ -457,8 +434,7 @@ main() {
     test("should get a list of documents nearest a point", () async {
       List l = await r
           .table(tableName)
-          .getNearest(r.point(80.5, 20), {'index': 'location'})
-          .run(connection);
+          .getNearest(r.point(80.5, 20), {'index': 'location'}).run(connection);
 
       expect(l is List, equals(true));
       expect(l.length, equals(1));

@@ -69,11 +69,11 @@ class RqlQuery {
   String _formatTimeZoneOffset(DateTime val) {
     String tz = val.timeZoneOffset.inHours.toString();
 
-    if (!val.timeZoneOffset.inHours.isNegative){
+    if (!val.timeZoneOffset.inHours.isNegative) {
       tz = "+$tz";
     }
 
-    if (tz.length == 2){
+    if (tz.length == 2) {
       tz = tz.replaceRange(0, 1, tz[0] + "0");
     }
 
@@ -146,7 +146,7 @@ class RqlQuery {
       return args;
     } else {
       if (args != null) {
-        if (parg != null){
+        if (parg != null) {
           return [parg, args];
         } else {
           return [args];
@@ -583,7 +583,7 @@ class RqlQuery {
       InstanceMirror im = reflect(this);
 
       List invocationParams = [argsList];
-      if(options.isNotEmpty){
+      if (options.isNotEmpty) {
         invocationParams.add(options);
       }
 

@@ -37,10 +37,11 @@ main() {
   });
 
   _setUpTable() async {
-    return await r.table(tableName)
-     .insert([{'id':1, 'name':'Jane Doe'},
-             {'id':2, 'name':'Jon Doe'}, {'id':3, 'name':'Firstname Last'}])
-     .run(connection);
+    return await r.table(tableName).insert([
+      {'id': 1, 'name': 'Jane Doe'},
+      {'id': 2, 'name': 'Jon Doe'},
+      {'id': 3, 'name': 'Firstname Last'}
+    ]).run(connection);
   }
 
   group("get command -> ", () {
@@ -55,7 +56,6 @@ main() {
 
   group("getAll command -> ", () {
     test("should get records by primary keys", () async {
-
       Cursor usrs = await r.table(tableName).getAll(1, 3).run(connection);
 
       expect(usrs is Cursor, equals(true));
@@ -71,8 +71,7 @@ main() {
 
   group("between command -> ", () {
     test("should get records between keys defaulting to closed left bound",
-      () async {
-
+        () async {
       Cursor usrs = await r.table(tableName).between(1, 3).run(connection);
 
       expect(usrs is Cursor, equals(true));
@@ -87,8 +86,9 @@ main() {
     });
 
     test("should get records between keys with closed right bound", () async {
-
-      Cursor usrs = await r.table(tableName).between(1, 3, {'right_bound':'closed'}).run(connection);
+      Cursor usrs = await r
+          .table(tableName)
+          .between(1, 3, {'right_bound': 'closed'}).run(connection);
 
       expect(usrs is Cursor, equals(true));
       List userList = await usrs.toList();
@@ -102,8 +102,9 @@ main() {
     });
 
     test("should get records between keys with open left bound", () async {
-
-      Cursor usrs = await r.table(tableName).between(1, 3, {'left_bound':'open'}).run(connection);
+      Cursor usrs = await r
+          .table(tableName)
+          .between(1, 3, {'left_bound': 'open'}).run(connection);
       expect(usrs is Cursor, equals(true));
       List userList = await usrs.toList();
 
@@ -114,8 +115,8 @@ main() {
     });
 
     test("should get records with a value less than minval", () async {
-
-      Cursor usrs = await r.table(tableName).between(r.minval, 2).run(connection);
+      Cursor usrs =
+          await r.table(tableName).between(r.minval, 2).run(connection);
 
       expect(usrs is Cursor, equals(true));
       List userList = await usrs.toList();
@@ -127,8 +128,8 @@ main() {
     });
 
     test("should get records with a value greater than maxval", () async {
-
-      Cursor usrs = await r.table(tableName).between(2, r.maxval).run(connection);
+      Cursor usrs =
+          await r.table(tableName).between(2, r.maxval).run(connection);
 
       expect(usrs is Cursor, equals(true));
       List userList = await usrs.toList();
@@ -142,8 +143,8 @@ main() {
 
   group("filter command -> ", () {
     test("should filter by field", () async {
-      Cursor users = await r.table(tableName).filter({'name':'Jane Doe'})
-      .run(connection);
+      Cursor users =
+          await r.table(tableName).filter({'name': 'Jane Doe'}).run(connection);
 
       expect(users is Cursor, equals(true));
       List userList = await users.toList();
@@ -154,8 +155,10 @@ main() {
     });
 
     test("should filter with r.row", () async {
-      Cursor users = await r.table(tableName).filter(r.row('name').match("Doe"))
-      .run(connection);
+      Cursor users = await r
+          .table(tableName)
+          .filter(r.row('name').match("Doe"))
+          .run(connection);
 
       expect(users is Cursor, equals(true));
       List userList = await users.toList();
@@ -166,11 +169,9 @@ main() {
     });
 
     test("should filter with a function", () async {
-      Cursor users = await r.table(tableName).filter((user){
-        return user('name').eq("Jon Doe")
-                 .or(user('name').eq("Firstname Last"));
-      })
-      .run(connection);
+      Cursor users = await r.table(tableName).filter((user) {
+        return user('name').eq("Jon Doe").or(user('name').eq("Firstname Last"));
+      }).run(connection);
 
       expect(users is Cursor, equals(true));
       List userList = await users.toList();

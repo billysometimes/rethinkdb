@@ -40,11 +40,8 @@ main() {
 
   test("r.db throws an error if a bad database name is given", () async {
     try {
-      await r
-        .db('fake2834723895')
-        .tableList()
-        .run(connection);
-    } catch(err) {
+      await r.db('fake2834723895').tableList().run(connection);
+    } catch (err) {
       expect(err is Exception, equals(true));
       expect(err.message, equals('Database `fake2834723895` does not exist.'));
     }
@@ -69,10 +66,8 @@ main() {
 
     test("r.dbCreate will throw an error if the database exists", () async {
       try {
-        await r
-          .dbCreate(databaseName)
-          .run(connection);
-      } catch(err) {
+        await r.dbCreate(databaseName).run(connection);
+      } catch (err) {
         expect(err is Exception, equals(true));
         expect(
             err.message, equals('Database `${databaseName}` already exists.'));
@@ -100,10 +95,8 @@ main() {
 
     test("r.dbDrop should error if the database does not exist", () async {
       try {
-        await r
-          .dbDrop(databaseName)
-          .run(connection);
-      } catch(err) {
+        await r.dbDrop(databaseName).run(connection);
+      } catch (err) {
         expect(
             err.message, equals('Database `${databaseName}` does not exist.'));
       }
@@ -123,10 +116,8 @@ main() {
 
       expect(cur is Cursor, equals(true));
       List item = await cur.take(17).toList();
-          expect(
-              item,
-              equals(
-                  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]));
+      expect(item,
+          equals([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]));
     });
 
     test("r.range() should accept a single end arguement", () async {
@@ -144,98 +135,95 @@ main() {
   });
 
   group("table command -> ", () {
-    test("table should return a cursor containing all records for a table", () async {
-      Cursor cur = await r
-          .db('rethinkdb')
-          .table('stats')
-          .run(connection);
+    test("table should return a cursor containing all records for a table",
+        () async {
+      Cursor cur = await r.db('rethinkdb').table('stats').run(connection);
       await for (Map item in cur) {
-          expect(item.containsKey('id'), equals(true));
-          expect(item.containsKey('query_engine'), equals(true));
-        }
+        expect(item.containsKey('id'), equals(true));
+        expect(item.containsKey('query_engine'), equals(true));
+      }
     });
 
     test("table should allow for `read_mode: single` option", () async {
       Cursor cur = await r
           .db('rethinkdb')
-          .table('stats', {'read_mode': 'single'})
-          .run(connection);
+          .table('stats', {'read_mode': 'single'}).run(connection);
 
       await for (Map item in cur) {
         expect(item.containsKey('id'), equals(true));
         expect(item.containsKey('query_engine'), equals(true));
-      };
+      }
+      ;
     });
 
     test("table should allow for `read_mode: majority` option", () async {
       Cursor cur = await r
           .db('rethinkdb')
-          .table('stats', {'read_mode': 'majority'})
-          .run(connection);
+          .table('stats', {'read_mode': 'majority'}).run(connection);
 
       await for (Map item in cur) {
         expect(item.containsKey('id'), equals(true));
         expect(item.containsKey('query_engine'), equals(true));
-      };
+      }
+      ;
     });
 
     test("table should allow for `read_mode: outdated` option", () async {
       Cursor cur = await r
           .db('rethinkdb')
-          .table('stats', {'read_mode': 'outdated'})
-          .run(connection);
+          .table('stats', {'read_mode': 'outdated'}).run(connection);
 
       await for (Map item in cur) {
         expect(item.containsKey('id'), equals(true));
         expect(item.containsKey('query_engine'), equals(true));
-      };
+      }
+      ;
     });
 
     test("table should catch invalid read_mode option", () async {
       try {
         await r
-          .db('rethinkdb')
-          .table('stats', {'read_mode': 'badReadMode'})
-          .run(connection);
-      } catch(err) {
-            expect(
-                err.message,
-                equals(
-                    'Read mode `badReadMode` unrecognized (options are "majority", "single", and "outdated").'));
-      };
+            .db('rethinkdb')
+            .table('stats', {'read_mode': 'badReadMode'}).run(connection);
+      } catch (err) {
+        expect(
+            err.message,
+            equals(
+                'Read mode `badReadMode` unrecognized (options are "majority", "single", and "outdated").'));
+      }
+      ;
     });
 
     test("table should allow for `identifier_format: name` option", () async {
       Cursor cur = await r
           .db('rethinkdb')
-          .table('stats', {'identifier_format': 'name'})
-          .run(connection);
+          .table('stats', {'identifier_format': 'name'}).run(connection);
 
       await for (Map item in cur) {
         expect(item.containsKey('id'), equals(true));
         expect(item.containsKey('query_engine'), equals(true));
-      };
+      }
+      ;
     });
 
     test("table should allow for `identifier_format: uuid` option", () async {
       Cursor cur = await r
           .db('rethinkdb')
-          .table('stats', {'identifier_format': 'uuid'})
-          .run(connection);
+          .table('stats', {'identifier_format': 'uuid'}).run(connection);
 
-          await for (Map item in cur) {
-            expect(item.containsKey('id'), equals(true));
-            expect(item.containsKey('query_engine'), equals(true));
-          };
+      await for (Map item in cur) {
+        expect(item.containsKey('id'), equals(true));
+        expect(item.containsKey('query_engine'), equals(true));
+      }
+      ;
     });
 
     test("table should catch invalid identifier_format option", () async {
       try {
         await r
-          .db('rethinkdb')
-          .table('stats', {'identifier_format': 'badFormat'})
-          .run(connection);
-      } catch(err){
+            .db('rethinkdb')
+            .table('stats', {'identifier_format': 'badFormat'}).run(connection);
+      } catch (err) {
         expect(
             err.message,
             equals(
@@ -244,15 +232,15 @@ main() {
     });
 
     test("table should catch bad options", () async {
-      try{
+      try {
         await r
-          .db('rethinkdb')
-          .table('stats', {'fake_option': 'bad_value'})
-          .run(connection);
-      } catch(err) {
+            .db('rethinkdb')
+            .table('stats', {'fake_option': 'bad_value'}).run(connection);
+      } catch (err) {
         expect(err.message,
-          equals('Unrecognized optional argument `fake_option`.'));
-      };
+            equals('Unrecognized optional argument `fake_option`.'));
+      }
+      ;
     });
   });
 
@@ -260,9 +248,7 @@ main() {
     test(
         "should return a time object if given a year, month, day, and timezone",
         () async {
-      DateTime obj = await r
-          .time(2010, 12, 29, timezone: 'Z')
-          .run(connection);
+      DateTime obj = await r.time(2010, 12, 29, timezone: 'Z').run(connection);
 
       expect(obj.runtimeType, equals(DateTime));
       expect(obj.isBefore(new DateTime.now()), equals(true));
@@ -273,7 +259,7 @@ main() {
     test(
         "should return a time object if given a year, month, day, hour, minute, second, and timezone",
         () async {
-       DateTime obj = await r
+      DateTime obj = await r
           .time(2010, 12, 29, hour: 7, minute: 33, second: 45, timezone: 'Z')
           .run(connection);
 
@@ -301,9 +287,8 @@ main() {
   group("ISO8601 command -> ", () {
     test("should take an ISO8601 string and convert it to a DateTime object",
         () async {
-      DateTime dt = await r
-          .ISO8601('1986-11-03T08:30:00-07:00')
-          .run(connection);
+      DateTime dt =
+          await r.ISO8601('1986-11-03T08:30:00-07:00').run(connection);
 
       expect(dt.year, equals(1986));
       expect(dt.month, equals(11));
@@ -312,9 +297,8 @@ main() {
     });
 
     test("should accept a timezone argument as well", () async {
-      DateTime dt = await r
-          .ISO8601('1986-11-03T08:30:00-07:00', 'MST')
-          .run(connection);
+      DateTime dt =
+          await r.ISO8601('1986-11-03T08:30:00-07:00', 'MST').run(connection);
 
       expect(dt.year, equals(1986));
       expect(dt.month, equals(11));
@@ -374,18 +358,16 @@ main() {
   });
 
   group("branch command -> ", () {
-    test("should accept a true test and return the true branch value", () async {
-      String val = await r
-          .branch(3 < 4, 'isTrue', 'isFalse')
-          .run(connection);
+    test("should accept a true test and return the true branch value",
+        () async {
+      String val = await r.branch(3 < 4, 'isTrue', 'isFalse').run(connection);
 
       expect(val, equals('isTrue'));
     });
 
-    test("should accept a false test and return the false branch value", () async {
-      String val = await r
-          .branch(3 > 4, 'isTrue', 'isFalse')
-          .run(connection);
+    test("should accept a false test and return the false branch value",
+        () async {
+      String val = await r.branch(3 > 4, 'isTrue', 'isFalse').run(connection);
 
       expect(val, equals('isFalse'));
     });
@@ -400,11 +382,9 @@ main() {
   });
 
   test("error command -> should create a custom error", () async {
-    try{
-      await r
-        .error('This is my Error')
-        .run(connection);
-    } catch(err) {
+    try {
+      await r.error('This is my Error').run(connection);
+    } catch (err) {
       expect(err.runtimeType, equals(ReqlUserError));
       expect(err.message, equals('This is my Error'));
     }
@@ -435,14 +415,12 @@ main() {
         """;
       int timeout = 3;
       try {
-        await r
-          .js(jsString, {'timeout': timeout})
-          .run(connection);
-      } catch(err) {
-          expect(
-              err.message,
-              equals(
-                  'JavaScript query `${jsString}` timed out after ${timeout}.000 seconds.'));
+        await r.js(jsString, {'timeout': timeout}).run(connection);
+      } catch (err) {
+        expect(
+            err.message,
+            equals(
+                'JavaScript query `${jsString}` timed out after ${timeout}.000 seconds.'));
       }
     });
   });
@@ -458,10 +436,8 @@ main() {
     test("should throw error if jsonString is invalid", () async {
       String jsonString = "1,2,3,4]";
       try {
-        await r
-          .json(jsonString)
-          .run(connection);
-      } catch(err) {
+        await r.json(jsonString).run(connection);
+      } catch (err) {
         expect(
             err.message,
             equals(
@@ -482,14 +458,15 @@ main() {
       expect(obj['objKey']['a'], equals('b'));
     });
 
-    test("should throw an error if params cannot be parsed into a map", () async {
+    test("should throw an error if params cannot be parsed into a map",
+        () async {
       try {
         await r
-          .object('key', 'val', 'listKey', [1, 2, 3, 4], 'objKey', {'a': 'b'},
-              'odd')
-          .run(connection);
+            .object('key', 'val', 'listKey', [1, 2, 3, 4], 'objKey', {'a': 'b'},
+                'odd')
+            .run(connection);
       } catch (err) {
-          expect(
+        expect(
             err.message,
             equals(
                 'OBJECT expects an even number of arguments (but found 7).'));
@@ -504,7 +481,8 @@ main() {
   });
 
   group("random command -> ", () {
-    test("should generate a random number if no parameters are provided", () async {
+    test("should generate a random number if no parameters are provided",
+        () async {
       double number = await r.random().run(connection);
 
       expect(number is double, equals(true));
@@ -531,9 +509,7 @@ main() {
     });
 
     test("should generate a random float between the two arguments", () async {
-      double number = await r
-          .random(50, 55, {'float': true})
-          .run(connection);
+      double number = await r.random(50, 55, {'float': true}).run(connection);
       expect(number is double, equals(true));
       expect(number, lessThanOrEqualTo(55));
       expect(number, greaterThanOrEqualTo(50));
@@ -556,20 +532,18 @@ main() {
 
   group("map command -> ", () {
     test("should map over an array", () async {
-      List arr = await r
-          .map([1, 2, 3, 4, 5], (item) => item * 2)
-          .run(connection);
+      List arr =
+          await r.map([1, 2, 3, 4, 5], (item) => item * 2).run(connection);
       expect(arr, equals([2, 4, 6, 8, 10]));
     });
 
     test("should map over multiple arrays", () async {
-        List arr = await r
-          .map([1, 2, 3, 4, 5], [10, 9, 8, 7], (item, item2) => item + item2)
-          .run(connection);
+      List arr = await r.map([1, 2, 3, 4, 5], [10, 9, 8, 7],
+          (item, item2) => item + item2).run(connection);
 
-        //notice that the first array is longer but we
-        //only map the length of the shortest array
-        expect(arr, equals([11, 11, 11, 11]));
+      //notice that the first array is longer but we
+      //only map the length of the shortest array
+      expect(arr, equals([11, 11, 11, 11]));
     });
 
     test("should map a sequence", () async {

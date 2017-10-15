@@ -7,7 +7,7 @@ main() {
   String tableName = null;
   String testDbName = null;
   bool shouldDropTable = false;
-  var connection;
+  Connection connection;
 
   setUp(() async {
     connection = await r.connect();
@@ -26,190 +26,165 @@ main() {
     }
   });
 
-  tearDown(() {
+  tearDown(() async {
     if (shouldDropTable) {
       shouldDropTable = false;
-      return r.tableDrop(tableName).run(connection).then((_) {
-        connection.close();
-      });
+      await r.tableDrop(tableName).run(connection);
+      connection.close();
     } else {
       connection.close();
     }
   });
 
-  _setUpTable(){
-    return r.table(tableName)
+  _setUpTable() async {
+    return await r.table(tableName)
      .insert([{'id':1, 'name':'Jane Doe'},
              {'id':2, 'name':'Jon Doe'}, {'id':3, 'name':'Firstname Last'}])
      .run(connection);
   }
 
   group("get command -> ", () {
-    test("should get a record by primary key", () async{
+    test("should get a record by primary key", () async {
       await _setUpTable();
-      r.table(tableName).get(1).run(connection).then(expectAsync((usr){
-        expect(usr['id'], equals(1));
-        expect(usr['name'], equals('Jane Doe'));
-      }));
+      var usr = await r.table(tableName).get(1).run(connection);
+
+      expect(usr['id'], equals(1));
+      expect(usr['name'], equals('Jane Doe'));
     });
   });
 
   group("getAll command -> ", () {
-    test("should get records by primary keys", () async{
+    test("should get records by primary keys", () async {
 
-      r.table(tableName).getAll(1, 3).run(connection)
-      .then((usrs){
-        expect(usrs is Cursor, equals(true));
-        return usrs.toList();
-      })
-      .then(expectAsync((userList){
-        expect(userList[1]['id'], equals(1));
-        expect(userList[0]['id'], equals(3));
+      Cursor usrs = await r.table(tableName).getAll(1, 3).run(connection);
 
-        expect(userList[1]['name'], equals('Jane Doe'));
-        expect(userList[0]['name'], equals('Firstname Last'));
-      }));
+      expect(usrs is Cursor, equals(true));
+      List userList = await usrs.toList();
+
+      expect(userList[1]['id'], equals(1));
+      expect(userList[0]['id'], equals(3));
+
+      expect(userList[1]['name'], equals('Jane Doe'));
+      expect(userList[0]['name'], equals('Firstname Last'));
     });
   });
 
   group("between command -> ", () {
     test("should get records between keys defaulting to closed left bound",
-      (){
+      () async {
 
-      r.table(tableName).between(1, 3).run(connection)
-      .then((usrs){
-        expect(usrs is Cursor, equals(true));
-        return usrs.toList();
-      })
-      .then(expectAsync((userList){
+      Cursor usrs = await r.table(tableName).between(1, 3).run(connection);
 
-        expect(userList.length, equals(2));
+      expect(usrs is Cursor, equals(true));
+      List userList = await usrs.toList();
 
-        expect(userList[1]['id'], equals(1));
-        expect(userList[0]['id'], equals(2));
+      expect(userList.length, equals(2));
+      expect(userList[1]['id'], equals(1));
+      expect(userList[0]['id'], equals(2));
 
-        expect(userList[1]['name'], equals('Jane Doe'));
-        expect(userList[0]['name'], equals('Jon Doe'));
-      }));
+      expect(userList[1]['name'], equals('Jane Doe'));
+      expect(userList[0]['name'], equals('Jon Doe'));
     });
 
-    test("should get records between keys with closed right bound", () async{
+    test("should get records between keys with closed right bound", () async {
 
-      r.table(tableName).between(1, 3, {'right_bound':'closed'}).run(connection)
-      .then((usrs){
-        expect(usrs is Cursor, equals(true));
-        return usrs.toList();
-      })
-      .then(expectAsync((userList){
-        expect(userList.length, equals(3));
-        expect(userList[2]['id'], equals(1));
-        expect(userList[0]['id'], equals(3));
+      Cursor usrs = await r.table(tableName).between(1, 3, {'right_bound':'closed'}).run(connection);
 
-        expect(userList[2]['name'], equals('Jane Doe'));
-        expect(userList[0]['name'], equals('Firstname Last'));
-      }));
+      expect(usrs is Cursor, equals(true));
+      List userList = await usrs.toList();
+
+      expect(userList.length, equals(3));
+      expect(userList[2]['id'], equals(1));
+      expect(userList[0]['id'], equals(3));
+
+      expect(userList[2]['name'], equals('Jane Doe'));
+      expect(userList[0]['name'], equals('Firstname Last'));
     });
 
-    test("should get records between keys with open left bound", () async{
+    test("should get records between keys with open left bound", () async {
 
-      r.table(tableName).between(1, 3, {'left_bound':'open'}).run(connection)
-      .then((usrs){
-        expect(usrs is Cursor, equals(true));
-        return usrs.toList();
-      })
-      .then(expectAsync((userList){
-        expect(userList.length, equals(1));
-        expect(userList[0]['id'], equals(2));
+      Cursor usrs = await r.table(tableName).between(1, 3, {'left_bound':'open'}).run(connection);
+      expect(usrs is Cursor, equals(true));
+      List userList = await usrs.toList();
 
-        expect(userList[0]['name'], equals('Jon Doe'));
+      expect(userList.length, equals(1));
+      expect(userList[0]['id'], equals(2));
 
-      }));
+      expect(userList[0]['name'], equals('Jon Doe'));
     });
 
-    test("should get records with a value less than minval", () async{
+    test("should get records with a value less than minval", () async {
 
-      r.table(tableName).between(r.minval, 2).run(connection)
-      .then((usrs){
-        expect(usrs is Cursor, equals(true));
-        return usrs.toList();
-      })
-      .then(expectAsync((userList){
+      Cursor usrs = await r.table(tableName).between(r.minval, 2).run(connection);
 
-        expect(userList.length, equals(1));
-        expect(userList[0]['id'], equals(1));
+      expect(usrs is Cursor, equals(true));
+      List userList = await usrs.toList();
 
-        expect(userList[0]['name'], equals('Jane Doe'));
+      expect(userList.length, equals(1));
+      expect(userList[0]['id'], equals(1));
 
-      }));
+      expect(userList[0]['name'], equals('Jane Doe'));
     });
 
-    test("should get records with a value greater than maxval", () async{
+    test("should get records with a value greater than maxval", () async {
 
-      r.table(tableName).between(2, r.maxval).run(connection)
-      .then((usrs){
-        expect(usrs is Cursor, equals(true));
-        return usrs.toList();
-      })
-      .then(expectAsync((userList){
+      Cursor usrs = await r.table(tableName).between(2, r.maxval).run(connection);
 
-        expect(userList.length, equals(2));
-        expect(userList[0]['id'], equals(3));
+      expect(usrs is Cursor, equals(true));
+      List userList = await usrs.toList();
 
-        expect(userList[0]['name'], equals('Firstname Last'));
-      }));
+      expect(userList.length, equals(2));
+      expect(userList[0]['id'], equals(3));
+
+      expect(userList[0]['name'], equals('Firstname Last'));
     });
   });
 
   group("filter command -> ", () {
-    test("should filter by field", (){
-      r.table(tableName).filter({'name':'Jane Doe'})
-      .run(connection)
-      .then((users){
-        expect(users is Cursor, equals(true));
-        return users.toList();
-      })
-      .then(expectAsync((userList){
-        expect(userList.length, equals(1));
-        expect(userList[0]['id'], equals(1));
-        expect(userList[0]['name'], equals('Jane Doe'));
-      }));
+    test("should filter by field", () async {
+      Cursor users = await r.table(tableName).filter({'name':'Jane Doe'})
+      .run(connection);
+
+      expect(users is Cursor, equals(true));
+      List userList = await users.toList();
+
+      expect(userList.length, equals(1));
+      expect(userList[0]['id'], equals(1));
+      expect(userList[0]['name'], equals('Jane Doe'));
     });
 
-    test("should filter with r.row", (){
-      r.table(tableName).filter(r.row('name').match("Doe"))
-      .run(connection)
-      .then((users){
-        expect(users is Cursor, equals(true));
-        return users.toList();
-      })
-      .then(expectAsync((userList){
-        expect(userList.length, equals(2));
-        expect(userList[0]['id'], equals(2));
-        expect(userList[0]['name'], equals('Jon Doe'));
-      }));
+    test("should filter with r.row", () async {
+      Cursor users = await r.table(tableName).filter(r.row('name').match("Doe"))
+      .run(connection);
+
+      expect(users is Cursor, equals(true));
+      List userList = await users.toList();
+
+      expect(userList.length, equals(2));
+      expect(userList[0]['id'], equals(2));
+      expect(userList[0]['name'], equals('Jon Doe'));
     });
 
-    test("should filter with a function", (){
-      r.table(tableName).filter((user){
+    test("should filter with a function", () async {
+      Cursor users = await r.table(tableName).filter((user){
         return user('name').eq("Jon Doe")
                  .or(user('name').eq("Firstname Last"));
       })
-      .run(connection)
-      .then((users){
-        expect(users is Cursor, equals(true));
-        return users.toList();
-      })
-      .then(expectAsync((userList){
-        expect(userList.length, equals(2));
-        expect(userList[0]['id'], equals(3));
-        expect(userList[0]['name'], equals('Firstname Last'));
-      }));
+      .run(connection);
+
+      expect(users is Cursor, equals(true));
+      List userList = await users.toList();
+
+      expect(userList.length, equals(2));
+      expect(userList[0]['id'], equals(3));
+      expect(userList[0]['name'], equals('Firstname Last'));
     });
   });
-  test("remove the test database", () {
-    r.dbDrop(testDbName).run(connection).then(expectAsync((Map response) {
-      expect(response.containsKey('config_changes'), equals(true));
-      expect(response['dbs_dropped'], equals(1));
-    }));
+
+  test("remove the test database", () async {
+    Map response = await r.dbDrop(testDbName).run(connection);
+
+    expect(response.containsKey('config_changes'), equals(true));
+    expect(response['dbs_dropped'], equals(1));
   });
 }

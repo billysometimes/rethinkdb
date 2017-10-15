@@ -8,31 +8,35 @@ class RqlQuery {
   Map optargs = {};
 
   RqlQuery([List args, Map optargs]) {
-    if (args != null)
+    if (args != null) {
       args.forEach((e) {
-      if (_checkIfOptions(e, tt)) {
-        optargs ??= e;
-      } else {
-        this.args.add(_expr(e));
-      }
-    });
-    if (optargs != null)
+        if (_checkIfOptions(e, tt)) {
+          optargs ??= e;
+        } else {
+          this.args.add(_expr(e));
+        }
+      });
+    }
+
+    if (optargs != null) {
       optargs.forEach((k, v) {
-      this.optargs[k] = _expr(v);
-    });
-    //args = [new Args(args)];
+        this.optargs[k] = _expr(v);
+      });
+    }
   }
 
   _expr(val, [nestingDepth = 20]) {
-    if (nestingDepth <= 0)
+    if (nestingDepth <= 0) {
       throw new RqlDriverError("Nesting depth limit exceeded");
+    }
 
-    if (nestingDepth is int == false)
+    if (nestingDepth is int == false) {
       throw new RqlDriverError("Second argument to `r.expr` must be a number.");
+    }
 
-    if (val is RqlQuery)
+    if (val is RqlQuery) {
       return val;
-    else if (val is List) {
+    } else if (val is List) {
       val.forEach((v) {
         v = _expr(v, nestingDepth - 1);
       });
@@ -46,9 +50,9 @@ class RqlQuery {
       });
 
       return new MakeObj(obj);
-    } else if (val is Function)
+    } else if (val is Function) {
       return new Func(val);
-    else if (val is DateTime) {
+    } else if (val is DateTime) {
       return new Time(new Args([
         val.year,
         val.month,
@@ -58,16 +62,20 @@ class RqlQuery {
         val.second,
         _formatTimeZoneOffset(val)
       ]));
-    } else
-      return new Datum(val);
+    }
+    return new Datum(val);
   }
 
   String _formatTimeZoneOffset(DateTime val) {
     String tz = val.timeZoneOffset.inHours.toString();
 
-    if (!val.timeZoneOffset.inHours.isNegative) tz = "+$tz";
+    if (!val.timeZoneOffset.inHours.isNegative){
+      tz = "+$tz";
+    }
 
-    if (tz.length == 2) tz = tz.replaceRange(0, 1, tz[0] + "0");
+    if (tz.length == 2){
+      tz = tz.replaceRange(0, 1, tz[0] + "0");
+    }
 
     return tz;
   }
@@ -75,9 +83,8 @@ class RqlQuery {
   Future run(Connection c, [globalOptargs]) {
     if (c == null)
       throw new RqlDriverError(
-          "RqlQuery.run must be given a connection to run on.");
+          "RqlQuery.run must be given a connection to run.");
 
-    globalOptargs ??= {};
     return c._start(this, globalOptargs);
   }
 
@@ -91,22 +98,21 @@ class RqlQuery {
     } else {
       List options = new _RqlAllOptions(tt).options;
 
-      bool isOptions = true;
-      obj.keys.forEach((k) {
-        if (!options.contains(k)) {
-          isOptions = false;
-        }
-      });
-      return isOptions;
+      return obj.keys.every(options.contains);
     }
   }
 
   build() {
     List res = [];
-    if (this.tt != null) res.add(this.tt.value);
+    if (this.tt != null) {
+      res.add(this.tt.value);
+    }
+
     List argList = [];
     args.forEach((arg) {
-      if (arg != null) argList.add(arg.build());
+      if (arg != null) {
+        argList.add(arg.build());
+      }
     });
     res.add(argList);
 
@@ -140,12 +146,14 @@ class RqlQuery {
       return args;
     } else {
       if (args != null) {
-        if (parg != null)
+        if (parg != null){
           return [parg, args];
-        else
+        } else {
           return [args];
-      } else
+        }
+      } else {
         return [];
+      }
     }
   }
 
@@ -418,8 +426,9 @@ class RqlQuery {
       index.forEach((k, ob) {
         if (ob is Asc || ob is Desc) {
           //do nothing
-        } else
+        } else {
           ob = _funcWrap(ob);
+        }
       });
     } else if (attrs is List) {
       if (index is Map == false && index != null) {
@@ -1576,9 +1585,11 @@ class Func extends RqlQuery {
   static int nextId = 0;
   Func(this.fun) : super([], null) {
     ClosureMirror closure = reflect(fun);
-    int x = closure.function.parameters.length;
+
     List vrs = [];
     List vrids = [];
+
+    int x = closure.function.parameters.length;
 
     for (int i = 0; i < x; i++) {
       vrs.add(new Var(Func.nextId));

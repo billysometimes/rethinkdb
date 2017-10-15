@@ -179,13 +179,17 @@ class Connection {
         });
 
         if (authMap.containsKey('r')) {
-          List<int> salt = BASE64.decode(authMap['s']);
+          String salt = new String.fromCharCodes(
+              BASE64.decode(authMap['s']));
+
+          var gen = new PBKDF2(hash: sha256);
+
           int i = int.parse(authMap['i']);
 
           String clientFinalMessageWithoutProof = "c=biws,r=" + authMap['r'];
 
           List<int> saltedPassword =
-              _pBKDF2(sha256, _password.codeUnits, salt, i, 32);
+            gen.generateKey(_password, salt, i, 32);
 
           Digest clientKey =
               new Hmac(sha256, saltedPassword).convert("Client Key".codeUnits);
@@ -291,7 +295,7 @@ class Connection {
       query._queryCompleter.complete(value);
   }
 
-  close([bool noreplyWait = true]) {
+  void close([bool noreplyWait = true]) {
     if (_listeners["close"] != null)
       _listeners["close"].forEach((func) => func());
 
@@ -497,40 +501,6 @@ class Connection {
     }
 
     return BASE64.encode(randomBytes);
-  }
-
-  /**
-   * this is a function from https://gist.github.com/csstewa/36d7834019d054cd4fb9
-   * hopefully someday csstewa will publish a library to provide
-   * PBKDF2 and we can switch to that.
-   */
-  List<int> _pBKDF2(
-      Hash pRF, List<int> password, List<int> salt, int c, int dKLen) {
-    List<int> f(c, i) {
-      List<int> u(List<int> salt) {
-        return new Hmac(pRF, password).convert(salt).bytes;
-      }
-
-      Uint8List bigEndianI = new Uint8List(4);
-      new ByteData.view(bigEndianI.buffer)
-          .setUint32(0, i, Endianness.BIG_ENDIAN);
-      List<int> u1 = u(new List.from(salt)..addAll(bigEndianI));
-      List<int> u2;
-      List<int> result = new List.from(u1);
-      for (int iteration = 1; iteration < c; iteration++, u1 = u2) {
-        u2 = u(u1);
-        result = _xOr(result, u2);
-      }
-      return result;
-    }
-
-    int hLen = pRF.convert([0]).bytes.length;
-    int tI = (dKLen / hLen).ceil();
-    List<int> dK = [];
-    for (int blockI = 1; blockI <= tI; blockI++) {
-      dK.addAll(f(c, blockI));
-    }
-    return dK.sublist(0, dKLen);
   }
 
   List<int> _xOr(List<int> result, List<int> next) {

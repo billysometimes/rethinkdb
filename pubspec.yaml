@@ -10,5 +10,6 @@ dependencies:
   protobuf: "^0.5.5"
   crypto: "^2.0.2+1"
   convert: "^2.0.1"
+  pbkdf2: "^0.2.0"
 dev_dependencies:
   test: "^0.12.24+8"

@@ -1,5 +1,5 @@
 name: rethinkdb_driver
-version: 2.3.2+1
+version: 2.3.2+2
 author: William Welch <billywelch@gmail.com>
 description: Dart driver for RethinkDB.
 homepage: https://github.com/billysometimes/rethinkdb
@@ -7,9 +7,9 @@ documentation: https://github.com/billysometimes/rethinkdb
 environment:
   sdk: ">=1.13.0 <2.0.0"
 dependencies:
-  protobuf: "^0.5.5"
+  protobuf: "^0.7.2"
   crypto: "^2.0.2+1"
   convert: "^2.0.1"
   pbkdf2: "^0.2.0"
 dev_dependencies:
-  test: "^0.12.24+8"
+  test: "^0.12.34"

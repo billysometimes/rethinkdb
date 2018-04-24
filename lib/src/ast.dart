@@ -12,7 +12,7 @@ class RqlQuery {
       args.forEach((e) {
         if (_checkIfOptions(e, tt)) {
           optargs ??= e;
-        } else {
+        } else if(e != null) {
           this.args.add(_expr(e));
         }
       });
@@ -629,7 +629,7 @@ class Datum extends RqlQuery {
   Map optargs = {};
   var data;
 
-  Datum(val) : super([], null) {
+  Datum(val) : super(null, null) {
     this.data = val;
   }
 
@@ -647,7 +647,7 @@ class MakeArray extends RqlQuery {
 class MakeObj extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.MAKE_OBJ;
 
-  MakeObj(objDict) : super([], objDict);
+  MakeObj(objDict) : super(null, objDict);
 
   build() {
     var res = {};
@@ -687,7 +687,7 @@ class UserError extends RqlTopLevelQuery {
 class Random extends RqlTopLevelQuery {
   p.Term_TermType tt = p.Term_TermType.RANDOM;
 
-  Random(optargs) : super([], optargs == null ? {} : optargs);
+  Random(optargs) : super(null, optargs == null ? {} : optargs);
 
   Random.leftBound(left, optargs)
       : super([left], optargs == null ? {} : optargs);
@@ -967,7 +967,7 @@ class DB extends RqlTopLevelQuery {
 class FunCall extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.FUNCALL;
 
-  FunCall(argslist, expression) : super([]) {
+  FunCall(argslist, expression) : super() {
     List temp = [];
     temp.add(expression);
     if (argslist is List)
@@ -1109,7 +1109,7 @@ class Max extends RqlMethodQuery {
 class RqlMap extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.MAP;
 
-  RqlMap(argslist, expression) : super([]) {
+  RqlMap(argslist, expression) : super() {
     List temp = [];
     temp.addAll(argslist);
     temp.add(_funcWrap(expression));
@@ -1292,7 +1292,7 @@ class Range extends RqlTopLevelQuery {
 
   Range(end) : super([end]);
 
-  Range.asStream() : super([]);
+  Range.asStream() : super();
 
   Range.withStart(start, end) : super([start, end]);
 }
@@ -1583,7 +1583,7 @@ class Func extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.FUNC;
   Function fun;
   static int nextId = 0;
-  Func(this.fun) : super([], null) {
+  Func(this.fun) : super(null, null) {
     ClosureMirror closure = reflect(fun);
 
     List vrs = [];

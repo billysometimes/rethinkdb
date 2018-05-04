@@ -254,7 +254,7 @@ class Rethinkdb {
 /**
  * Convert native dart object into a RqlObject
  */
-  expr(val) => new RqlQuery()._expr(val);
+  expr(val) => RqlQuery._expr(val);
 
 /**
  * Convert a GeoJSON object to a ReQL geometry object.

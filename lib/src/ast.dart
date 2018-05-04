@@ -13,19 +13,19 @@ class RqlQuery {
         if (_checkIfOptions(e, tt)) {
           optargs ??= e;
         } else if(e != null) {
-          this.args.add(_expr(e));
+          this.args.add(RqlQuery._expr(e));
         }
       });
     }
 
     if (optargs != null) {
       optargs.forEach((k, v) {
-        this.optargs[k] = _expr(v);
+        this.optargs[k] = RqlQuery._expr(v);
       });
     }
   }
 
-  _expr(val, [nestingDepth = 20]) {
+  static RqlQuery _expr(val, [nestingDepth = 20]) {
     if (nestingDepth <= 0) {
       throw new RqlDriverError("Nesting depth limit exceeded");
     }
@@ -38,7 +38,7 @@ class RqlQuery {
       return val;
     } else if (val is List) {
       val.forEach((v) {
-        v = _expr(v, nestingDepth - 1);
+        v = RqlQuery._expr(v, nestingDepth - 1);
       });
 
       return new MakeArray(val);
@@ -46,7 +46,7 @@ class RqlQuery {
       Map obj = {};
 
       val.forEach((k, v) {
-        obj[k] = _expr(v, nestingDepth - 1);
+        obj[k] = RqlQuery._expr(v, nestingDepth - 1);
       });
 
       return new MakeObj(obj);
@@ -66,7 +66,7 @@ class RqlQuery {
     return new Datum(val);
   }
 
-  String _formatTimeZoneOffset(DateTime val) {
+  static String _formatTimeZoneOffset(DateTime val) {
     String tz = val.timeZoneOffset.inHours.toString();
 
     if (!val.timeZoneOffset.inHours.isNegative) {
@@ -179,7 +179,7 @@ class RqlQuery {
 
   // Called on arguments that should be functions
   _funcWrap(val) {
-    val = _expr(val);
+    val = RqlQuery._expr(val);
     if (_ivarScan(val)) {
       return new Func((x) => val);
     }
@@ -975,7 +975,7 @@ class FunCall extends RqlQuery {
     else
       temp.add(argslist);
 
-    this.args.addAll(temp.map(_expr));
+    this.args.addAll(temp.map(RqlQuery._expr));
   }
 }
 
@@ -1113,7 +1113,7 @@ class RqlMap extends RqlMethodQuery {
     List temp = [];
     temp.addAll(argslist);
     temp.add(_funcWrap(expression));
-    this.args.addAll(temp.map(_expr));
+    this.args.addAll(temp.map(RqlQuery._expr));
   }
 }
 
@@ -1597,7 +1597,7 @@ class Func extends RqlQuery {
       Func.nextId++;
     }
 
-    this.args = [new MakeArray(vrids), _expr(Function.apply(fun, vrs))];
+    this.args = [new MakeArray(vrids), RqlQuery._expr(Function.apply(fun, vrs))];
   }
 }
 

@@ -83,5 +83,13 @@ main() {
       
       expect(count, equals(7));
     });
+
+    test("remove the test database", () async {
+      Map response = await r.dbDrop(testDbName).run(connection);
+
+      expect(response.containsKey('config_changes'), equals(true));
+      expect(response['dbs_dropped'], equals(1));
+      expect(response['tables_dropped'], equals(1));
+    });
   });
 }

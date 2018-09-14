@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'dart:convert';
 import 'dart:collection';
 import 'package:crypto/crypto.dart';
-import 'package:pbkdf2/pbkdf2.dart';
+import 'package:password_hash/password_hash.dart';
 import 'dart:math' as math;
 
 part 'src/ast.dart';
@@ -295,6 +295,7 @@ class Rethinkdb {
  */
   Binary binary(var data) => new Binary(data);
 
+  @override
   noSuchMethod(Invocation invocation) {
     String methodName = MirrorSystem.getName(invocation.memberName);
     List args = new List.from(invocation.positionalArguments);

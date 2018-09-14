@@ -24,7 +24,7 @@ class Query extends RqlQuery {
 
       res.add(optargs);
     }
-    return JSON.encode(res);
+    return json.encode(res);
   }
 }
 
@@ -39,7 +39,7 @@ class Response {
 
   Response(int this._token, String jsonStr) {
     if (jsonStr.length > 0) {
-      Map fullResponse = JSON.decode(jsonStr);
+      Map fullResponse = json.decode(jsonStr);
       this._type = fullResponse['t'];
       this._data = fullResponse['r'];
       this._backtrace = fullResponse['b'];
@@ -111,7 +111,7 @@ class Connection {
       _socket.listen(_handleResponse);
 
       _clientFirstMessage = "n=$_user,r=" + _makeSalt();
-      String message = JSON.encode({
+      String message = json.encode({
         'protocol_version': _protocolVersion,
         'authentication_method': "SCRAM-SHA-256",
         'authentication': "n,,${_clientFirstMessage}"
@@ -154,7 +154,7 @@ class Connection {
   }
 
   _doHandshake(List<int> response) {
-    Map responseJSON = JSON.decode(UTF8.decode(response));
+    Map responseJSON = json.decode(utf8.decode(response));
 
     if (responseJSON.containsKey('success') && responseJSON['success']) {
       if (responseJSON.containsKey('max_protocol_version')) {
@@ -171,7 +171,7 @@ class Connection {
         Map authMap = {};
         List authPieces = authString.split(',');
 
-        authPieces.forEach((String piece) {
+        authPieces.forEach((piece) {
           int i = piece.indexOf('=');
           String key = piece.substring(0, i);
           String val = piece.substring(i + 1);
@@ -179,9 +179,9 @@ class Connection {
         });
 
         if (authMap.containsKey('r')) {
-          String salt = new String.fromCharCodes(BASE64.decode(authMap['s']));
+          String salt = new String.fromCharCodes(base64.decode(authMap['s']));
 
-          var gen = new PBKDF2(hash: sha256);
+          var gen = new PBKDF2();
 
           int i = int.parse(authMap['i']);
 
@@ -208,17 +208,17 @@ class Connection {
           _serverSignature =
               new Hmac(sha256, serverKey.bytes).convert(authMessage.codeUnits);
 
-          String message = JSON.encode({
+          String message = json.encode({
             'authentication': clientFinalMessageWithoutProof +
                 ",p=" +
-                BASE64.encode(clientProof)
+                base64.encode(clientProof)
           });
 
           List<int> messageBytes = new List.from(message.codeUnits)..add(0);
 
           _socket.add(messageBytes);
         } else if (authMap.containsKey('v')) {
-          if (BASE64.encode(_serverSignature.bytes) != authMap['v']) {
+          if (base64.encode(_serverSignature.bytes) != authMap['v']) {
             _handleAuthError(new RqlDriverError("Invalid server signature"));
           } else {
             _completer.complete(this);
@@ -371,7 +371,7 @@ class Connection {
       responseLen = _fromBytes(_responseBuffer.sublist(8, 12));
       if (_responseLength >= responseLen + 12) {
         responseBuf =
-            UTF8.decode(_responseBuffer.sublist(12, responseLen + 12));
+            utf8.decode(_responseBuffer.sublist(12, responseLen + 12));
 
         _responseBuffer.removeRange(0, responseLen + 12);
         _responseLength = _responseBuffer.length;
@@ -444,7 +444,7 @@ class Connection {
             .completeError(new RqlDriverError("Connection is closed."));
       } else {
         // Send json
-        List queryStr = UTF8.encode(query.serialize());
+        List queryStr = utf8.encode(query.serialize());
         List queryHeader = new List.from(_toBytes8(query._token))
           ..addAll(_toBytes(queryStr.length))
           ..addAll(queryStr);
@@ -473,21 +473,21 @@ class Connection {
   Uint8List _toBytes(int data) {
     ByteBuffer buffer = new Uint8List(4).buffer;
     ByteData bdata = new ByteData.view(buffer);
-    bdata.setInt32(0, data, Endianness.LITTLE_ENDIAN);
+    bdata.setInt32(0, data, Endian.little);
     return new Uint8List.view(buffer);
   }
 
   Uint8List _toBytes8(int data) {
     ByteBuffer buffer = new Uint8List(8).buffer;
     ByteData bdata = new ByteData.view(buffer);
-    bdata.setInt32(0, data, Endianness.LITTLE_ENDIAN);
+    bdata.setInt32(0, data, Endian.little);
     return new Uint8List.view(buffer);
   }
 
   int _fromBytes(List<int> data) {
     Uint8List buf = new Uint8List.fromList(data);
     ByteData bdata = new ByteData.view(buf.buffer);
-    return bdata.getInt32(0, Endianness.LITTLE_ENDIAN);
+    return bdata.getInt32(0, Endian.little);
   }
 
   String _makeSalt() {
@@ -498,7 +498,7 @@ class Connection {
       randomBytes[i] = random.nextInt(255);
     }
 
-    return BASE64.encode(randomBytes);
+    return base64.encode(randomBytes);
   }
 
   List<int> _xOr(List<int> result, List<int> next) {

@@ -270,7 +270,7 @@ class RqlQuery {
   }
 
   _reqlTypeBinaryToBytes(Map obj) {
-    return BASE64.decode(obj['data']);
+    return base64.decode(obj['data']);
   }
 
   Update update(args, [options]) => new Update(this, _funcWrap(args), options);
@@ -458,7 +458,9 @@ class RqlQuery {
   operator -(other) => this.sub(other);
   operator *(other) => this.mul(other);
   operator /(other) => this.div(other);
-  operator ==(other) => this.eq(other);
+  // TODO see if we can still do this. != isn't assignable so maybe 
+  // it makes more sense not to do == anyway. 
+  //operator ==(other) => this.eq(other);
   operator <=(other) => this.le(other);
   operator >=(other) => this.ge(other);
   operator <(other) => this.lt(other);
@@ -568,6 +570,7 @@ class RqlQuery {
 
   Wait wait([Map options]) => new Wait(this, options);
 
+  @override
   noSuchMethod(Invocation invocation) {
     if (this._errDepth == 0) {
       _errDepth++;
@@ -1037,7 +1040,8 @@ class Table extends RqlQuery {
 
   InnerJoin innerJoin(otherSeq, [predicate]) =>
       new InnerJoin(this, otherSeq, predicate);
-
+  
+  @override
   noSuchMethod(Invocation invocation) {
     if (this._errDepth == 0) {
       _errDepth++;

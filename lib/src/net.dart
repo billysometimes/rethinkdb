@@ -63,7 +63,7 @@ class Connection {
   Digest _serverSignature;
   Map _sslOpts;
 
-  Completer _completer = new Completer();
+  Completer<Connection> _completer = new Completer();
 
   int _responseLength = 0;
   List<int> _responseBuffer = [];
@@ -169,9 +169,9 @@ class Connection {
       } else if (responseJSON.containsKey('authentication')) {
         String authString = responseJSON['authentication'];
         Map authMap = {};
-        List authPieces = authString.split(',');
+        List<String> authPieces = authString.split(',');
 
-        authPieces.forEach((piece) {
+        authPieces.forEach((String piece) {
           int i = piece.indexOf('=');
           String key = piece.substring(0, i);
           String val = piece.substring(i + 1);
@@ -444,8 +444,8 @@ class Connection {
             .completeError(new RqlDriverError("Connection is closed."));
       } else {
         // Send json
-        List queryStr = utf8.encode(query.serialize());
-        List queryHeader = new List.from(_toBytes8(query._token))
+        List<int> queryStr = utf8.encode(query.serialize());
+        List<int> queryHeader = new List.from(_toBytes8(query._token))
           ..addAll(_toBytes(queryStr.length))
           ..addAll(queryStr);
         _socket.add(queryHeader);
@@ -491,9 +491,9 @@ class Connection {
   }
 
   String _makeSalt() {
-    List randomBytes = new List(18);
+    List<int> randomBytes = new List(18);
     math.Random random = new math.Random.secure();
-
+  
     for (int i = 0; i < randomBytes.length; ++i) {
       randomBytes[i] = random.nextInt(255);
     }

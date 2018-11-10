@@ -82,7 +82,7 @@ class Connection {
     _db = db;
   }
 
-  Future<Map> server() {
+  Future server() {
     RqlQuery query =
         new Query(p.Query_QueryType.SERVER_INFO, _getToken(), null, null);
     _sendQueue.add(query);
@@ -181,7 +181,7 @@ class Connection {
         if (authMap.containsKey('r')) {
           String salt = new String.fromCharCodes(base64.decode(authMap['s']));
 
-          var gen = new PBKDF2();
+          PBKDF2 gen = new PBKDF2(hash: sha256);
 
           int i = int.parse(authMap['i']);
 

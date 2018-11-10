@@ -8,7 +8,7 @@ import 'dart:mirrors';
 import 'dart:convert';
 import 'dart:collection';
 import 'package:crypto/crypto.dart';
-import 'package:password_hash/password_hash.dart';
+import 'package:pbkdf2/pbkdf2.dart';
 import 'dart:math' as math;
 
 part 'src/ast.dart';

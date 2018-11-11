@@ -157,7 +157,7 @@ class RqlQuery {
     }
   }
 
-  _ivarScan(query) {
+  bool _ivarScan(query) {
     if (!(query is RqlQuery)) {
       return false;
     }
@@ -571,7 +571,7 @@ class RqlQuery {
   Wait wait([Map options]) => new Wait(this, options);
 
   @override
-  noSuchMethod(Invocation invocation) {
+  dynamic noSuchMethod(Invocation invocation) {
     if (this._errDepth == 0) {
       _errDepth++;
       Symbol methodName = invocation.memberName;
@@ -1042,7 +1042,7 @@ class Table extends RqlQuery {
       new InnerJoin(this, otherSeq, predicate);
   
   @override
-  noSuchMethod(Invocation invocation) {
+  dynamic noSuchMethod(Invocation invocation) {
     if (this._errDepth == 0) {
       _errDepth++;
       Symbol methodName = invocation.memberName;

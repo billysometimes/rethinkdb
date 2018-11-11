@@ -296,7 +296,7 @@ class Rethinkdb {
   Binary binary(var data) => new Binary(data);
 
   @override
-  noSuchMethod(Invocation invocation) {
+  dynamic noSuchMethod(Invocation invocation) {
     String methodName = MirrorSystem.getName(invocation.memberName);
     List args = new List.from(invocation.positionalArguments);
 

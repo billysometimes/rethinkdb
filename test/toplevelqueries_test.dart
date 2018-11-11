@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import '../lib/rethinkdb_driver.dart';
 
 main() {
-  Rethinkdb r = new Rethinkdb();
+  var r = new Rethinkdb() as dynamic;
   String databaseName = null;
   String tableName = null;
   String testDbName = null;

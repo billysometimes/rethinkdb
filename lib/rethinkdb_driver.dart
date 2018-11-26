@@ -46,6 +46,20 @@ class BranchFunction {
 }
 
 /**
+ * Construct a geometric line
+ */
+class LineFunction {
+  Line call(point1, point2) {
+    return new Line([point1, point2]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Line(invocation.positionalArguments);
+  }
+}
+
+/**
  * Executes the mappingFunction for each item in a sequence or array
  * and returns the transformed array. multiple sequences and arrays
  * may be passed
@@ -354,7 +368,7 @@ class Rethinkdb {
 /**
  * Construct a geometric line
  */
-  Line line(point1, point2) => new Line([point1, point2]);
+  dynamic get line => LineFunction();
 
 /**
  * Construct a geometric point
@@ -380,8 +394,6 @@ class Rethinkdb {
     switch (methodName) {
       case "rqlDo":
         return this.rqlDo(args.sublist(0, args.length - 1), args.last);
-      case "line":
-        return new Line(args);
       case "polygon":
         return new Polygon(args);
       default:

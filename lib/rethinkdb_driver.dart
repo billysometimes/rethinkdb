@@ -17,6 +17,20 @@ part 'src/net.dart';
 part 'src/cursor.dart';
 
 /**
+ * computes logical 'and' of two or more values
+ */
+class AndFunction {
+  And call(obj1, obj2) {
+    return new And([obj1, obj2]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new And(invocation.positionalArguments);
+  }
+}
+
+/**
  * If the test expression returns false or null, the [falseBranch] will be executed.
  * In the other cases, the [trueBranch] is the one that will be evaluated.
  */
@@ -253,7 +267,7 @@ class Rethinkdb {
 /**
  * computes logical 'and' of two or more values
  */
-  And and(obj1, obj2) => new And([obj1, obj2]);
+  dynamic get and => AndFunction();
 
 /**
  * computes logical 'or' of two or more values

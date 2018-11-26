@@ -982,6 +982,28 @@ class FunCall extends RqlQuery {
   }
 }
 
+class GetAllFunction extends RqlQuery {
+  Table _table;
+
+  GetAllFunction(this._table);
+
+  GetAll call(args, [options]) {
+    if (options != null && options is Map == false) {
+      args = _listify(args, _table);
+      options = args.add(options);
+      return new GetAll(args, options);
+    }
+    return new GetAll(_listify(args, _table), options);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
+  }
+}
+
 class Table extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.TABLE;
 
@@ -1029,14 +1051,7 @@ class Table extends RqlQuery {
 
   Sync sync() => new Sync(this);
 
-  GetAll getAll(args, [options]) {
-    if (options != null && options is Map == false) {
-      args = _listify(args, this);
-      options = args.add(options);
-      return new GetAll(args, options);
-    }
-    return new GetAll(_listify(args, this), options);
-  }
+  dynamic get getAll => GetAllFunction(this);
 
   InnerJoin innerJoin(otherSeq, [predicate]) =>
       new InnerJoin(this, otherSeq, predicate);

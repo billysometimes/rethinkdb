@@ -122,6 +122,26 @@ class PolygonFunction {
   }
 }
 
+/**
+ * Evaluate the expr in the context of one or more value bindings.
+ * The type of the result is the type of the value returned from expr.
+ */
+class RqlDoFunction {
+  Rethinkdb _rethinkdb;
+
+  RqlDoFunction(this._rethinkdb);
+
+  FunCall call(arg, [expr]) {
+    return new FunCall(arg, expr);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List args = new List.from(invocation.positionalArguments);
+    return _rethinkdb.rqlDo(args.sublist(0, args.length - 1), args.last);
+  }
+}
+
 class Rethinkdb {
 // Connection Management
 /**
@@ -258,7 +278,7 @@ class Rethinkdb {
  * Evaluate the expr in the context of one or more value bindings.
  * The type of the result is the type of the value returned from expr.
  */
-  FunCall rqlDo(arg, [expr]) => new FunCall(arg, expr);
+  dynamic get rqlDo => RqlDoFunction(this);
 
 /**
  * If the test expression returns false or null, the [falseBranch] will be executed.
@@ -398,19 +418,6 @@ class Rethinkdb {
  * Encapsulate binary data within a query.
  */
   Binary binary(var data) => new Binary(data);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) {
-    String methodName = MirrorSystem.getName(invocation.memberName);
-    List args = new List.from(invocation.positionalArguments);
-
-    switch (methodName) {
-      case "rqlDo":
-        return this.rqlDo(args.sublist(0, args.length - 1), args.last);
-      default:
-        throw new RqlDriverError("Unknown method $methodName");
-    }
-  }
 
   RqlTimeName monday = new RqlTimeName(p.Term_TermType.MONDAY);
   RqlTimeName tuesday = new RqlTimeName(p.Term_TermType.TUESDAY);

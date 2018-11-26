@@ -337,8 +337,6 @@ class Rethinkdb {
         return new Line(args);
       case "polygon":
         return new Polygon(args);
-      case "and":
-        return new And(args);
       case "or":
         return new Or(args);
       case "map":

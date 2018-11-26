@@ -45,6 +45,20 @@ class BranchFunction {
   }
 }
 
+/**
+ * computes logical 'or' of two or more values
+ */
+class OrFunction {
+  Or call(obj1, obj2) {
+    return new Or([obj1, obj2]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Or(invocation.positionalArguments);
+  }
+}
+
 class Rethinkdb {
 // Connection Management
 /**
@@ -272,7 +286,7 @@ class Rethinkdb {
 /**
  * computes logical 'or' of two or more values
  */
-  Or or(obj1, obj2) => new Or([obj1, obj2]);
+  dynamic get or => OrFunction();
 
 /**
  * Replace an object in a field instead of merging it with an existing object in a [merge] or [update] operation.
@@ -337,8 +351,6 @@ class Rethinkdb {
         return new Line(args);
       case "polygon":
         return new Polygon(args);
-      case "or":
-        return new Or(args);
       case "map":
         return new RqlMap(args.sublist(0, args.length - 1), args.last);
       default:

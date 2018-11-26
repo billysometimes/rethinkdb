@@ -108,6 +108,20 @@ class OrFunction {
   }
 }
 
+/**
+ * Construct a geometric polygon
+ */
+class PolygonFunction {
+  Polygon call(point1, point2, point3) {
+    return new Polygon([point1, point2, point3]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Polygon(invocation.positionalArguments);
+  }
+}
+
 class Rethinkdb {
 // Connection Management
 /**
@@ -378,8 +392,7 @@ class Rethinkdb {
 /**
  * Construct a geometric polygon
  */
-  Polygon polygon(point1, point2, point3) =>
-      new Polygon([point1, point2, point3]);
+  dynamic get polygon => PolygonFunction();
 
 /**
  * Encapsulate binary data within a query.
@@ -394,8 +407,6 @@ class Rethinkdb {
     switch (methodName) {
       case "rqlDo":
         return this.rqlDo(args.sublist(0, args.length - 1), args.last);
-      case "polygon":
-        return new Polygon(args);
       default:
         throw new RqlDriverError("Unknown method $methodName");
     }

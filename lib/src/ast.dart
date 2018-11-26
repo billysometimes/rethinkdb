@@ -1004,6 +1004,26 @@ class GetAllFunction extends RqlQuery {
   }
 }
 
+class IndexWaitFunction extends RqlQuery {
+  Table _table;
+
+  IndexWaitFunction(this._table);
+
+  IndexWait call([indexes]) {
+    if (indexes == null) {
+      return new IndexWait.all(_table);
+    }
+    return new IndexWait(_table, indexes);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
+  }
+}
+
 class Table extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.TABLE;
 
@@ -1040,12 +1060,7 @@ class Table extends RqlQuery {
     return new IndexStatus(this, indexes);
   }
 
-  IndexWait indexWait([indexes]) {
-    if (indexes == null) {
-      return new IndexWait.all(this);
-    }
-    return new IndexWait(this, indexes);
-  }
+  dynamic get indexWait => IndexWaitFunction(this);
 
   Update update(args, [options]) => new Update(this, _funcWrap(args), options);
 

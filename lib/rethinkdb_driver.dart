@@ -46,9 +46,25 @@ class BranchFunction {
 }
 
 /**
+ * Executes the mappingFunction for each item in a sequence or array
+ * and returns the transformed array. multiple sequences and arrays
+ * may be passed
+ */
+class MapFunction {
+  RqlMap call(seq, mappingFunction) {
+    return new RqlMap([seq], mappingFunction);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List args = new List.from(invocation.positionalArguments);
+    return new RqlMap(args.sublist(0, args.length - 1), args.last);
+  }
+}
+
+/**
  * Adds fields to an object
  */
-
 class ObjectFunction {
   Rethinkdb _rethinkdb;
 
@@ -295,7 +311,7 @@ class Rethinkdb {
  * and returns the transformed array. multiple sequences and arrays
  * may be passed
  */
-  RqlMap map(seq, mappingFunction) => new RqlMap([seq], mappingFunction);
+  dynamic get map => MapFunction();
 
 /**
  * computes logical 'and' of two or more values
@@ -368,8 +384,6 @@ class Rethinkdb {
         return new Line(args);
       case "polygon":
         return new Polygon(args);
-      case "map":
-        return new RqlMap(args.sublist(0, args.length - 1), args.last);
       default:
         throw new RqlDriverError("Unknown method $methodName");
     }

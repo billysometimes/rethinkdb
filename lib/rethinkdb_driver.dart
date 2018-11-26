@@ -46,6 +46,25 @@ class BranchFunction {
 }
 
 /**
+ * Adds fields to an object
+ */
+
+class ObjectFunction {
+  Rethinkdb _rethinkdb;
+
+  ObjectFunction(this._rethinkdb);
+
+  RqlObject call(args) {
+    return new RqlObject(args);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return _rethinkdb.object(invocation.positionalArguments);
+  }
+}
+
+/**
  * computes logical 'or' of two or more values
  */
 class OrFunction {
@@ -242,7 +261,7 @@ class Rethinkdb {
  * Adds fields to an object
  */
 
-  RqlObject object(args) => new RqlObject(args);
+  dynamic get object => ObjectFunction(this);
 
 /**
  * Acts like the ruby splat operator; unpacks a list of arguments.
@@ -343,8 +362,6 @@ class Rethinkdb {
     List args = new List.from(invocation.positionalArguments);
 
     switch (methodName) {
-      case "object":
-        return this.object(args);
       case "rqlDo":
         return this.rqlDo(args.sublist(0, args.length - 1), args.last);
       case "line":

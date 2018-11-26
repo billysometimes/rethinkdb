@@ -1004,6 +1004,26 @@ class GetAllFunction extends RqlQuery {
   }
 }
 
+class IndexStatusFunction extends RqlQuery {
+  Table _table;
+
+  IndexStatusFunction(this._table);
+
+  IndexStatus call([indexes]) {
+    if (indexes == null) {
+      return new IndexStatus.all(_table);
+    }
+    return new IndexStatus(_table, indexes);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
+  }
+}
+
 class IndexWaitFunction extends RqlQuery {
   Table _table;
 
@@ -1053,12 +1073,7 @@ class Table extends RqlQuery {
   IndexRename indexRename(oldName, newName, [Map options]) =>
       new IndexRename(this, oldName, newName, options);
 
-  IndexStatus indexStatus([indexes]) {
-    if (indexes == null) {
-      return new IndexStatus.all(this);
-    }
-    return new IndexStatus(this, indexes);
-  }
+  dynamic get indexStatus => IndexStatusFunction(this);
 
   dynamic get indexWait => IndexWaitFunction(this);
 

@@ -16,6 +16,21 @@ part 'src/errors.dart';
 part 'src/net.dart';
 part 'src/cursor.dart';
 
+/**
+ * If the test expression returns false or null, the [falseBranch] will be executed.
+ * In the other cases, the [trueBranch] is the one that will be evaluated.
+ */
+class BranchFunction {
+  Branch call(test, [trueBranch, falseBranch]) {
+    return new Branch(test, trueBranch, falseBranch);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Branch.fromArgs(new Args(invocation.positionalArguments));
+  }
+}
+
 class Rethinkdb {
 // Connection Management
 /**
@@ -158,8 +173,7 @@ class Rethinkdb {
  * If the test expression returns false or null, the [falseBranch] will be executed.
  * In the other cases, the [trueBranch] is the one that will be evaluated.
  */
-  Branch branch(test, [trueBranch, falseBranch]) =>
-      new Branch(test, trueBranch, falseBranch);
+  dynamic get branch => BranchFunction();
 
 /**
  * Throw a runtime error. If called with no arguments inside the second argument to default, re-throw the current error.
@@ -315,8 +329,6 @@ class Rethinkdb {
         return new Or(args);
       case "map":
         return new RqlMap(args.sublist(0, args.length - 1), args.last);
-      case "branch":
-        return new Branch.fromArgs(new Args(args));
       default:
         throw new RqlDriverError("Unknown method $methodName");
     }

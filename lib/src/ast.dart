@@ -982,6 +982,68 @@ class FunCall extends RqlQuery {
   }
 }
 
+class GetAllFunction extends RqlQuery {
+  Table _table;
+
+  GetAllFunction(this._table);
+
+  GetAll call(args, [options]) {
+    if (options != null && options is Map == false) {
+      args = _listify(args, _table);
+      options = args.add(options);
+      return new GetAll(args, options);
+    }
+    return new GetAll(_listify(args, _table), options);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
+  }
+}
+
+class IndexStatusFunction extends RqlQuery {
+  Table _table;
+
+  IndexStatusFunction(this._table);
+
+  IndexStatus call([indexes]) {
+    if (indexes == null) {
+      return new IndexStatus.all(_table);
+    }
+    return new IndexStatus(_table, indexes);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
+  }
+}
+
+class IndexWaitFunction extends RqlQuery {
+  Table _table;
+
+  IndexWaitFunction(this._table);
+
+  IndexWait call([indexes]) {
+    if (indexes == null) {
+      return new IndexWait.all(_table);
+    }
+    return new IndexWait(_table, indexes);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
+  }
+}
+
 class Table extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.TABLE;
 
@@ -1011,52 +1073,18 @@ class Table extends RqlQuery {
   IndexRename indexRename(oldName, newName, [Map options]) =>
       new IndexRename(this, oldName, newName, options);
 
-  IndexStatus indexStatus([indexes]) {
-    if (indexes == null) {
-      return new IndexStatus.all(this);
-    }
-    return new IndexStatus(this, indexes);
-  }
+  dynamic get indexStatus => IndexStatusFunction(this);
 
-  IndexWait indexWait([indexes]) {
-    if (indexes == null) {
-      return new IndexWait.all(this);
-    }
-    return new IndexWait(this, indexes);
-  }
+  dynamic get indexWait => IndexWaitFunction(this);
 
   Update update(args, [options]) => new Update(this, _funcWrap(args), options);
 
   Sync sync() => new Sync(this);
 
-  GetAll getAll(args, [options]) {
-    if (options != null && options is Map == false) {
-      args = _listify(args, this);
-      options = args.add(options);
-      return new GetAll(args, options);
-    }
-    return new GetAll(_listify(args, this), options);
-  }
+  dynamic get getAll => GetAllFunction(this);
 
   InnerJoin innerJoin(otherSeq, [predicate]) =>
       new InnerJoin(this, otherSeq, predicate);
-  
-  @override
-  dynamic noSuchMethod(Invocation invocation) {
-    if (this._errDepth == 0) {
-      _errDepth++;
-      Symbol methodName = invocation.memberName;
-      List argsList = [];
-      argsList.addAll(invocation.positionalArguments);
-
-      InstanceMirror im = reflect(this);
-
-      return im.invoke(methodName, [argsList]).reflectee;
-    } else {
-      throw new RqlDriverError(
-          "${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
-    }
-  }
 }
 
 class Get extends RqlMethodQuery {

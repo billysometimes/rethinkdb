@@ -16,6 +16,132 @@ part 'src/errors.dart';
 part 'src/net.dart';
 part 'src/cursor.dart';
 
+/**
+ * computes logical 'and' of two or more values
+ */
+class AndFunction {
+  And call(obj1, obj2) {
+    return new And([obj1, obj2]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new And(invocation.positionalArguments);
+  }
+}
+
+/**
+ * If the test expression returns false or null, the [falseBranch] will be executed.
+ * In the other cases, the [trueBranch] is the one that will be evaluated.
+ */
+class BranchFunction {
+  Branch call(test, [trueBranch, falseBranch]) {
+    return new Branch(test, trueBranch, falseBranch);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Branch.fromArgs(new Args(invocation.positionalArguments));
+  }
+}
+
+/**
+ * Construct a geometric line
+ */
+class LineFunction {
+  Line call(point1, point2) {
+    return new Line([point1, point2]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Line(invocation.positionalArguments);
+  }
+}
+
+/**
+ * Executes the mappingFunction for each item in a sequence or array
+ * and returns the transformed array. multiple sequences and arrays
+ * may be passed
+ */
+class MapFunction {
+  RqlMap call(seq, mappingFunction) {
+    return new RqlMap([seq], mappingFunction);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List args = new List.from(invocation.positionalArguments);
+    return new RqlMap(args.sublist(0, args.length - 1), args.last);
+  }
+}
+
+/**
+ * Adds fields to an object
+ */
+class ObjectFunction {
+  Rethinkdb _rethinkdb;
+
+  ObjectFunction(this._rethinkdb);
+
+  RqlObject call(args) {
+    return new RqlObject(args);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return _rethinkdb.object(invocation.positionalArguments);
+  }
+}
+
+/**
+ * computes logical 'or' of two or more values
+ */
+class OrFunction {
+  Or call(obj1, obj2) {
+    return new Or([obj1, obj2]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Or(invocation.positionalArguments);
+  }
+}
+
+/**
+ * Construct a geometric polygon
+ */
+class PolygonFunction {
+  Polygon call(point1, point2, point3) {
+    return new Polygon([point1, point2, point3]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Polygon(invocation.positionalArguments);
+  }
+}
+
+/**
+ * Evaluate the expr in the context of one or more value bindings.
+ * The type of the result is the type of the value returned from expr.
+ */
+class RqlDoFunction {
+  Rethinkdb _rethinkdb;
+
+  RqlDoFunction(this._rethinkdb);
+
+  FunCall call(arg, [expr]) {
+    return new FunCall(arg, expr);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List args = new List.from(invocation.positionalArguments);
+    return _rethinkdb.rqlDo(args.sublist(0, args.length - 1), args.last);
+  }
+}
+
 class Rethinkdb {
 // Connection Management
 /**
@@ -152,14 +278,13 @@ class Rethinkdb {
  * Evaluate the expr in the context of one or more value bindings.
  * The type of the result is the type of the value returned from expr.
  */
-  FunCall rqlDo(arg, [expr]) => new FunCall(arg, expr);
+  dynamic get rqlDo => RqlDoFunction(this);
 
 /**
  * If the test expression returns false or null, the [falseBranch] will be executed.
  * In the other cases, the [trueBranch] is the one that will be evaluated.
  */
-  Branch branch(test, [trueBranch, falseBranch]) =>
-      new Branch(test, trueBranch, falseBranch);
+  dynamic get branch => BranchFunction();
 
 /**
  * Throw a runtime error. If called with no arguments inside the second argument to default, re-throw the current error.
@@ -200,7 +325,7 @@ class Rethinkdb {
  * Adds fields to an object
  */
 
-  RqlObject object(args) => new RqlObject(args);
+  dynamic get object => ObjectFunction(this);
 
 /**
  * Acts like the ruby splat operator; unpacks a list of arguments.
@@ -234,17 +359,17 @@ class Rethinkdb {
  * and returns the transformed array. multiple sequences and arrays
  * may be passed
  */
-  RqlMap map(seq, mappingFunction) => new RqlMap([seq], mappingFunction);
+  dynamic get map => MapFunction();
 
 /**
  * computes logical 'and' of two or more values
  */
-  And and(obj1, obj2) => new And([obj1, obj2]);
+  dynamic get and => AndFunction();
 
 /**
  * computes logical 'or' of two or more values
  */
-  Or or(obj1, obj2) => new Or([obj1, obj2]);
+  dynamic get or => OrFunction();
 
 /**
  * Replace an object in a field instead of merging it with an existing object in a [merge] or [update] operation.
@@ -277,7 +402,7 @@ class Rethinkdb {
 /**
  * Construct a geometric line
  */
-  Line line(point1, point2) => new Line([point1, point2]);
+  dynamic get line => LineFunction();
 
 /**
  * Construct a geometric point
@@ -287,40 +412,12 @@ class Rethinkdb {
 /**
  * Construct a geometric polygon
  */
-  Polygon polygon(point1, point2, point3) =>
-      new Polygon([point1, point2, point3]);
+  dynamic get polygon => PolygonFunction();
 
 /**
  * Encapsulate binary data within a query.
  */
   Binary binary(var data) => new Binary(data);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) {
-    String methodName = MirrorSystem.getName(invocation.memberName);
-    List args = new List.from(invocation.positionalArguments);
-
-    switch (methodName) {
-      case "object":
-        return this.object(args);
-      case "rqlDo":
-        return this.rqlDo(args.sublist(0, args.length - 1), args.last);
-      case "line":
-        return new Line(args);
-      case "polygon":
-        return new Polygon(args);
-      case "and":
-        return new And(args);
-      case "or":
-        return new Or(args);
-      case "map":
-        return new RqlMap(args.sublist(0, args.length - 1), args.last);
-      case "branch":
-        return new Branch.fromArgs(new Args(args));
-      default:
-        throw new RqlDriverError("Unknown method $methodName");
-    }
-  }
 
   RqlTimeName monday = new RqlTimeName(p.Term_TermType.MONDAY);
   RqlTimeName tuesday = new RqlTimeName(p.Term_TermType.TUESDAY);

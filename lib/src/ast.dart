@@ -1085,23 +1085,6 @@ class Table extends RqlQuery {
 
   InnerJoin innerJoin(otherSeq, [predicate]) =>
       new InnerJoin(this, otherSeq, predicate);
-  
-  @override
-  dynamic noSuchMethod(Invocation invocation) {
-    if (this._errDepth == 0) {
-      _errDepth++;
-      Symbol methodName = invocation.memberName;
-      List argsList = [];
-      argsList.addAll(invocation.positionalArguments);
-
-      InstanceMirror im = reflect(this);
-
-      return im.invoke(methodName, [argsList]).reflectee;
-    } else {
-      throw new RqlDriverError(
-          "${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
-    }
-  }
 }
 
 class Get extends RqlMethodQuery {

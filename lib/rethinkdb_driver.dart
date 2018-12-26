@@ -45,6 +45,50 @@ class BranchFunction {
   }
 }
 
+class EqFunction {
+  Eq call(number1, number2) {
+    return Eq(number1, number2);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Eq.fromList(invocation.positionalArguments);
+  }
+}
+
+class GeFunction {
+  Ge call(number1, number2) {
+    return Ge(number1, number2);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Ge.fromList(invocation.positionalArguments);
+  }
+}
+
+class GtFunction {
+  Gt call(number1, number2) {
+    return Gt(number1, number2);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Gt.fromList(invocation.positionalArguments);
+  }
+}
+
+class LeFunction {
+  Le call(number1, number2) {
+    return Le(number1, number2);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Le.fromList(invocation.positionalArguments);
+  }
+}
+
 /**
  * Construct a geometric line
  */
@@ -56,6 +100,17 @@ class LineFunction {
   @override
   dynamic noSuchMethod(Invocation invocation) {
     return new Line(invocation.positionalArguments);
+  }
+}
+
+class LtFunction {
+  Lt call(number1, number2) {
+    return Lt(number1, number2);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Lt.fromList(invocation.positionalArguments);
   }
 }
 
@@ -73,6 +128,17 @@ class MapFunction {
   dynamic noSuchMethod(Invocation invocation) {
     List args = new List.from(invocation.positionalArguments);
     return new RqlMap(args.sublist(0, args.length - 1), args.last);
+  }
+}
+
+class NeFunction {
+  Ne call(number1, number2) {
+    return Ne(number1, number2);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return new Ne.fromList(invocation.positionalArguments);
   }
 }
 
@@ -413,6 +479,18 @@ class Rethinkdb {
  * Construct a geometric polygon
  */
   dynamic get polygon => PolygonFunction();
+
+  dynamic get eq => EqFunction();
+
+  dynamic get ne => NeFunction();
+
+  dynamic get lt => LtFunction();
+
+  dynamic get le => LeFunction();
+
+  dynamic get gt => GtFunction();
+
+  dynamic get ge => GeFunction();
 
 /**
  * Encapsulate binary data within a query.

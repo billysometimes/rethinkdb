@@ -762,36 +762,42 @@ class Eq extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.EQ;
 
   Eq(comparable, numb) : super([comparable, numb]);
+  Eq.fromList(numbers) : super(numbers);
 }
 
 class Ne extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.NE;
 
   Ne(comparable, numb) : super([comparable, numb]);
+  Ne.fromList(numbers) : super(numbers);
 }
 
 class Lt extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.LT;
 
   Lt(comparable, numb) : super([comparable, numb]);
+  Lt.fromList(numbers) : super(numbers);
 }
 
 class Le extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.LE;
 
   Le(comparable, numb) : super([comparable, numb]);
+  Le.fromList(numbers) : super(numbers);
 }
 
 class Gt extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.GT;
 
   Gt(comparable, numb) : super([comparable, numb]);
+  Gt.fromList(numbers) : super(numbers);
 }
 
 class Ge extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.GE;
 
   Ge(comparable, numb) : super([comparable, numb]);
+  Ge.fromList(numbers) : super(numbers);
 }
 
 class Not extends RqlQuery {

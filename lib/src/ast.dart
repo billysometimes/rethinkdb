@@ -1,5 +1,30 @@
 part of rethinkdb;
 
+const defaultNestingDepth = 20;
+
+class RqlMapFunction {
+  RqlQuery _rqlQuery;
+
+  RqlMapFunction(this._rqlQuery);
+
+  call(mappingFunction) {
+    if (mappingFunction is List) {
+      mappingFunction.insert(0, _rqlQuery);
+      var item = _rqlQuery._funcWrap(mappingFunction.removeLast(), mappingFunction.length);
+      return new RqlMap(mappingFunction, item);
+    }
+    return new RqlMap([_rqlQuery], mappingFunction);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List mappingFunction = new List.from(invocation.positionalArguments);
+    mappingFunction.insert(0, _rqlQuery);
+    var item = _rqlQuery._funcWrap(mappingFunction.removeLast(), mappingFunction.length);
+    return new RqlMap(mappingFunction, item);
+  }
+}
+
 class RqlQuery {
   p.Term_TermType tt;
 
@@ -20,12 +45,16 @@ class RqlQuery {
 
     if (optargs != null) {
       optargs.forEach((k, v) {
-        this.optargs[k] = _expr(v);
+        if ((k == "conflict") && (v is Function)) {
+          this.optargs[k] = _expr(v, defaultNestingDepth, 3);
+        } else {
+          this.optargs[k] = _expr(v);
+        }
       });
     }
   }
 
-  _expr(val, [nestingDepth = 20]) {
+  _expr(val, [nestingDepth = defaultNestingDepth, argsCount]) {
     if (nestingDepth <= 0) {
       throw new RqlDriverError("Nesting depth limit exceeded");
     }
@@ -38,7 +67,7 @@ class RqlQuery {
       return val;
     } else if (val is List) {
       val.forEach((v) {
-        v = _expr(v, nestingDepth - 1);
+        v = _expr(v, nestingDepth - 1, argsCount);
       });
 
       return new MakeArray(val);
@@ -46,12 +75,12 @@ class RqlQuery {
       Map obj = {};
 
       val.forEach((k, v) {
-        obj[k] = _expr(v, nestingDepth - 1);
+        obj[k] = _expr(v, nestingDepth - 1, argsCount);
       });
 
       return new MakeObj(obj);
     } else if (val is Function) {
-      return new Func(val);
+      return new Func(val, argsCount);
     } else if (val is DateTime) {
       return new Time(new Args([
         val.year,
@@ -178,10 +207,10 @@ class RqlQuery {
   }
 
   // Called on arguments that should be functions
-  _funcWrap(val) {
-    val = _expr(val);
+  _funcWrap(val, [argsCount]) {
+    val = _expr(val, defaultNestingDepth, argsCount);
     if (_ivarScan(val)) {
-      return new Func((x) => val);
+      return new Func((x) => val, argsCount);
     }
     return val;
   }
@@ -273,7 +302,7 @@ class RqlQuery {
     return base64.decode(obj['data']);
   }
 
-  Update update(args, [options]) => new Update(this, _funcWrap(args), options);
+  Update update(args, [options]) => new Update(this, _funcWrap(args, 1), options);
 
   // Comparison operators
   Eq eq(other) => new Eq(this, other);
@@ -305,7 +334,7 @@ class RqlQuery {
 
   Or or(other) => new Or([this, other]);
 
-  Contains contains(args) => new Contains(this, _funcWrap(args));
+  Contains contains(args) => new Contains(this, _funcWrap(args, 1));
 
   HasFields hasFields(args) => new HasFields(this, args);
 
@@ -324,16 +353,16 @@ class RqlQuery {
 
   FunCall rqlDo(arg, [expression]) {
     if (expression == null) {
-      return new FunCall(this, _funcWrap(arg));
+      return new FunCall(this, _funcWrap(arg, 1));
     } else {
-      return new FunCall(_listify(arg, this), _funcWrap(expression));
+      return new FunCall(_listify(arg, this), _funcWrap(expression, arg.length));
     }
   }
 
   Default rqlDefault(args) => new Default(this, args);
 
   Replace replace(expr, [options]) =>
-      new Replace(this, _funcWrap(expr), options);
+      new Replace(this, _funcWrap(expr, 1), options);
 
   Delete delete([options]) => new Delete(this, options);
 
@@ -344,7 +373,7 @@ class RqlQuery {
 
   TypeOf typeOf() => new TypeOf(this);
 
-  Merge merge(obj) => new Merge(this, _funcWrap(obj));
+  Merge merge(obj) => new Merge(this, _funcWrap(obj, 1));
 
   Append append(val) => new Append(this, val);
 
@@ -392,7 +421,7 @@ class RqlQuery {
   Limit limit(int i) => new Limit(this, i);
 
   Reduce reduce(reductionFunction, [base]) =>
-      new Reduce(this, _funcWrap(reductionFunction), base);
+      new Reduce(this, _funcWrap(reductionFunction, 2), base);
 
   Sum sum([args]) => new Sum(this, args);
 
@@ -402,19 +431,12 @@ class RqlQuery {
 
   Max max([args]) => new Max(this, args);
 
-  RqlMap map(mappingFunction) {
-    if (mappingFunction is List) {
-      mappingFunction.insert(0, this);
-      var item = _funcWrap(mappingFunction.removeLast());
-      return new RqlMap(mappingFunction, item);
-    }
-    return new RqlMap([this], mappingFunction);
-  }
+  dynamic get map => RqlMapFunction(this);
 
-  Filter filter(expr, [options]) => new Filter(this, _funcWrap(expr), options);
+  Filter filter(expr, [options]) => new Filter(this, _funcWrap(expr, 1), options);
 
   ConcatMap concatMap(mappingFunction) =>
-      new ConcatMap(this, _funcWrap(mappingFunction));
+      new ConcatMap(this, _funcWrap(mappingFunction, 1));
 
   Get get(id) => new Get(this, id);
 
@@ -427,7 +449,7 @@ class RqlQuery {
         if (ob is Asc || ob is Desc) {
           //do nothing
         } else {
-          ob = _funcWrap(ob);
+          ob = _funcWrap(ob, 1);
         }
       });
     } else if (attrs is List) {
@@ -439,7 +461,7 @@ class RqlQuery {
         if (ob is Asc || ob is Desc) {
           //do nothing
         } else
-          ob = _funcWrap(ob);
+          ob = _funcWrap(ob, 1);
       });
     } else {
       List tmp = [];
@@ -458,8 +480,8 @@ class RqlQuery {
   operator -(other) => this.sub(other);
   operator *(other) => this.mul(other);
   operator /(other) => this.div(other);
-  // TODO see if we can still do this. != isn't assignable so maybe 
-  // it makes more sense not to do == anyway. 
+  // TODO see if we can still do this. != isn't assignable so maybe
+  // it makes more sense not to do == anyway.
   //operator ==(other) => this.eq(other);
   operator <=(other) => this.le(other);
   operator >=(other) => this.ge(other);
@@ -475,7 +497,7 @@ class RqlQuery {
 
   Count count([filter]) {
     if (filter == null) return new Count(this);
-    return new Count(this, _funcWrap(filter));
+    return new Count(this, _funcWrap(filter, 1));
   }
 
   Union union(sequence, opts) => new Union(this, [sequence, opts]);
@@ -487,13 +509,13 @@ class RqlQuery {
       new OuterJoin(this, otherSequence, predicate);
 
   EqJoin eqJoin(leftAttr, [otherTable, options]) =>
-      new EqJoin(this, _funcWrap(leftAttr), otherTable, options);
+      new EqJoin(this, _funcWrap(leftAttr, 1), otherTable, options);
 
   Zip zip() => new Zip(this);
 
   Group group(args, [options]) => new Group(this, args, options);
 
-  ForEach forEach(writeQuery) => new ForEach(this, _funcWrap(writeQuery));
+  ForEach forEach(writeQuery) => new ForEach(this, _funcWrap(writeQuery, 1));
 
   Info info() => new Info(this);
 
@@ -973,12 +995,18 @@ class FunCall extends RqlQuery {
   FunCall(argslist, expression) : super() {
     List temp = [];
     temp.add(expression);
-    if (argslist is List)
+    int argsCount;
+    if (argslist is List) {
+      argsCount = argslist.length;
       temp.addAll(argslist);
-    else
+    } else {
+      argsCount = 1;
       temp.add(argslist);
+    }
 
-    this.args.addAll(temp.map(_expr));
+    this.args.addAll(temp.map((arg) {
+      return _expr(arg, defaultNestingDepth, argsCount);
+    }));
   }
 }
 
@@ -1065,7 +1093,7 @@ class Table extends RqlQuery {
       return new IndexCreate(this, indexName, indexFunction);
     }
     return new IndexCreate.withIndexFunction(
-        this, indexName, _funcWrap(indexFunction), options);
+        this, indexName, _funcWrap(indexFunction, 1), options);
   }
 
   IndexDrop indexDrop(indexName) => new IndexDrop(this, indexName);
@@ -1077,7 +1105,7 @@ class Table extends RqlQuery {
 
   dynamic get indexWait => IndexWaitFunction(this);
 
-  Update update(args, [options]) => new Update(this, _funcWrap(args), options);
+  Update update(args, [options]) => new Update(this, _funcWrap(args, 1), options);
 
   Sync sync() => new Sync(this);
 
@@ -1142,10 +1170,13 @@ class RqlMap extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.MAP;
 
   RqlMap(argslist, expression) : super() {
+    int argsCount = argslist.length;
     List temp = [];
     temp.addAll(argslist);
-    temp.add(_funcWrap(expression));
-    this.args.addAll(temp.map(_expr));
+    temp.add(_funcWrap(expression, argsCount));
+    this.args.addAll(temp.map((arg) {
+      return _expr(arg, defaultNestingDepth, argsCount);
+    }));
   }
 }
 
@@ -1614,16 +1645,13 @@ class ToEpochTime extends RqlMethodQuery {
 class Func extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.FUNC;
   Function fun;
+  int argsCount;
   static int nextId = 0;
-  Func(this.fun) : super(null, null) {
-    ClosureMirror closure = reflect(fun);
-
+  Func(this.fun, this.argsCount) : super(null, null) {
     List vrs = [];
     List vrids = [];
 
-    int x = closure.function.parameters.length;
-
-    for (int i = 0; i < x; i++) {
+    for (int i = 0; i < argsCount; i++) {
       vrs.add(new Var(Func.nextId));
       vrids.add(Func.nextId);
       Func.nextId++;

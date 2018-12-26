@@ -1,9 +1,11 @@
 name: rethinkdb_driver
 version: 2.3.2+2
-author: William Welch <billywelch@gmail.com>
-description: Dart driver for RethinkDB.
-homepage: https://github.com/billysometimes/rethinkdb
-documentation: https://github.com/billysometimes/rethinkdb
+authors:
+  - William Welch <billywelch@gmail.com>
+  - Marcelo Henrique Neppel <marcelo.neppel@gmail.com>
+description: Dart 2 driver for RethinkDB v2.3.
+homepage: https://github.com/marceloneppel/rethinkdb
+documentation: https://github.com/marceloneppel/rethinkdb
 environment:
   sdk: ">=1.20.0 <3.0.0"
 dependencies:

@@ -10,7 +10,8 @@ class RqlMapFunction {
   call(mappingFunction) {
     if (mappingFunction is List) {
       mappingFunction.insert(0, _rqlQuery);
-      var item = _rqlQuery._funcWrap(mappingFunction.removeLast(), mappingFunction.length);
+      var item = _rqlQuery._funcWrap(
+          mappingFunction.removeLast(), mappingFunction.length);
       return new RqlMap(mappingFunction, item);
     }
     return new RqlMap([_rqlQuery], mappingFunction);
@@ -20,7 +21,8 @@ class RqlMapFunction {
   dynamic noSuchMethod(Invocation invocation) {
     List mappingFunction = new List.from(invocation.positionalArguments);
     mappingFunction.insert(0, _rqlQuery);
-    var item = _rqlQuery._funcWrap(mappingFunction.removeLast(), mappingFunction.length);
+    var item = _rqlQuery._funcWrap(
+        mappingFunction.removeLast(), mappingFunction.length);
     return new RqlMap(mappingFunction, item);
   }
 }
@@ -37,7 +39,7 @@ class RqlQuery {
       args.forEach((e) {
         if (_checkIfOptions(e, tt)) {
           optargs ??= e;
-        } else if(e != null) {
+        } else if (e != null) {
           this.args.add(_expr(e));
         }
       });
@@ -302,7 +304,8 @@ class RqlQuery {
     return base64.decode(obj['data']);
   }
 
-  Update update(args, [options]) => new Update(this, _funcWrap(args, 1), options);
+  Update update(args, [options]) =>
+      new Update(this, _funcWrap(args, 1), options);
 
   // Comparison operators
   Eq eq(other) => new Eq(this, other);
@@ -355,7 +358,8 @@ class RqlQuery {
     if (expression == null) {
       return new FunCall(this, _funcWrap(arg, 1));
     } else {
-      return new FunCall(_listify(arg, this), _funcWrap(expression, arg.length));
+      return new FunCall(
+          _listify(arg, this), _funcWrap(expression, arg.length));
     }
   }
 
@@ -433,7 +437,8 @@ class RqlQuery {
 
   dynamic get map => RqlMapFunction(this);
 
-  Filter filter(expr, [options]) => new Filter(this, _funcWrap(expr, 1), options);
+  Filter filter(expr, [options]) =>
+      new Filter(this, _funcWrap(expr, 1), options);
 
   ConcatMap concatMap(mappingFunction) =>
       new ConcatMap(this, _funcWrap(mappingFunction, 1));
@@ -1105,7 +1110,8 @@ class Table extends RqlQuery {
 
   dynamic get indexWait => IndexWaitFunction(this);
 
-  Update update(args, [options]) => new Update(this, _funcWrap(args, 1), options);
+  Update update(args, [options]) =>
+      new Update(this, _funcWrap(args, 1), options);
 
   Sync sync() => new Sync(this);
 

@@ -493,7 +493,7 @@ class Connection {
   String _makeSalt() {
     List<int> randomBytes = new List(18);
     math.Random random = new math.Random.secure();
-  
+
     for (int i = 0; i < randomBytes.length; ++i) {
       randomBytes[i] = random.nextInt(255);
     }

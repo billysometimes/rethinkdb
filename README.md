@@ -1,9 +1,9 @@
 [![Build Status](https://travis-ci.org/billysometimes/rethinkdb.svg?branch=adding-unit-tests)](https://travis-ci.org/billysometimes/rethinkdb)
 
-Dart RethinkDB Driver
+Dart 2 RethinkDB Driver
 =========
 
-A [Dart](http://www.dartlang.org) driver for [RethinkDB v2.3](http://www.rethinkdb.com).
+A [Dart 2](http://www.dartlang.org) driver for [RethinkDB v2.3](http://www.rethinkdb.com).
 
 
 Getting Started:

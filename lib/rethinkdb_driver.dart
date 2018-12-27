@@ -47,45 +47,45 @@ class BranchFunction {
 
 class EqFunction {
   Eq call(number1, number2) {
-    return Eq(number1, number2);
+    return Eq([number1, number2]);
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return new Eq.fromList(invocation.positionalArguments);
+    return Eq(buildInvocationParams(invocation.positionalArguments));
   }
 }
 
 class GeFunction {
   Ge call(number1, number2) {
-    return Ge(number1, number2);
+    return Ge([number1, number2]);
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return new Ge.fromList(invocation.positionalArguments);
+    return Ge(buildInvocationParams(invocation.positionalArguments));
   }
 }
 
 class GtFunction {
   Gt call(number1, number2) {
-    return Gt(number1, number2);
+    return Gt([number1, number2]);
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return new Gt.fromList(invocation.positionalArguments);
+    return Gt(buildInvocationParams(invocation.positionalArguments));
   }
 }
 
 class LeFunction {
   Le call(number1, number2) {
-    return Le(number1, number2);
+    return Le([number1, number2]);
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return new Le.fromList(invocation.positionalArguments);
+    return Le(buildInvocationParams(invocation.positionalArguments));
   }
 }
 
@@ -105,12 +105,12 @@ class LineFunction {
 
 class LtFunction {
   Lt call(number1, number2) {
-    return Lt(number1, number2);
+    return Lt([number1, number2]);
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return new Lt.fromList(invocation.positionalArguments);
+    return Lt(buildInvocationParams(invocation.positionalArguments));
   }
 }
 
@@ -133,12 +133,12 @@ class MapFunction {
 
 class NeFunction {
   Ne call(number1, number2) {
-    return Ne(number1, number2);
+    return Ne([number1, number2]);
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return new Ne.fromList(invocation.positionalArguments);
+    return Ne(buildInvocationParams(invocation.positionalArguments));
   }
 }
 

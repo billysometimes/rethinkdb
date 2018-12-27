@@ -2,6 +2,20 @@ part of rethinkdb;
 
 const defaultNestingDepth = 20;
 
+List buildInvocationParams(List<dynamic> positionalArguments) {
+  List argsList = [];
+  argsList.addAll(positionalArguments);
+  Map options = {};
+  if (argsList.length > 1 && argsList.last is Map) {
+    options = argsList.removeLast();
+  }
+  List invocationParams = [argsList];
+  if (options.isNotEmpty) {
+    invocationParams.add(options);
+  }
+  return invocationParams;
+}
+
 class RqlMapFunction {
   RqlQuery _rqlQuery;
 
@@ -308,17 +322,17 @@ class RqlQuery {
       new Update(this, _funcWrap(args, 1), options);
 
   // Comparison operators
-  Eq eq(other) => new Eq(this, other);
+  Eq eq(other) => EqFunction()(this, other);
 
-  Ne ne(other) => new Ne(this, other);
+  Ne ne(other) => NeFunction()(this, other);
 
-  Lt lt(other) => new Lt(this, other);
+  Lt lt(other) => LtFunction()(this, other);
 
-  Le le(other) => new Le(this, other);
+  Le le(other) => LeFunction()(this, other);
 
-  Gt gt(other) => new Gt(this, other);
+  Gt gt(other) => GtFunction()(this, other);
 
-  Ge ge(other) => new Ge(this, other);
+  Ge ge(other) => GeFunction()(this, other);
 
   // Numeric operators
   Not not() => new Not(this);
@@ -761,43 +775,37 @@ class ImplicitVar extends RqlQuery {
 class Eq extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.EQ;
 
-  Eq(comparable, numb) : super([comparable, numb]);
-  Eq.fromList(numbers) : super(numbers);
+  Eq(numbers) : super(numbers);
 }
 
 class Ne extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.NE;
 
-  Ne(comparable, numb) : super([comparable, numb]);
-  Ne.fromList(numbers) : super(numbers);
+  Ne(numbers) : super(numbers);
 }
 
 class Lt extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.LT;
 
-  Lt(comparable, numb) : super([comparable, numb]);
-  Lt.fromList(numbers) : super(numbers);
+  Lt(numbers) : super(numbers);
 }
 
 class Le extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.LE;
 
-  Le(comparable, numb) : super([comparable, numb]);
-  Le.fromList(numbers) : super(numbers);
+  Le(numbers) : super(numbers);
 }
 
 class Gt extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.GT;
 
-  Gt(comparable, numb) : super([comparable, numb]);
-  Gt.fromList(numbers) : super(numbers);
+  Gt(numbers) : super(numbers);
 }
 
 class Ge extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.GE;
 
-  Ge(comparable, numb) : super([comparable, numb]);
-  Ge.fromList(numbers) : super(numbers);
+  Ge(numbers) : super(numbers);
 }
 
 class Not extends RqlQuery {

@@ -16,17 +16,56 @@ part 'src/errors.dart';
 part 'src/net.dart';
 part 'src/cursor.dart';
 
-/**
- * computes logical 'and' of two or more values
- */
-class AndFunction {
-  And call(obj1, obj2) {
-    return new And([obj1, obj2]);
+class AddFunction {
+  RqlQuery _rqlQuery;
+
+  AddFunction([this._rqlQuery]);
+
+  Add call(obj) {
+    if (_rqlQuery != null) {
+      return Add([_rqlQuery, obj]);
+    } else if (obj is Args) {
+      return Add([obj]);
+    } else {
+      throw RqlDriverError("Called add with too few values");
+    }
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return new And(invocation.positionalArguments);
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Add(positionalArguments);
+  }
+}
+
+/**
+ * computes logical 'and' of two or more values
+ */
+class AndFunction {
+  RqlQuery _rqlQuery;
+
+  AndFunction([this._rqlQuery]);
+
+  And call(obj) {
+    if (_rqlQuery != null) {
+      return And([_rqlQuery, obj]);
+    } else {
+      throw RqlDriverError("Called and with too few values");
+    }
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return And(positionalArguments);
   }
 }
 
@@ -42,6 +81,32 @@ class BranchFunction {
   @override
   dynamic noSuchMethod(Invocation invocation) {
     return new Branch.fromArgs(new Args(invocation.positionalArguments));
+  }
+}
+
+class DivFunction {
+  RqlQuery _rqlQuery;
+
+  DivFunction([this._rqlQuery]);
+
+  Div call(number) {
+    if (_rqlQuery != null) {
+      return Div([_rqlQuery, number]);
+    } else if (number is Args) {
+      return Div([number]);
+    } else {
+      throw RqlDriverError("Called div with too few values");
+    }
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Div(positionalArguments);
   }
 }
 
@@ -131,6 +196,32 @@ class MapFunction {
   }
 }
 
+class MulFunction {
+  RqlQuery _rqlQuery;
+
+  MulFunction([this._rqlQuery]);
+
+  Mul call(number) {
+    if (_rqlQuery != null) {
+      return Mul([_rqlQuery, number]);
+    } else if (number is Args) {
+      return Mul([number]);
+    } else {
+      throw RqlDriverError("Called mul with too few values");
+    }
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Mul(positionalArguments);
+  }
+}
+
 class NeFunction {
   Ne call(number1, number2) {
     return Ne([number1, number2]);
@@ -164,13 +255,26 @@ class ObjectFunction {
  * computes logical 'or' of two or more values
  */
 class OrFunction {
-  Or call(obj1, obj2) {
-    return new Or([obj1, obj2]);
+  RqlQuery _rqlQuery;
+
+  OrFunction([this._rqlQuery]);
+
+  Or call(number) {
+    if (_rqlQuery != null) {
+      return Or([_rqlQuery, number]);
+    } else {
+      throw RqlDriverError("Called or with too few values");
+    }
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return new Or(invocation.positionalArguments);
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Or(positionalArguments);
   }
 }
 
@@ -205,6 +309,32 @@ class RqlDoFunction {
   dynamic noSuchMethod(Invocation invocation) {
     List args = new List.from(invocation.positionalArguments);
     return _rethinkdb.rqlDo(args.sublist(0, args.length - 1), args.last);
+  }
+}
+
+class SubFunction {
+  RqlQuery _rqlQuery;
+
+  SubFunction([this._rqlQuery]);
+
+  Sub call(number) {
+    if (_rqlQuery != null) {
+      return Sub([_rqlQuery, number]);
+    } else if (number is Args) {
+      return Sub([number]);
+    } else {
+      throw RqlDriverError("Called sub with too few values");
+    }
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Sub(positionalArguments);
   }
 }
 
@@ -491,6 +621,14 @@ class Rethinkdb {
   dynamic get gt => GtFunction();
 
   dynamic get ge => GeFunction();
+
+  dynamic get add => AddFunction();
+
+  dynamic get sub => SubFunction();
+
+  dynamic get mul => MulFunction();
+
+  dynamic get div => DivFunction();
 
 /**
  * Encapsulate binary data within a query.

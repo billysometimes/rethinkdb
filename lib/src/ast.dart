@@ -16,6 +16,40 @@ List buildInvocationParams(List<dynamic> positionalArguments) {
   return invocationParams;
 }
 
+class HasFieldsFunction {
+  RqlQuery _rqlQuery;
+
+  HasFieldsFunction([this._rqlQuery]);
+
+  HasFields call(items) {
+    return HasFields(_rqlQuery, items);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    return HasFields(_rqlQuery, buildInvocationParams(positionalArguments));
+  }
+}
+
+class WithFieldsFunction {
+  RqlQuery _rqlQuery;
+
+  WithFieldsFunction([this._rqlQuery]);
+
+  WithFields call(items) {
+    return WithFields(_rqlQuery, items);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    return WithFields(_rqlQuery, buildInvocationParams(positionalArguments));
+  }
+}
+
 class RqlMapFunction {
   RqlQuery _rqlQuery;
 
@@ -335,31 +369,31 @@ class RqlQuery {
   Ge ge(other) => GeFunction()(this, other);
 
   // Numeric operators
-  Not not() => new Not(this);
+  Not not() => Not(this);
 
-  Add add(other) => new Add(this, other);
+  dynamic get add => AddFunction(this);
 
-  Sub sub(other) => new Sub(this, other);
+  dynamic get sub => SubFunction(this);
 
-  Mul mul(other) => new Mul(this, other);
+  dynamic get mul => MulFunction(this);
 
-  Div div(other) => new Div(this, other);
+  dynamic get div => DivFunction(this);
 
-  Mod mod(other) => new Mod(this, other);
+  Mod mod(other) => Mod(this, other);
 
-  And and(other) => new And([this, other]);
+  dynamic get and => AndFunction(this);
 
-  Or or(other) => new Or([this, other]);
+  dynamic get or => OrFunction(this);
 
-  Contains contains(args) => new Contains(this, _funcWrap(args, 1));
+  Contains contains(args) => Contains(this, _funcWrap(args, 1));
 
-  HasFields hasFields(args) => new HasFields(this, args);
+  dynamic get hasFields => HasFieldsFunction(this);
 
-  WithFields withFields([args]) => new WithFields(this, args);
+  dynamic get withFields => WithFieldsFunction(this);
 
-  Keys keys() => new Keys(this);
+  Keys keys() => Keys(this);
 
-  Values values() => new Values(this);
+  Values values() => Values(this);
 
   Changes changes([Map opts]) => new Changes(this, opts);
 
@@ -817,25 +851,25 @@ class Not extends RqlQuery {
 class Add extends RqlBiOperQuery {
   p.Term_TermType tt = p.Term_TermType.ADD;
 
-  Add(addable, obj) : super([addable, obj]);
+  Add(objects) : super(objects);
 }
 
 class Sub extends RqlBiOperQuery {
   p.Term_TermType tt = p.Term_TermType.SUB;
 
-  Sub(subbable, obj) : super([subbable, obj]);
+  Sub(numbers) : super(numbers);
 }
 
 class Mul extends RqlBiOperQuery {
   p.Term_TermType tt = p.Term_TermType.MUL;
 
-  Mul(mulable, obj) : super([mulable, obj]);
+  Mul(numbers) : super(numbers);
 }
 
 class Div extends RqlBiOperQuery {
   p.Term_TermType tt = p.Term_TermType.DIV;
 
-  Div(divable, obj) : super([divable, obj]);
+  Div(numbers) : super(numbers);
 }
 
 class Mod extends RqlBiOperQuery {

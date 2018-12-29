@@ -111,46 +111,106 @@ class DivFunction {
 }
 
 class EqFunction {
-  Eq call(number1, number2) {
-    return Eq([number1, number2]);
+  RqlQuery _rqlQuery;
+
+  EqFunction([this._rqlQuery]);
+
+  Eq call(value) {
+    if (_rqlQuery != null) {
+      return Eq([_rqlQuery, value]);
+    } else if (value is Args) {
+      return Eq([value]);
+    } else {
+      throw RqlDriverError("Called eq with too few values");
+    }
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return Eq(buildInvocationParams(invocation.positionalArguments));
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Eq(positionalArguments);
   }
 }
 
 class GeFunction {
-  Ge call(number1, number2) {
-    return Ge([number1, number2]);
+  RqlQuery _rqlQuery;
+
+  GeFunction([this._rqlQuery]);
+
+  Ge call(number) {
+    if (_rqlQuery != null) {
+      return Ge([_rqlQuery, number]);
+    } else if (number is Args) {
+      return Ge([number]);
+    } else {
+      throw RqlDriverError("Called ge with too few values");
+    }
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return Ge(buildInvocationParams(invocation.positionalArguments));
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Ge(positionalArguments);
   }
 }
 
 class GtFunction {
-  Gt call(number1, number2) {
-    return Gt([number1, number2]);
+  RqlQuery _rqlQuery;
+
+  GtFunction([this._rqlQuery]);
+
+  Gt call(number) {
+    if (_rqlQuery != null) {
+      return Gt([_rqlQuery, number]);
+    } else if (number is Args) {
+      return Gt([number]);
+    } else {
+      throw RqlDriverError("Called gt with too few values");
+    }
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return Gt(buildInvocationParams(invocation.positionalArguments));
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Gt(positionalArguments);
   }
 }
 
 class LeFunction {
-  Le call(number1, number2) {
-    return Le([number1, number2]);
+  RqlQuery _rqlQuery;
+
+  LeFunction([this._rqlQuery]);
+
+  Le call(number) {
+    if (_rqlQuery != null) {
+      return Le([_rqlQuery, number]);
+    } else if (number is Args) {
+      return Le([number]);
+    } else {
+      throw RqlDriverError("Called le with too few values");
+    }
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return Le(buildInvocationParams(invocation.positionalArguments));
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Le(positionalArguments);
   }
 }
 
@@ -169,13 +229,28 @@ class LineFunction {
 }
 
 class LtFunction {
-  Lt call(number1, number2) {
-    return Lt([number1, number2]);
+  RqlQuery _rqlQuery;
+
+  LtFunction([this._rqlQuery]);
+
+  Lt call(number) {
+    if (_rqlQuery != null) {
+      return Lt([_rqlQuery, number]);
+    } else if (number is Args) {
+      return Lt([number]);
+    } else {
+      throw RqlDriverError("Called lt with too few values");
+    }
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return Lt(buildInvocationParams(invocation.positionalArguments));
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Lt(positionalArguments);
   }
 }
 
@@ -223,13 +298,28 @@ class MulFunction {
 }
 
 class NeFunction {
-  Ne call(number1, number2) {
-    return Ne([number1, number2]);
+  RqlQuery _rqlQuery;
+
+  NeFunction([this._rqlQuery]);
+
+  Ne call(value) {
+    if (_rqlQuery != null) {
+      return Ne([_rqlQuery, value]);
+    } else if (value is Args) {
+      return Ne([value]);
+    } else {
+      throw RqlDriverError("Called ne with too few values");
+    }
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    return Ne(buildInvocationParams(invocation.positionalArguments));
+    List positionalArguments = [];
+    if (_rqlQuery != null) {
+      positionalArguments.add(_rqlQuery);
+    }
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Ne(positionalArguments);
   }
 }
 

@@ -356,17 +356,17 @@ class RqlQuery {
       new Update(this, _funcWrap(args, 1), options);
 
   // Comparison operators
-  Eq eq(other) => EqFunction()(this, other);
+  dynamic get eq => EqFunction(this);
 
-  Ne ne(other) => NeFunction()(this, other);
+  dynamic get ne => NeFunction(this);
 
-  Lt lt(other) => LtFunction()(this, other);
+  dynamic get lt => LtFunction(this);
 
-  Le le(other) => LeFunction()(this, other);
+  dynamic get le => LeFunction(this);
 
-  Gt gt(other) => GtFunction()(this, other);
+  dynamic get gt => GtFunction(this);
 
-  Ge ge(other) => GeFunction()(this, other);
+  dynamic get ge => GeFunction(this);
 
   // Numeric operators
   Not not() => Not(this);

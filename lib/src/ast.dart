@@ -33,6 +33,42 @@ class HasFieldsFunction {
   }
 }
 
+class PluckFunction {
+  RqlQuery _rqlQuery;
+
+  PluckFunction([this._rqlQuery]);
+
+  Pluck call(args) {
+    return Pluck(_rqlQuery._listify(args, _rqlQuery));
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Pluck(_rqlQuery._listify(
+        buildInvocationParams(positionalArguments), _rqlQuery));
+  }
+}
+
+class WithoutFunction {
+  RqlQuery _rqlQuery;
+
+  WithoutFunction([this._rqlQuery]);
+
+  Without call(items) {
+    return Without(_rqlQuery._listify(items, _rqlQuery));
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Without(_rqlQuery._listify(
+        buildInvocationParams(positionalArguments), _rqlQuery));
+  }
+}
+
 class WithFieldsFunction {
   RqlQuery _rqlQuery;
 
@@ -398,9 +434,9 @@ class RqlQuery {
   Changes changes([Map opts]) => new Changes(this, opts);
 
   // Polymorphic object/sequence operations
-  Pluck pluck(args) => new Pluck(_listify(args, this));
+  dynamic get pluck => PluckFunction(this);
 
-  Without without(items) => new Without(_listify(items, this));
+  dynamic get without => WithoutFunction(this);
 
   FunCall rqlDo(arg, [expression]) {
     if (expression == null) {

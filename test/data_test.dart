@@ -110,10 +110,10 @@ main() {
     test(
         "should use withFields and return the children of the people who have them",
         () async {
-      Cursor parentsWithNickname =
+      Cursor parents =
           await r.table(tableName).withFields('children').run(connection);
-      expect(parentsWithNickname is Cursor, equals(true));
-      List parentsList = await parentsWithNickname.toList();
+      expect(parents is Cursor, equals(true));
+      List parentsList = await parents.toList();
 
       expect(parentsList.length, equals(2));
 
@@ -132,12 +132,12 @@ main() {
     test(
         "should use withFields and return the children and the nickname of the people who have them",
         () async {
-      Cursor parents = await r
+      Cursor parentsWithNickname = await r
           .table(tableName)
           .withFields('children', 'nickname')
           .run(connection);
-      expect(parents is Cursor, equals(true));
-      List parentsWithNicknameList = await parents.toList();
+      expect(parentsWithNickname is Cursor, equals(true));
+      List parentsWithNicknameList = await parentsWithNickname.toList();
 
       expect(parentsWithNicknameList.length, equals(1));
 

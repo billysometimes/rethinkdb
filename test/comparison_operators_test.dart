@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import '../lib/rethinkdb_driver.dart';
+import '../lib/rethinkdb_dart.dart';
 
 main() {
   Rethinkdb r = Rethinkdb();

@@ -1,4 +1,4 @@
-import 'package:rethinkdb_dart/rethinkdb_driver.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
 Rethinkdb r = new Rethinkdb();
 

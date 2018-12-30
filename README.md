@@ -35,7 +35,7 @@ Or if you are a developer:
 
 Then import the package into your project:
 ```dart
-import 'package:rethinkdb_dart/rethinkdb_driver.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 ```
 Connect to the database:
 ```dart

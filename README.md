@@ -1,11 +1,11 @@
 [![Build Status](https://travis-ci.org/marceloneppel/rethinkdb.svg?branch=master)](https://travis-ci.org/marceloneppel/rethinkdb)
 
-Dart 2 RethinkDB Driver
+Dart 2 and Flutter RethinkDB Driver
 =========
 
-A [Dart 2](http://www.dartlang.org) driver for [RethinkDB v2.3](http://www.rethinkdb.com).
+A [Dart 2](http://www.dartlang.org) and [Flutter](https://flutter.io) driver for [RethinkDB v2.3](http://www.rethinkdb.com).
 
-This is a fork of [RethinkDB Driver](https://pub.dartlang.org/packages/rethinkdb_driver), that was created to update the driver to [Dart 2](http://www.dartlang.org).
+This is a fork of [RethinkDB Driver](https://pub.dartlang.org/packages/rethinkdb_driver), that was created to update the driver to Dart 2 and Flutter.
 
 
 Getting Started:

@@ -1,5 +1,5 @@
-name: rethinkdb_driver
-version: 2.3.2+2
+name: rethinkdb_dart
+version: 2.3.2+3
 authors:
   - William Welch <billywelch@gmail.com>
   - Marcelo Henrique Neppel <marcelo.neppel@gmail.com>

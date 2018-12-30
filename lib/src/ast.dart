@@ -196,7 +196,6 @@ class RqlMapFunction {
 class RqlQuery {
   p.Term_TermType tt;
 
-  int _errDepth = 0;
   List args = [];
   Map optargs = {};
 
@@ -762,33 +761,6 @@ class RqlQuery {
   Status status() => new Status(this);
 
   Wait wait([Map options]) => new Wait(this, options);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) {
-    if (this._errDepth == 0) {
-      _errDepth++;
-      Symbol methodName = invocation.memberName;
-      List argsList = [];
-      argsList.addAll(invocation.positionalArguments);
-      Map options = {};
-
-      if (argsList.length > 1 && argsList.last is Map) {
-        options = argsList.removeLast();
-      }
-
-      InstanceMirror im = reflect(this);
-
-      List invocationParams = [argsList];
-      if (options.isNotEmpty) {
-        invocationParams.add(options);
-      }
-
-      return im.invoke(methodName, invocationParams).reflectee;
-    } else {
-      throw new RqlDriverError(
-          "${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
-    }
-  }
 
   call(attr) {
     return new GetField(this, attr);

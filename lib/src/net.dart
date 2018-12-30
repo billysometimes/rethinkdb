@@ -24,7 +24,7 @@ class Query extends RqlQuery {
 
       res.add(optargs);
     }
-    return JSON.encode(res);
+    return json.encode(res);
   }
 }
 
@@ -39,7 +39,7 @@ class Response {
 
   Response(int this._token, String jsonStr) {
     if (jsonStr.length > 0) {
-      Map fullResponse = JSON.decode(jsonStr);
+      Map fullResponse = json.decode(jsonStr);
       this._type = fullResponse['t'];
       this._data = fullResponse['r'];
       this._backtrace = fullResponse['b'];
@@ -63,7 +63,7 @@ class Connection {
   Digest _serverSignature;
   Map _sslOpts;
 
-  Completer _completer = new Completer();
+  Completer<Connection> _completer = new Completer();
 
   int _responseLength = 0;
   List<int> _responseBuffer = [];
@@ -82,7 +82,7 @@ class Connection {
     _db = db;
   }
 
-  Future<Map> server() {
+  Future server() {
     RqlQuery query =
         new Query(p.Query_QueryType.SERVER_INFO, _getToken(), null, null);
     _sendQueue.add(query);
@@ -111,7 +111,7 @@ class Connection {
       _socket.listen(_handleResponse);
 
       _clientFirstMessage = "n=$_user,r=" + _makeSalt();
-      String message = JSON.encode({
+      String message = json.encode({
         'protocol_version': _protocolVersion,
         'authentication_method': "SCRAM-SHA-256",
         'authentication': "n,,${_clientFirstMessage}"
@@ -154,7 +154,7 @@ class Connection {
   }
 
   _doHandshake(List<int> response) {
-    Map responseJSON = JSON.decode(UTF8.decode(response));
+    Map responseJSON = json.decode(utf8.decode(response));
 
     if (responseJSON.containsKey('success') && responseJSON['success']) {
       if (responseJSON.containsKey('max_protocol_version')) {
@@ -169,7 +169,7 @@ class Connection {
       } else if (responseJSON.containsKey('authentication')) {
         String authString = responseJSON['authentication'];
         Map authMap = {};
-        List authPieces = authString.split(',');
+        List<String> authPieces = authString.split(',');
 
         authPieces.forEach((String piece) {
           int i = piece.indexOf('=');
@@ -179,9 +179,9 @@ class Connection {
         });
 
         if (authMap.containsKey('r')) {
-          String salt = new String.fromCharCodes(BASE64.decode(authMap['s']));
+          String salt = new String.fromCharCodes(base64.decode(authMap['s']));
 
-          var gen = new PBKDF2(hash: sha256);
+          PBKDF2 gen = new PBKDF2(hash: sha256);
 
           int i = int.parse(authMap['i']);
 
@@ -208,17 +208,17 @@ class Connection {
           _serverSignature =
               new Hmac(sha256, serverKey.bytes).convert(authMessage.codeUnits);
 
-          String message = JSON.encode({
+          String message = json.encode({
             'authentication': clientFinalMessageWithoutProof +
                 ",p=" +
-                BASE64.encode(clientProof)
+                base64.encode(clientProof)
           });
 
           List<int> messageBytes = new List.from(message.codeUnits)..add(0);
 
           _socket.add(messageBytes);
         } else if (authMap.containsKey('v')) {
-          if (BASE64.encode(_serverSignature.bytes) != authMap['v']) {
+          if (base64.encode(_serverSignature.bytes) != authMap['v']) {
             _handleAuthError(new RqlDriverError("Invalid server signature"));
           } else {
             _completer.complete(this);
@@ -371,7 +371,7 @@ class Connection {
       responseLen = _fromBytes(_responseBuffer.sublist(8, 12));
       if (_responseLength >= responseLen + 12) {
         responseBuf =
-            UTF8.decode(_responseBuffer.sublist(12, responseLen + 12));
+            utf8.decode(_responseBuffer.sublist(12, responseLen + 12));
 
         _responseBuffer.removeRange(0, responseLen + 12);
         _responseLength = _responseBuffer.length;
@@ -444,8 +444,8 @@ class Connection {
             .completeError(new RqlDriverError("Connection is closed."));
       } else {
         // Send json
-        List queryStr = UTF8.encode(query.serialize());
-        List queryHeader = new List.from(_toBytes8(query._token))
+        List<int> queryStr = utf8.encode(query.serialize());
+        List<int> queryHeader = new List.from(_toBytes8(query._token))
           ..addAll(_toBytes(queryStr.length))
           ..addAll(queryStr);
         _socket.add(queryHeader);
@@ -473,32 +473,32 @@ class Connection {
   Uint8List _toBytes(int data) {
     ByteBuffer buffer = new Uint8List(4).buffer;
     ByteData bdata = new ByteData.view(buffer);
-    bdata.setInt32(0, data, Endianness.LITTLE_ENDIAN);
+    bdata.setInt32(0, data, Endian.little);
     return new Uint8List.view(buffer);
   }
 
   Uint8List _toBytes8(int data) {
     ByteBuffer buffer = new Uint8List(8).buffer;
     ByteData bdata = new ByteData.view(buffer);
-    bdata.setInt32(0, data, Endianness.LITTLE_ENDIAN);
+    bdata.setInt32(0, data, Endian.little);
     return new Uint8List.view(buffer);
   }
 
   int _fromBytes(List<int> data) {
     Uint8List buf = new Uint8List.fromList(data);
     ByteData bdata = new ByteData.view(buf.buffer);
-    return bdata.getInt32(0, Endianness.LITTLE_ENDIAN);
+    return bdata.getInt32(0, Endian.little);
   }
 
   String _makeSalt() {
-    List randomBytes = new List(18);
+    List<int> randomBytes = new List(18);
     math.Random random = new math.Random.secure();
 
     for (int i = 0; i < randomBytes.length; ++i) {
       randomBytes[i] = random.nextInt(255);
     }
 
-    return BASE64.encode(randomBytes);
+    return base64.encode(randomBytes);
   }
 
   List<int> _xOr(List<int> result, List<int> next) {

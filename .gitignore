@@ -37,3 +37,7 @@ rethinkdb_data
 
 #mac stuff
 .DS_Store
+
+# Directories created by the IDE
+.dart_tool/
+.idea/

@@ -1,9 +1,11 @@
-[![Build Status](https://travis-ci.org/billysometimes/rethinkdb.svg?branch=adding-unit-tests)](https://travis-ci.org/billysometimes/rethinkdb)
+[![Build Status](https://travis-ci.org/marceloneppel/rethinkdb.svg?branch=master)](https://travis-ci.org/marceloneppel/rethinkdb)
 
-Dart RethinkDB Driver
+Dart 2 and Flutter RethinkDB Driver
 =========
 
-A [Dart](http://www.dartlang.org) driver for [RethinkDB v2.3](http://www.rethinkdb.com).
+A [Dart 2](http://www.dartlang.org) and [Flutter](https://flutter.io) driver for [RethinkDB v2.3](http://www.rethinkdb.com).
+
+This is a fork of [RethinkDB Driver](https://pub.dartlang.org/packages/rethinkdb_driver), that was created to update the driver to Dart 2 and Flutter.
 
 
 Getting Started:
@@ -11,35 +13,55 @@ Getting Started:
 
 The driver api tries to align with the javascript and python RethinkDB drivers. You can read their documentation [here](http://www.rethinkdb.com/api/).
 
-to include this driver in your own project add the package to your pubspec.yaml file:
-```
+To include this driver in your own project add the package to your pubspec.yaml file:
+```yaml
 dependencies:
-  rethinkdb_driver: '^2.3.2+2'
+  rethinkdb_dart: '^2.3.2+3'
 ```
 
-or to use bleeding edge:
-```
+Or to use bleeding edge:
+```yaml
 dependencies:
-  rethinkdb_driver:
-    git: git://github.com/billysometimes/rethinkdb.git
+  rethinkdb_dart:
+    git: git://github.com/marceloneppel/rethinkdb.git
 ```
 
-or if you are a developer:
-  ```
+Or if you are a developer:
+  ```yaml
   dependencies:
-    rethinkdb_driver:
-      path: /path/to/your/cloned/rethinkdb_driver
+    rethinkdb_dart:
+      path: /path/to/your/cloned/rethinkdb_dart
   ```
 
-  then import the package into your project:
-  ```
-    import 'package:rethinkdb_driver/rethinkdb_driver.dart';
-  ```
+Then import the package into your project:
+```dart
+import 'package:rethinkdb_dart/rethinkdb_driver.dart';
+```
+Connect to the database:
+```dart
+var connection = await r.connect(db: "test", host: "localhost", port: 28015);
+```
+Create a table:
+```dart
+await r.db('test').tableCreate('tv_shows').run(connection);
+```
+Insert some data:
+```dart
+await r.table('tv_shows').insert([
+      {'name': 'Star Trek TNG', 'episodes': 178},
+      {'name': 'Battlestar Galactica', 'episodes': 75}
+    ]).run(connection);
+```
+And work with the data:
+```dart
+var count = await r.table('tv_shows').count();
+print("count: $count");
+```
 
-  to run tests execute the following command from the project root:
+To run tests execute the following command from the project root:
 
-  **warning: tests are run against a live database, but they do attempt to
-  clean up after themselves**
-  ```
-  pub run test  
-  ```
+**warning: tests are run against a live database, but they do attempt to
+clean up after themselves**
+```sh
+pub run test  
+```

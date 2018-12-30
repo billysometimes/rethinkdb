@@ -1,14 +1,14 @@
 ///
 //  Generated code. Do not modify.
+//  source: ql2.proto
 ///
-// ignore_for_file: non_constant_identifier_names,library_prefixes
-library ql2_pbenum;
+// ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import
 
 // ignore_for_file: UNDEFINED_SHOWN_NAME,UNUSED_SHOWN_NAME
 import 'dart:core' show int, dynamic, String, List, Map;
-import 'package:protobuf/protobuf.dart';
+import 'package:protobuf/protobuf.dart' as $pb;
 
-class VersionDummy_Version extends ProtobufEnum {
+class VersionDummy_Version extends $pb.ProtobufEnum {
   static const VersionDummy_Version V0_1 = const VersionDummy_Version._(1063369270, 'V0_1');
   static const VersionDummy_Version V0_2 = const VersionDummy_Version._(1915781601, 'V0_2');
   static const VersionDummy_Version V0_3 = const VersionDummy_Version._(1601562686, 'V0_3');
@@ -23,16 +23,16 @@ class VersionDummy_Version extends ProtobufEnum {
     V1_0,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static VersionDummy_Version valueOf(int value) => _byValue[value] as VersionDummy_Version;
   static void $checkItem(VersionDummy_Version v) {
-    if (v is! VersionDummy_Version) checkItemFailed(v, 'VersionDummy_Version');
+    if (v is! VersionDummy_Version) $pb.checkItemFailed(v, 'VersionDummy_Version');
   }
 
   const VersionDummy_Version._(int v, String n) : super(v, n);
 }
 
-class VersionDummy_Protocol extends ProtobufEnum {
+class VersionDummy_Protocol extends $pb.ProtobufEnum {
   static const VersionDummy_Protocol PROTOBUF = const VersionDummy_Protocol._(656407617, 'PROTOBUF');
   static const VersionDummy_Protocol JSON = const VersionDummy_Protocol._(2120839367, 'JSON');
 
@@ -41,16 +41,16 @@ class VersionDummy_Protocol extends ProtobufEnum {
     JSON,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static VersionDummy_Protocol valueOf(int value) => _byValue[value] as VersionDummy_Protocol;
   static void $checkItem(VersionDummy_Protocol v) {
-    if (v is! VersionDummy_Protocol) checkItemFailed(v, 'VersionDummy_Protocol');
+    if (v is! VersionDummy_Protocol) $pb.checkItemFailed(v, 'VersionDummy_Protocol');
   }
 
   const VersionDummy_Protocol._(int v, String n) : super(v, n);
 }
 
-class Query_QueryType extends ProtobufEnum {
+class Query_QueryType extends $pb.ProtobufEnum {
   static const Query_QueryType START = const Query_QueryType._(1, 'START');
   static const Query_QueryType CONTINUE = const Query_QueryType._(2, 'CONTINUE');
   static const Query_QueryType STOP = const Query_QueryType._(3, 'STOP');
@@ -65,16 +65,16 @@ class Query_QueryType extends ProtobufEnum {
     SERVER_INFO,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static Query_QueryType valueOf(int value) => _byValue[value] as Query_QueryType;
   static void $checkItem(Query_QueryType v) {
-    if (v is! Query_QueryType) checkItemFailed(v, 'Query_QueryType');
+    if (v is! Query_QueryType) $pb.checkItemFailed(v, 'Query_QueryType');
   }
 
   const Query_QueryType._(int v, String n) : super(v, n);
 }
 
-class Frame_FrameType extends ProtobufEnum {
+class Frame_FrameType extends $pb.ProtobufEnum {
   static const Frame_FrameType POS = const Frame_FrameType._(1, 'POS');
   static const Frame_FrameType OPT = const Frame_FrameType._(2, 'OPT');
 
@@ -83,16 +83,16 @@ class Frame_FrameType extends ProtobufEnum {
     OPT,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static Frame_FrameType valueOf(int value) => _byValue[value] as Frame_FrameType;
   static void $checkItem(Frame_FrameType v) {
-    if (v is! Frame_FrameType) checkItemFailed(v, 'Frame_FrameType');
+    if (v is! Frame_FrameType) $pb.checkItemFailed(v, 'Frame_FrameType');
   }
 
   const Frame_FrameType._(int v, String n) : super(v, n);
 }
 
-class Response_ResponseType extends ProtobufEnum {
+class Response_ResponseType extends $pb.ProtobufEnum {
   static const Response_ResponseType SUCCESS_ATOM = const Response_ResponseType._(1, 'SUCCESS_ATOM');
   static const Response_ResponseType SUCCESS_SEQUENCE = const Response_ResponseType._(2, 'SUCCESS_SEQUENCE');
   static const Response_ResponseType SUCCESS_PARTIAL = const Response_ResponseType._(3, 'SUCCESS_PARTIAL');
@@ -113,16 +113,16 @@ class Response_ResponseType extends ProtobufEnum {
     RUNTIME_ERROR,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static Response_ResponseType valueOf(int value) => _byValue[value] as Response_ResponseType;
   static void $checkItem(Response_ResponseType v) {
-    if (v is! Response_ResponseType) checkItemFailed(v, 'Response_ResponseType');
+    if (v is! Response_ResponseType) $pb.checkItemFailed(v, 'Response_ResponseType');
   }
 
   const Response_ResponseType._(int v, String n) : super(v, n);
 }
 
-class Response_ErrorType extends ProtobufEnum {
+class Response_ErrorType extends $pb.ProtobufEnum {
   static const Response_ErrorType INTERNAL = const Response_ErrorType._(1000000, 'INTERNAL');
   static const Response_ErrorType RESOURCE_LIMIT = const Response_ErrorType._(2000000, 'RESOURCE_LIMIT');
   static const Response_ErrorType QUERY_LOGIC = const Response_ErrorType._(3000000, 'QUERY_LOGIC');
@@ -143,16 +143,16 @@ class Response_ErrorType extends ProtobufEnum {
     PERMISSION_ERROR,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static Response_ErrorType valueOf(int value) => _byValue[value] as Response_ErrorType;
   static void $checkItem(Response_ErrorType v) {
-    if (v is! Response_ErrorType) checkItemFailed(v, 'Response_ErrorType');
+    if (v is! Response_ErrorType) $pb.checkItemFailed(v, 'Response_ErrorType');
   }
 
   const Response_ErrorType._(int v, String n) : super(v, n);
 }
 
-class Response_ResponseNote extends ProtobufEnum {
+class Response_ResponseNote extends $pb.ProtobufEnum {
   static const Response_ResponseNote SEQUENCE_FEED = const Response_ResponseNote._(1, 'SEQUENCE_FEED');
   static const Response_ResponseNote ATOM_FEED = const Response_ResponseNote._(2, 'ATOM_FEED');
   static const Response_ResponseNote ORDER_BY_LIMIT_FEED = const Response_ResponseNote._(3, 'ORDER_BY_LIMIT_FEED');
@@ -167,16 +167,16 @@ class Response_ResponseNote extends ProtobufEnum {
     INCLUDES_STATES,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static Response_ResponseNote valueOf(int value) => _byValue[value] as Response_ResponseNote;
   static void $checkItem(Response_ResponseNote v) {
-    if (v is! Response_ResponseNote) checkItemFailed(v, 'Response_ResponseNote');
+    if (v is! Response_ResponseNote) $pb.checkItemFailed(v, 'Response_ResponseNote');
   }
 
   const Response_ResponseNote._(int v, String n) : super(v, n);
 }
 
-class Datum_DatumType extends ProtobufEnum {
+class Datum_DatumType extends $pb.ProtobufEnum {
   static const Datum_DatumType R_NULL = const Datum_DatumType._(1, 'R_NULL');
   static const Datum_DatumType R_BOOL = const Datum_DatumType._(2, 'R_BOOL');
   static const Datum_DatumType R_NUM = const Datum_DatumType._(3, 'R_NUM');
@@ -195,16 +195,16 @@ class Datum_DatumType extends ProtobufEnum {
     R_JSON,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static Datum_DatumType valueOf(int value) => _byValue[value] as Datum_DatumType;
   static void $checkItem(Datum_DatumType v) {
-    if (v is! Datum_DatumType) checkItemFailed(v, 'Datum_DatumType');
+    if (v is! Datum_DatumType) $pb.checkItemFailed(v, 'Datum_DatumType');
   }
 
   const Datum_DatumType._(int v, String n) : super(v, n);
 }
 
-class Term_TermType extends ProtobufEnum {
+class Term_TermType extends $pb.ProtobufEnum {
   static const Term_TermType DATUM = const Term_TermType._(1, 'DATUM');
   static const Term_TermType MAKE_ARRAY = const Term_TermType._(2, 'MAKE_ARRAY');
   static const Term_TermType MAKE_OBJ = const Term_TermType._(3, 'MAKE_OBJ');
@@ -385,6 +385,12 @@ class Term_TermType extends ProtobufEnum {
   static const Term_TermType TO_JSON_STRING = const Term_TermType._(172, 'TO_JSON_STRING');
   static const Term_TermType MINVAL = const Term_TermType._(180, 'MINVAL');
   static const Term_TermType MAXVAL = const Term_TermType._(181, 'MAXVAL');
+  static const Term_TermType BIT_AND = const Term_TermType._(191, 'BIT_AND');
+  static const Term_TermType BIT_OR = const Term_TermType._(192, 'BIT_OR');
+  static const Term_TermType BIT_XOR = const Term_TermType._(193, 'BIT_XOR');
+  static const Term_TermType BIT_NOT = const Term_TermType._(194, 'BIT_NOT');
+  static const Term_TermType BIT_SAL = const Term_TermType._(195, 'BIT_SAL');
+  static const Term_TermType BIT_SAR = const Term_TermType._(196, 'BIT_SAR');
 
   static const List<Term_TermType> values = const <Term_TermType> [
     DATUM,
@@ -567,12 +573,18 @@ class Term_TermType extends ProtobufEnum {
     TO_JSON_STRING,
     MINVAL,
     MAXVAL,
+    BIT_AND,
+    BIT_OR,
+    BIT_XOR,
+    BIT_NOT,
+    BIT_SAL,
+    BIT_SAR,
   ];
 
-  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static final Map<int, dynamic> _byValue = $pb.ProtobufEnum.initByValue(values);
   static Term_TermType valueOf(int value) => _byValue[value] as Term_TermType;
   static void $checkItem(Term_TermType v) {
-    if (v is! Term_TermType) checkItemFailed(v, 'Term_TermType');
+    if (v is! Term_TermType) $pb.checkItemFailed(v, 'Term_TermType');
   }
 
   const Term_TermType._(int v, String n) : super(v, n);

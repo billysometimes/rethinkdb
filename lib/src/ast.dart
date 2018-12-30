@@ -1,9 +1,201 @@
 part of rethinkdb;
 
+const defaultNestingDepth = 20;
+
+List buildInvocationParams(List<dynamic> positionalArguments,
+    [List<String> optionsNames]) {
+  List argsList = [];
+  argsList.addAll(positionalArguments);
+  Map options = {};
+  if (argsList.length > 1 && argsList.last is Map) {
+    if (optionsNames == null) {
+      options = argsList.removeLast();
+    } else {
+      Map lastArgument = argsList.last;
+      bool isOptions = true;
+      lastArgument.forEach((key, _) {
+        if (!optionsNames.contains(key)) {
+          isOptions = false;
+        }
+      });
+      if (isOptions) {
+        options = argsList.removeLast();
+      }
+    }
+  }
+  List invocationParams = [argsList];
+  if (options.isNotEmpty) {
+    invocationParams.add(options);
+  }
+  return invocationParams;
+}
+
+// TODO: handle index.
+// TODO: handle multi.
+class GroupFunction {
+  RqlQuery _rqlQuery;
+
+  GroupFunction([this._rqlQuery]);
+
+  Group call(args) {
+    if (args is List) {
+      return Group(_rqlQuery, args, null);
+    } else {
+      return Group(_rqlQuery, [args], null);
+    }
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    List invocationParams =
+        buildInvocationParams(positionalArguments, ['index', 'multi']);
+    return Group(_rqlQuery, invocationParams[0],
+        invocationParams.length == 2 ? invocationParams[1] : null);
+  }
+}
+
+class HasFieldsFunction {
+  RqlQuery _rqlQuery;
+
+  HasFieldsFunction([this._rqlQuery]);
+
+  HasFields call(items) {
+    return HasFields(_rqlQuery, items);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    return HasFields(_rqlQuery, buildInvocationParams(positionalArguments));
+  }
+}
+
+class MergeFunction {
+  RqlQuery _rqlQuery;
+
+  MergeFunction([this._rqlQuery]);
+
+  Merge call(obj) {
+    return Merge([_rqlQuery, obj]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.add(_rqlQuery);
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Merge(positionalArguments);
+  }
+}
+
+class PluckFunction {
+  RqlQuery _rqlQuery;
+
+  PluckFunction([this._rqlQuery]);
+
+  Pluck call(args) {
+    return Pluck(_rqlQuery._listify(args, _rqlQuery));
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Pluck(_rqlQuery._listify(
+        buildInvocationParams(positionalArguments), _rqlQuery));
+  }
+}
+
+// TODO: handle interleave.
+class UnionFunction {
+  RqlQuery _rqlQuery;
+
+  UnionFunction([this._rqlQuery]);
+
+  Union call(sequence) {
+    return Union(_rqlQuery, [sequence]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    List invocationParams =
+        buildInvocationParams(positionalArguments, ['interleave']);
+    if (invocationParams.length == 2) {
+      return Union(_rqlQuery, [invocationParams[0], invocationParams[1]]);
+    } else {
+      return Union(_rqlQuery, invocationParams[0]);
+    }
+  }
+}
+
+class WithoutFunction {
+  RqlQuery _rqlQuery;
+
+  WithoutFunction([this._rqlQuery]);
+
+  Without call(items) {
+    return Without(_rqlQuery._listify(items, _rqlQuery));
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Without(_rqlQuery._listify(
+        buildInvocationParams(positionalArguments), _rqlQuery));
+  }
+}
+
+class WithFieldsFunction {
+  RqlQuery _rqlQuery;
+
+  WithFieldsFunction([this._rqlQuery]);
+
+  WithFields call(items) {
+    return WithFields(_rqlQuery, items);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    return WithFields(_rqlQuery, buildInvocationParams(positionalArguments));
+  }
+}
+
+class RqlMapFunction {
+  RqlQuery _rqlQuery;
+
+  RqlMapFunction(this._rqlQuery);
+
+  call(mappingFunction) {
+    if (mappingFunction is List) {
+      mappingFunction.insert(0, _rqlQuery);
+      var item = _rqlQuery._funcWrap(
+          mappingFunction.removeLast(), mappingFunction.length);
+      return new RqlMap(mappingFunction, item);
+    }
+    return new RqlMap([_rqlQuery], mappingFunction);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List mappingFunction = new List.from(invocation.positionalArguments);
+    mappingFunction.insert(0, _rqlQuery);
+    var item = _rqlQuery._funcWrap(
+        mappingFunction.removeLast(), mappingFunction.length);
+    return new RqlMap(mappingFunction, item);
+  }
+}
+
 class RqlQuery {
   p.Term_TermType tt;
 
-  int _errDepth = 0;
   List args = [];
   Map optargs = {};
 
@@ -12,7 +204,7 @@ class RqlQuery {
       args.forEach((e) {
         if (_checkIfOptions(e, tt)) {
           optargs ??= e;
-        } else if(e != null) {
+        } else if (e != null) {
           this.args.add(_expr(e));
         }
       });
@@ -20,12 +212,16 @@ class RqlQuery {
 
     if (optargs != null) {
       optargs.forEach((k, v) {
-        this.optargs[k] = _expr(v);
+        if ((k == "conflict") && (v is Function)) {
+          this.optargs[k] = _expr(v, defaultNestingDepth, 3);
+        } else {
+          this.optargs[k] = _expr(v);
+        }
       });
     }
   }
 
-  _expr(val, [nestingDepth = 20]) {
+  _expr(val, [nestingDepth = defaultNestingDepth, argsCount]) {
     if (nestingDepth <= 0) {
       throw new RqlDriverError("Nesting depth limit exceeded");
     }
@@ -38,7 +234,7 @@ class RqlQuery {
       return val;
     } else if (val is List) {
       val.forEach((v) {
-        v = _expr(v, nestingDepth - 1);
+        v = _expr(v, nestingDepth - 1, argsCount);
       });
 
       return new MakeArray(val);
@@ -46,12 +242,12 @@ class RqlQuery {
       Map obj = {};
 
       val.forEach((k, v) {
-        obj[k] = _expr(v, nestingDepth - 1);
+        obj[k] = _expr(v, nestingDepth - 1, argsCount);
       });
 
       return new MakeObj(obj);
     } else if (val is Function) {
-      return new Func(val);
+      return new Func(val, argsCount);
     } else if (val is DateTime) {
       return new Time(new Args([
         val.year,
@@ -157,7 +353,7 @@ class RqlQuery {
     }
   }
 
-  _ivarScan(query) {
+  bool _ivarScan(query) {
     if (!(query is RqlQuery)) {
       return false;
     }
@@ -178,10 +374,10 @@ class RqlQuery {
   }
 
   // Called on arguments that should be functions
-  _funcWrap(val) {
-    val = _expr(val);
+  _funcWrap(val, [argsCount]) {
+    val = _expr(val, defaultNestingDepth, argsCount);
     if (_ivarScan(val)) {
-      return new Func((x) => val);
+      return new Func((x) => val, argsCount);
     }
     return val;
   }
@@ -252,7 +448,7 @@ class RqlQuery {
 
           try {
             return _reqlTypeBinaryToBytes(obj);
-          } on FormatException catch (e) {
+          } on FormatException {
             return obj['data'];
           }
         } else
@@ -270,70 +466,72 @@ class RqlQuery {
   }
 
   _reqlTypeBinaryToBytes(Map obj) {
-    return BASE64.decode(obj['data']);
+    return base64.decode(obj['data']);
   }
 
-  Update update(args, [options]) => new Update(this, _funcWrap(args), options);
+  Update update(args, [options]) =>
+      new Update(this, _funcWrap(args, 1), options);
 
   // Comparison operators
-  Eq eq(other) => new Eq(this, other);
+  dynamic get eq => EqFunction(this);
 
-  Ne ne(other) => new Ne(this, other);
+  dynamic get ne => NeFunction(this);
 
-  Lt lt(other) => new Lt(this, other);
+  dynamic get lt => LtFunction(this);
 
-  Le le(other) => new Le(this, other);
+  dynamic get le => LeFunction(this);
 
-  Gt gt(other) => new Gt(this, other);
+  dynamic get gt => GtFunction(this);
 
-  Ge ge(other) => new Ge(this, other);
+  dynamic get ge => GeFunction(this);
 
   // Numeric operators
-  Not not() => new Not(this);
+  Not not() => Not(this);
 
-  Add add(other) => new Add(this, other);
+  dynamic get add => AddFunction(this);
 
-  Sub sub(other) => new Sub(this, other);
+  dynamic get sub => SubFunction(this);
 
-  Mul mul(other) => new Mul(this, other);
+  dynamic get mul => MulFunction(this);
 
-  Div div(other) => new Div(this, other);
+  dynamic get div => DivFunction(this);
 
-  Mod mod(other) => new Mod(this, other);
+  Mod mod(other) => Mod(this, other);
 
-  And and(other) => new And([this, other]);
+  dynamic get and => AndFunction(this);
 
-  Or or(other) => new Or([this, other]);
+  dynamic get or => OrFunction(this);
 
-  Contains contains(args) => new Contains(this, _funcWrap(args));
+  Contains contains(args) => Contains(this, _funcWrap(args, 1));
 
-  HasFields hasFields(args) => new HasFields(this, args);
+  dynamic get hasFields => HasFieldsFunction(this);
 
-  WithFields withFields([args]) => new WithFields(this, args);
+  dynamic get withFields => WithFieldsFunction(this);
 
-  Keys keys() => new Keys(this);
+  Keys keys() => Keys(this);
 
-  Values values() => new Values(this);
+  Values values() => Values(this);
 
   Changes changes([Map opts]) => new Changes(this, opts);
 
   // Polymorphic object/sequence operations
-  Pluck pluck(args) => new Pluck(_listify(args, this));
+  dynamic get pluck => PluckFunction(this);
 
-  Without without(items) => new Without(_listify(items, this));
+  dynamic get without => WithoutFunction(this);
 
   FunCall rqlDo(arg, [expression]) {
     if (expression == null) {
-      return new FunCall(this, _funcWrap(arg));
+      return new FunCall(this, _funcWrap(arg, 1));
     } else {
-      return new FunCall(_listify(arg, this), _funcWrap(expression));
+      return new FunCall(
+          _listify(arg, this), _funcWrap(expression, arg.length));
     }
   }
 
   Default rqlDefault(args) => new Default(this, args);
 
   Replace replace(expr, [options]) =>
-      new Replace(this, _funcWrap(expr), options);
+      new Replace(this, _funcWrap(expr, 1), options);
 
   Delete delete([options]) => new Delete(this, options);
 
@@ -344,7 +542,7 @@ class RqlQuery {
 
   TypeOf typeOf() => new TypeOf(this);
 
-  Merge merge(obj) => new Merge(this, _funcWrap(obj));
+  dynamic get merge => MergeFunction(this);
 
   Append append(val) => new Append(this, val);
 
@@ -392,7 +590,7 @@ class RqlQuery {
   Limit limit(int i) => new Limit(this, i);
 
   Reduce reduce(reductionFunction, [base]) =>
-      new Reduce(this, _funcWrap(reductionFunction), base);
+      new Reduce(this, _funcWrap(reductionFunction, 2), base);
 
   Sum sum([args]) => new Sum(this, args);
 
@@ -402,19 +600,13 @@ class RqlQuery {
 
   Max max([args]) => new Max(this, args);
 
-  RqlMap map(mappingFunction) {
-    if (mappingFunction is List) {
-      mappingFunction.insert(0, this);
-      var item = _funcWrap(mappingFunction.removeLast());
-      return new RqlMap(mappingFunction, item);
-    }
-    return new RqlMap([this], mappingFunction);
-  }
+  dynamic get map => RqlMapFunction(this);
 
-  Filter filter(expr, [options]) => new Filter(this, _funcWrap(expr), options);
+  Filter filter(expr, [options]) =>
+      new Filter(this, _funcWrap(expr, 1), options);
 
   ConcatMap concatMap(mappingFunction) =>
-      new ConcatMap(this, _funcWrap(mappingFunction));
+      new ConcatMap(this, _funcWrap(mappingFunction, 1));
 
   Get get(id) => new Get(this, id);
 
@@ -427,7 +619,7 @@ class RqlQuery {
         if (ob is Asc || ob is Desc) {
           //do nothing
         } else {
-          ob = _funcWrap(ob);
+          ob = _funcWrap(ob, 1);
         }
       });
     } else if (attrs is List) {
@@ -439,7 +631,7 @@ class RqlQuery {
         if (ob is Asc || ob is Desc) {
           //do nothing
         } else
-          ob = _funcWrap(ob);
+          ob = _funcWrap(ob, 1);
       });
     } else {
       List tmp = [];
@@ -458,7 +650,9 @@ class RqlQuery {
   operator -(other) => this.sub(other);
   operator *(other) => this.mul(other);
   operator /(other) => this.div(other);
-  operator ==(other) => this.eq(other);
+  // TODO see if we can still do this. != isn't assignable so maybe
+  // it makes more sense not to do == anyway.
+  //operator ==(other) => this.eq(other);
   operator <=(other) => this.le(other);
   operator >=(other) => this.ge(other);
   operator <(other) => this.lt(other);
@@ -473,10 +667,10 @@ class RqlQuery {
 
   Count count([filter]) {
     if (filter == null) return new Count(this);
-    return new Count(this, _funcWrap(filter));
+    return new Count(this, _funcWrap(filter, 1));
   }
 
-  Union union(sequence, opts) => new Union(this, [sequence, opts]);
+  dynamic get union => UnionFunction(this);
 
   InnerJoin innerJoin(otherSequence, [predicate]) =>
       new InnerJoin(this, otherSequence, predicate);
@@ -485,13 +679,13 @@ class RqlQuery {
       new OuterJoin(this, otherSequence, predicate);
 
   EqJoin eqJoin(leftAttr, [otherTable, options]) =>
-      new EqJoin(this, _funcWrap(leftAttr), otherTable, options);
+      new EqJoin(this, _funcWrap(leftAttr, 1), otherTable, options);
 
   Zip zip() => new Zip(this);
 
-  Group group(args, [options]) => new Group(this, args, options);
+  dynamic get group => GroupFunction(this);
 
-  ForEach forEach(writeQuery) => new ForEach(this, _funcWrap(writeQuery));
+  ForEach forEach(writeQuery) => new ForEach(this, _funcWrap(writeQuery, 1));
 
   Info info() => new Info(this);
 
@@ -567,32 +761,6 @@ class RqlQuery {
   Status status() => new Status(this);
 
   Wait wait([Map options]) => new Wait(this, options);
-
-  noSuchMethod(Invocation invocation) {
-    if (this._errDepth == 0) {
-      _errDepth++;
-      Symbol methodName = invocation.memberName;
-      List argsList = [];
-      argsList.addAll(invocation.positionalArguments);
-      Map options = {};
-
-      if (argsList.length > 1 && argsList.last is Map) {
-        options = argsList.removeLast();
-      }
-
-      InstanceMirror im = reflect(this);
-
-      List invocationParams = [argsList];
-      if (options.isNotEmpty) {
-        invocationParams.add(options);
-      }
-
-      return im.invoke(methodName, invocationParams).reflectee;
-    } else {
-      throw new RqlDriverError(
-          "${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
-    }
-  }
 
   call(attr) {
     return new GetField(this, attr);
@@ -731,37 +899,37 @@ class ImplicitVar extends RqlQuery {
 class Eq extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.EQ;
 
-  Eq(comparable, numb) : super([comparable, numb]);
+  Eq(numbers) : super(numbers);
 }
 
 class Ne extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.NE;
 
-  Ne(comparable, numb) : super([comparable, numb]);
+  Ne(numbers) : super(numbers);
 }
 
 class Lt extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.LT;
 
-  Lt(comparable, numb) : super([comparable, numb]);
+  Lt(numbers) : super(numbers);
 }
 
 class Le extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.LE;
 
-  Le(comparable, numb) : super([comparable, numb]);
+  Le(numbers) : super(numbers);
 }
 
 class Gt extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.GT;
 
-  Gt(comparable, numb) : super([comparable, numb]);
+  Gt(numbers) : super(numbers);
 }
 
 class Ge extends RqlBiCompareOperQuery {
   p.Term_TermType tt = p.Term_TermType.GE;
 
-  Ge(comparable, numb) : super([comparable, numb]);
+  Ge(numbers) : super(numbers);
 }
 
 class Not extends RqlQuery {
@@ -773,25 +941,25 @@ class Not extends RqlQuery {
 class Add extends RqlBiOperQuery {
   p.Term_TermType tt = p.Term_TermType.ADD;
 
-  Add(addable, obj) : super([addable, obj]);
+  Add(objects) : super(objects);
 }
 
 class Sub extends RqlBiOperQuery {
   p.Term_TermType tt = p.Term_TermType.SUB;
 
-  Sub(subbable, obj) : super([subbable, obj]);
+  Sub(numbers) : super(numbers);
 }
 
 class Mul extends RqlBiOperQuery {
   p.Term_TermType tt = p.Term_TermType.MUL;
 
-  Mul(mulable, obj) : super([mulable, obj]);
+  Mul(numbers) : super(numbers);
 }
 
 class Div extends RqlBiOperQuery {
   p.Term_TermType tt = p.Term_TermType.DIV;
 
-  Div(divable, obj) : super([divable, obj]);
+  Div(numbers) : super(numbers);
 }
 
 class Mod extends RqlBiOperQuery {
@@ -936,7 +1104,7 @@ class Without extends RqlMethodQuery {
 class Merge extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.MERGE;
 
-  Merge(sequence, obj) : super([sequence, obj]);
+  Merge(objects) : super(objects);
 }
 
 class Between extends RqlMethodQuery {
@@ -970,12 +1138,80 @@ class FunCall extends RqlQuery {
   FunCall(argslist, expression) : super() {
     List temp = [];
     temp.add(expression);
-    if (argslist is List)
+    int argsCount;
+    if (argslist is List) {
+      argsCount = argslist.length;
       temp.addAll(argslist);
-    else
+    } else {
+      argsCount = 1;
       temp.add(argslist);
+    }
 
-    this.args.addAll(temp.map(_expr));
+    this.args.addAll(temp.map((arg) {
+      return _expr(arg, defaultNestingDepth, argsCount);
+    }));
+  }
+}
+
+class GetAllFunction extends RqlQuery {
+  Table _table;
+
+  GetAllFunction(this._table);
+
+  GetAll call(args, [options]) {
+    if (options != null && options is Map == false) {
+      args = _listify(args, _table);
+      options = args.add(options);
+      return new GetAll(args, options);
+    }
+    return new GetAll(_listify(args, _table), options);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
+  }
+}
+
+class IndexStatusFunction extends RqlQuery {
+  Table _table;
+
+  IndexStatusFunction(this._table);
+
+  IndexStatus call([indexes]) {
+    if (indexes == null) {
+      return new IndexStatus.all(_table);
+    }
+    return new IndexStatus(_table, indexes);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
+  }
+}
+
+class IndexWaitFunction extends RqlQuery {
+  Table _table;
+
+  IndexWaitFunction(this._table);
+
+  IndexWait call([indexes]) {
+    if (indexes == null) {
+      return new IndexWait.all(_table);
+    }
+    return new IndexWait(_table, indexes);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List argsList = [];
+    argsList.addAll(invocation.positionalArguments);
+    return Function.apply(call, [argsList]);
   }
 }
 
@@ -1000,7 +1236,7 @@ class Table extends RqlQuery {
       return new IndexCreate(this, indexName, indexFunction);
     }
     return new IndexCreate.withIndexFunction(
-        this, indexName, _funcWrap(indexFunction), options);
+        this, indexName, _funcWrap(indexFunction, 1), options);
   }
 
   IndexDrop indexDrop(indexName) => new IndexDrop(this, indexName);
@@ -1008,51 +1244,19 @@ class Table extends RqlQuery {
   IndexRename indexRename(oldName, newName, [Map options]) =>
       new IndexRename(this, oldName, newName, options);
 
-  IndexStatus indexStatus([indexes]) {
-    if (indexes == null) {
-      return new IndexStatus.all(this);
-    }
-    return new IndexStatus(this, indexes);
-  }
+  dynamic get indexStatus => IndexStatusFunction(this);
 
-  IndexWait indexWait([indexes]) {
-    if (indexes == null) {
-      return new IndexWait.all(this);
-    }
-    return new IndexWait(this, indexes);
-  }
+  dynamic get indexWait => IndexWaitFunction(this);
 
-  Update update(args, [options]) => new Update(this, _funcWrap(args), options);
+  Update update(args, [options]) =>
+      new Update(this, _funcWrap(args, 1), options);
 
   Sync sync() => new Sync(this);
 
-  GetAll getAll(args, [options]) {
-    if (options != null && options is Map == false) {
-      args = _listify(args, this);
-      options = args.add(options);
-      return new GetAll(args, options);
-    }
-    return new GetAll(_listify(args, this), options);
-  }
+  dynamic get getAll => GetAllFunction(this);
 
   InnerJoin innerJoin(otherSeq, [predicate]) =>
       new InnerJoin(this, otherSeq, predicate);
-
-  noSuchMethod(Invocation invocation) {
-    if (this._errDepth == 0) {
-      _errDepth++;
-      Symbol methodName = invocation.memberName;
-      List argsList = [];
-      argsList.addAll(invocation.positionalArguments);
-
-      InstanceMirror im = reflect(this);
-
-      return im.invoke(methodName, [argsList]).reflectee;
-    } else {
-      throw new RqlDriverError(
-          "${this.runtimeType} has no function ${MirrorSystem.getName(invocation.memberName)}");
-    }
-  }
 }
 
 class Get extends RqlMethodQuery {
@@ -1110,10 +1314,13 @@ class RqlMap extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.MAP;
 
   RqlMap(argslist, expression) : super() {
+    int argsCount = argslist.length;
     List temp = [];
     temp.addAll(argslist);
-    temp.add(_funcWrap(expression));
-    this.args.addAll(temp.map(_expr));
+    temp.add(_funcWrap(expression, argsCount));
+    this.args.addAll(temp.map((arg) {
+      return _expr(arg, defaultNestingDepth, argsCount);
+    }));
   }
 }
 
@@ -1199,7 +1406,7 @@ class IsEmpty extends RqlMethodQuery {
 class Group extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.GROUP;
 
-  Group(obj, group, [options]) : super([obj, group], options);
+  Group(obj, groups, [options]) : super([obj]..addAll(groups), options);
 }
 
 class InnerJoin extends RqlMethodQuery {
@@ -1582,16 +1789,13 @@ class ToEpochTime extends RqlMethodQuery {
 class Func extends RqlQuery {
   p.Term_TermType tt = p.Term_TermType.FUNC;
   Function fun;
+  int argsCount;
   static int nextId = 0;
-  Func(this.fun) : super(null, null) {
-    ClosureMirror closure = reflect(fun);
-
+  Func(this.fun, this.argsCount) : super(null, null) {
     List vrs = [];
     List vrids = [];
 
-    int x = closure.function.parameters.length;
-
-    for (int i = 0; i < x; i++) {
+    for (int i = 0; i < argsCount; i++) {
       vrs.add(new Var(Func.nextId));
       vrids.add(Func.nextId);
       Func.nextId++;

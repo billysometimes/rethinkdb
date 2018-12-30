@@ -2,18 +2,58 @@ part of rethinkdb;
 
 const defaultNestingDepth = 20;
 
-List buildInvocationParams(List<dynamic> positionalArguments) {
+List buildInvocationParams(List<dynamic> positionalArguments,
+    [List<String> optionsNames]) {
   List argsList = [];
   argsList.addAll(positionalArguments);
   Map options = {};
   if (argsList.length > 1 && argsList.last is Map) {
-    options = argsList.removeLast();
+    if (optionsNames == null) {
+      options = argsList.removeLast();
+    } else {
+      Map lastArgument = argsList.last;
+      bool isOptions = true;
+      lastArgument.forEach((key, _) {
+        if (!optionsNames.contains(key)) {
+          isOptions = false;
+        }
+      });
+      if (isOptions) {
+        options = argsList.removeLast();
+      }
+    }
   }
   List invocationParams = [argsList];
   if (options.isNotEmpty) {
     invocationParams.add(options);
   }
   return invocationParams;
+}
+
+// TODO: handle index.
+// TODO: handle multi.
+class GroupFunction {
+  RqlQuery _rqlQuery;
+
+  GroupFunction([this._rqlQuery]);
+
+  Group call(args) {
+    if (args is List) {
+      return Group(_rqlQuery, args, null);
+    } else {
+      return Group(_rqlQuery, [args], null);
+    }
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    List invocationParams =
+        buildInvocationParams(positionalArguments, ['index', 'multi']);
+    return Group(_rqlQuery, invocationParams[0],
+        invocationParams.length == 2 ? invocationParams[1] : null);
+  }
 }
 
 class HasFieldsFunction {
@@ -33,6 +73,24 @@ class HasFieldsFunction {
   }
 }
 
+class MergeFunction {
+  RqlQuery _rqlQuery;
+
+  MergeFunction([this._rqlQuery]);
+
+  Merge call(obj) {
+    return Merge([_rqlQuery, obj]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.add(_rqlQuery);
+    positionalArguments.addAll(invocation.positionalArguments);
+    return Merge(positionalArguments);
+  }
+}
+
 class PluckFunction {
   RqlQuery _rqlQuery;
 
@@ -48,6 +106,30 @@ class PluckFunction {
     positionalArguments.addAll(invocation.positionalArguments);
     return Pluck(_rqlQuery._listify(
         buildInvocationParams(positionalArguments), _rqlQuery));
+  }
+}
+
+// TODO: handle interleave.
+class UnionFunction {
+  RqlQuery _rqlQuery;
+
+  UnionFunction([this._rqlQuery]);
+
+  Union call(sequence) {
+    return Union(_rqlQuery, [sequence]);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    List positionalArguments = [];
+    positionalArguments.addAll(invocation.positionalArguments);
+    List invocationParams =
+        buildInvocationParams(positionalArguments, ['interleave']);
+    if (invocationParams.length == 2) {
+      return Union(_rqlQuery, [invocationParams[0], invocationParams[1]]);
+    } else {
+      return Union(_rqlQuery, invocationParams[0]);
+    }
   }
 }
 
@@ -461,7 +543,7 @@ class RqlQuery {
 
   TypeOf typeOf() => new TypeOf(this);
 
-  Merge merge(obj) => new Merge(this, _funcWrap(obj, 1));
+  dynamic get merge => MergeFunction(this);
 
   Append append(val) => new Append(this, val);
 
@@ -589,7 +671,7 @@ class RqlQuery {
     return new Count(this, _funcWrap(filter, 1));
   }
 
-  Union union(sequence, opts) => new Union(this, [sequence, opts]);
+  dynamic get union => UnionFunction(this);
 
   InnerJoin innerJoin(otherSequence, [predicate]) =>
       new InnerJoin(this, otherSequence, predicate);
@@ -602,7 +684,7 @@ class RqlQuery {
 
   Zip zip() => new Zip(this);
 
-  Group group(args, [options]) => new Group(this, args, options);
+  dynamic get group => GroupFunction(this);
 
   ForEach forEach(writeQuery) => new ForEach(this, _funcWrap(writeQuery, 1));
 
@@ -1050,7 +1132,7 @@ class Without extends RqlMethodQuery {
 class Merge extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.MERGE;
 
-  Merge(sequence, obj) : super([sequence, obj]);
+  Merge(objects) : super(objects);
 }
 
 class Between extends RqlMethodQuery {
@@ -1352,7 +1434,7 @@ class IsEmpty extends RqlMethodQuery {
 class Group extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.GROUP;
 
-  Group(obj, group, [options]) : super([obj, group], options);
+  Group(obj, groups, [options]) : super([obj]..addAll(groups), options);
 }
 
 class InnerJoin extends RqlMethodQuery {

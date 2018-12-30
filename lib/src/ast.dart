@@ -448,7 +448,7 @@ class RqlQuery {
 
           try {
             return _reqlTypeBinaryToBytes(obj);
-          } on FormatException catch (e) {
+          } on FormatException {
             return obj['data'];
           }
         } else

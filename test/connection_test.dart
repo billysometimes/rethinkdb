@@ -36,7 +36,7 @@ main() {
     expect(closeCounter, equals(0));
     conn.close();
     conn.close();
-    expect(closeCounter, equals(2));
+    expect(closeCounter, equals(1));
     Connection c = await conn.connect();
 
     expect(connectCounter, equals(1));

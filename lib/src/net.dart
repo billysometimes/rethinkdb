@@ -108,7 +108,10 @@ class Connection {
 
     _sock.then((socket) {
       _socket = socket;
-      _socket.listen(_handleResponse);
+      _socket.listen(_handleResponse, onDone: () {
+        if (_listeners["close"] != null)
+          _listeners["close"].forEach((func) => func());
+      });
 
       _clientFirstMessage = "n=$_user,r=" + _makeSalt();
       String message = json.encode({
@@ -294,9 +297,6 @@ class Connection {
   }
 
   void close([bool noreplyWait = true]) {
-    if (_listeners["close"] != null)
-      _listeners["close"].forEach((func) => func());
-
     if (_socket != null) {
       if (noreplyWait) this.noreplyWait();
       try {
@@ -309,15 +309,15 @@ class Connection {
   }
 
   /**
-    * Alias for addListener
-    */
+   * Alias for addListener
+   */
   void on(String key, Function val) {
     addListener(key, val);
   }
 
   /**
-    * Adds a listener to the connection.
-    */
+   * Adds a listener to the connection.
+   */
   void addListener(String key, Function val) {
     List currentListeners = [];
     if (_listeners != null && _listeners[key] != null)

@@ -1,3 +1,7 @@
+## 2.3.2+5
+
+* Made 'SocketException: OS Error: Connection refused' handleable by user code
+
 ## 2.3.2+4
 
 * Fixed connection close listener

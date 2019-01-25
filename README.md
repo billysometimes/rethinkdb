@@ -16,7 +16,7 @@ The driver api tries to align with the javascript and python RethinkDB drivers. 
 To include this driver in your own project add the package to your pubspec.yaml file:
 ```yaml
 dependencies:
-  rethinkdb_dart: '^2.3.2+4'
+  rethinkdb_dart: '^2.3.2+5'
 ```
 
 Or to use bleeding edge:

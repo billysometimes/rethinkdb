@@ -106,27 +106,31 @@ class Connection {
       _sock = SecureSocket.connect(_host, _port, context: context);
     }
 
-    _sock.then((socket) {
-      _socket = socket;
-      _socket.listen(_handleResponse, onDone: () {
-        if (_listeners["close"] != null)
-          _listeners["close"].forEach((func) => func());
-      });
+    _sock.catchError((err) {
+      _completer.completeError(
+          RqlDriverError("Could not connect to $_host:$_port.  Error $err"));
+    }).then((socket) {
+      if (socket != null) {
+        _socket = socket;
+        _socket.listen(_handleResponse, onDone: () {
+          if (_listeners["close"] != null)
+            _listeners["close"].forEach((func) => func());
+        });
 
-      _clientFirstMessage = "n=$_user,r=" + _makeSalt();
-      String message = json.encode({
-        'protocol_version': _protocolVersion,
-        'authentication_method': "SCRAM-SHA-256",
-        'authentication': "n,,${_clientFirstMessage}"
-      });
-      List<int> handshake =
-          new List.from(_toBytes(p.VersionDummy_Version.V1_0.value))
-            ..addAll(message.codeUnits)
-            ..add(0);
+        _clientFirstMessage = "n=$_user,r=" + _makeSalt();
+        String message = json.encode({
+          'protocol_version': _protocolVersion,
+          'authentication_method': "SCRAM-SHA-256",
+          'authentication': "n,,${_clientFirstMessage}"
+        });
+        List<int> handshake =
+            new List.from(_toBytes(p.VersionDummy_Version.V1_0.value))
+              ..addAll(message.codeUnits)
+              ..add(0);
 
-      _socket.add(handshake);
-    }).catchError((err) => throw new RqlDriverError(
-        "Could not connect to $_host:$_port.  Error $err"));
+        _socket.add(handshake);
+      }
+    });
     return _completer.future;
   }
 

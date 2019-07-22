@@ -1,6 +1,6 @@
 import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
-Rethinkdb r = new Rethinkdb();
+Rethinkdb r = Rethinkdb();
 
 void main(List<String> arguments) async {
   var connection;

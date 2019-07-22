@@ -1,11 +1,11 @@
 import 'package:test/test.dart';
-import '../lib/rethinkdb_dart.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
 main() {
-  var r = new Rethinkdb() as dynamic;
+  var r = Rethinkdb() as dynamic;
 
-  String tableName = null;
-  String testDbName = null;
+  String tableName;
+  String testDbName;
   bool shouldDropTable = false;
   Connection connection;
 

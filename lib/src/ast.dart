@@ -178,18 +178,18 @@ class RqlMapFunction {
       mappingFunction.insert(0, _rqlQuery);
       var item = _rqlQuery._funcWrap(
           mappingFunction.removeLast(), mappingFunction.length);
-      return new RqlMap(mappingFunction, item);
+      return RqlMap(mappingFunction, item);
     }
-    return new RqlMap([_rqlQuery], mappingFunction);
+    return RqlMap([_rqlQuery], mappingFunction);
   }
 
   @override
   dynamic noSuchMethod(Invocation invocation) {
-    List mappingFunction = new List.from(invocation.positionalArguments);
+    List mappingFunction = List.from(invocation.positionalArguments);
     mappingFunction.insert(0, _rqlQuery);
     var item = _rqlQuery._funcWrap(
         mappingFunction.removeLast(), mappingFunction.length);
-    return new RqlMap(mappingFunction, item);
+    return RqlMap(mappingFunction, item);
   }
 }
 
@@ -223,11 +223,11 @@ class RqlQuery {
 
   _expr(val, [nestingDepth = defaultNestingDepth, argsCount]) {
     if (nestingDepth <= 0) {
-      throw new RqlDriverError("Nesting depth limit exceeded");
+      throw RqlDriverError("Nesting depth limit exceeded");
     }
 
     if (nestingDepth is int == false) {
-      throw new RqlDriverError("Second argument to `r.expr` must be a number.");
+      throw RqlDriverError("Second argument to `r.expr` must be a number.");
     }
 
     if (val is RqlQuery) {
@@ -237,7 +237,7 @@ class RqlQuery {
         v = _expr(v, nestingDepth - 1, argsCount);
       });
 
-      return new MakeArray(val);
+      return MakeArray(val);
     } else if (val is Map) {
       Map obj = {};
 
@@ -245,11 +245,11 @@ class RqlQuery {
         obj[k] = _expr(v, nestingDepth - 1, argsCount);
       });
 
-      return new MakeObj(obj);
+      return MakeObj(obj);
     } else if (val is Function) {
-      return new Func(val, argsCount);
+      return Func(val, argsCount);
     } else if (val is DateTime) {
-      return new Time(new Args([
+      return Time(Args([
         val.year,
         val.month,
         val.day,
@@ -259,7 +259,7 @@ class RqlQuery {
         _formatTimeZoneOffset(val)
       ]));
     }
-    return new Datum(val);
+    return Datum(val);
   }
 
   String _formatTimeZoneOffset(DateTime val) {
@@ -277,9 +277,9 @@ class RqlQuery {
   }
 
   Future run(Connection c, [globalOptargs]) {
-    if (c == null)
-      throw new RqlDriverError(
-          "RqlQuery.run must be given a connection to run.");
+    if (c == null) {
+      throw RqlDriverError("RqlQuery.run must be given a connection to run.");
+    }
 
     return c._start(this, globalOptargs);
   }
@@ -292,7 +292,7 @@ class RqlQuery {
     if (obj is Map == false) {
       return false;
     } else {
-      List options = new _RqlAllOptions(tt).options;
+      List options = _RqlAllOptions(tt).options;
 
       return obj.keys.every(options.contains);
     }
@@ -312,7 +312,7 @@ class RqlQuery {
     });
     res.add(argList);
 
-    if (optargs.length > 0) {
+    if (optargs.isNotEmpty) {
       Map optArgsMap = {};
       optargs.forEach((k, v) {
         optArgsMap[k] = v.build();
@@ -377,18 +377,18 @@ class RqlQuery {
   _funcWrap(val, [argsCount]) {
     val = _expr(val, defaultNestingDepth, argsCount);
     if (_ivarScan(val)) {
-      return new Func((x) => val, argsCount);
+      return Func((x) => val, argsCount);
     }
     return val;
   }
 
   _reqlTypeTimeToDatetime(Map obj) {
     if (obj["epoch_time"] == null) {
-      throw new RqlDriverError(
+      throw RqlDriverError(
           'pseudo-type TIME object $obj does not have expected field "epoch_time".');
     } else {
       String s = obj["epoch_time"].toString();
-      if (s.indexOf(".") >= 0) {
+      if (s.contains(".")) {
         List l = s.split('.');
         while (l[1].length < 3) {
           l[1] = l[1] + "0";
@@ -397,13 +397,13 @@ class RqlQuery {
       } else {
         s += "000";
       }
-      return new DateTime.fromMillisecondsSinceEpoch(int.parse(s));
+      return DateTime.fromMillisecondsSinceEpoch(int.parse(s));
     }
   }
 
   _reqlTypeGroupedDataToObject(Map obj) {
     if (obj['data'] == null) {
-      throw new RqlDriverError(
+      throw RqlDriverError(
           'pseudo-type GROUPED_DATA object $obj does not have the expected field "data".');
     }
 
@@ -425,40 +425,41 @@ class RqlQuery {
         if (timeFormat != null || timeFormat == 'native') {
           // Convert to native dart DateTime
           return _reqlTypeTimeToDatetime(obj);
-        } else if (timeFormat != 'raw')
-          throw new RqlDriverError(
-              "Unknown time_format run option $timeFormat.");
+        } else if (timeFormat != 'raw') {
+          throw RqlDriverError("Unknown time_format run option $timeFormat.");
+        }
       } else if (reqlType == 'GROUPED_DATA') {
         if (formatOpts == null ||
             formatOpts.isEmpty ||
-            formatOpts['group_format'] == 'native')
+            formatOpts['group_format'] == 'native') {
           return _reqlTypeGroupedDataToObject(obj);
-        else if (formatOpts['group_format'] != 'raw')
-          throw new RqlDriverError(
+        } else if (formatOpts['group_format'] != 'raw') {
+          throw RqlDriverError(
               "Unknown group_format run option ${formatOpts['group_format']}.");
+        }
       } else if (reqlType == "BINARY") {
         if (formatOpts == null || formatOpts["binary_format"] == "native") {
-          /**the official drivers decode the BASE64 string to binary data
-            *this driver currently has a bug with its [_reqlTypeBinaryToBytes]
-            * for some reason, when trying to convert the index function for
-            * `indexWait` commands, we get a FormatException.
-            *  so for the short term we will just return the BASE64 string
-            *  with a TODO to find out what is wrong and fix it.
-            **/
+          /// the official drivers decode the BASE64 string to binary data
+          /// this driver currently has a bug with its [_reqlTypeBinaryToBytes]
+          /// for some reason, when trying to convert the index function for
+          /// `indexWait` commands, we get a FormatException.
+          ///  so for the short term we will just return the BASE64 string
+          ///  with a TODO to find out what is wrong and fix it.
 
           try {
             return _reqlTypeBinaryToBytes(obj);
           } on FormatException {
             return obj['data'];
           }
-        } else
-          throw new RqlDriverError(
+        } else {
+          throw RqlDriverError(
               "Unknown binary_format run option: ${formatOpts["binary_format"]}");
+        }
       } else if (reqlType == "GEOMETRY") {
         obj.remove('\$reql_type\$');
         return obj;
       } else {
-        throw new RqlDriverError("Unknown pseudo-type $reqlType");
+        throw RqlDriverError("Unknown pseudo-type $reqlType");
       }
     }
 
@@ -469,8 +470,7 @@ class RqlQuery {
     return base64.decode(obj['data']);
   }
 
-  Update update(args, [options]) =>
-      new Update(this, _funcWrap(args, 1), options);
+  Update update(args, [options]) => Update(this, _funcWrap(args, 1), options);
 
   // Comparison operators
   dynamic get eq => EqFunction(this);
@@ -512,7 +512,7 @@ class RqlQuery {
 
   Values values() => Values(this);
 
-  Changes changes([Map opts]) => new Changes(this, opts);
+  Changes changes([Map opts]) => Changes(this, opts);
 
   // Polymorphic object/sequence operations
   dynamic get pluck => PluckFunction(this);
@@ -521,94 +521,91 @@ class RqlQuery {
 
   FunCall rqlDo(arg, [expression]) {
     if (expression == null) {
-      return new FunCall(this, _funcWrap(arg, 1));
+      return FunCall(this, _funcWrap(arg, 1));
     } else {
-      return new FunCall(
-          _listify(arg, this), _funcWrap(expression, arg.length));
+      return FunCall(_listify(arg, this), _funcWrap(expression, arg.length));
     }
   }
 
-  Default rqlDefault(args) => new Default(this, args);
+  Default rqlDefault(args) => Default(this, args);
 
   Replace replace(expr, [options]) =>
-      new Replace(this, _funcWrap(expr, 1), options);
+      Replace(this, _funcWrap(expr, 1), options);
 
-  Delete delete([options]) => new Delete(this, options);
+  Delete delete([options]) => Delete(this, options);
 
   // Rql type inspection
-  coerceTo(String type) => new CoerceTo(this, type);
+  coerceTo(String type) => CoerceTo(this, type);
 
-  Ungroup ungroup() => new Ungroup(this);
+  Ungroup ungroup() => Ungroup(this);
 
-  TypeOf typeOf() => new TypeOf(this);
+  TypeOf typeOf() => TypeOf(this);
 
   dynamic get merge => MergeFunction(this);
 
-  Append append(val) => new Append(this, val);
+  Append append(val) => Append(this, val);
 
-  Floor floor() => new Floor(this);
+  Floor floor() => Floor(this);
 
-  Ceil ceil() => new Ceil(this);
+  Ceil ceil() => Ceil(this);
 
-  Round round() => new Round(this);
+  Round round() => Round(this);
 
-  Prepend prepend(val) => new Prepend(this, val);
+  Prepend prepend(val) => Prepend(this, val);
 
-  Difference difference(List ar) => new Difference(this, ar);
+  Difference difference(List ar) => Difference(this, ar);
 
-  SetInsert setInsert(val) => new SetInsert(this, val);
+  SetInsert setInsert(val) => SetInsert(this, val);
 
-  SetUnion setUnion(ar) => new SetUnion(this, ar);
+  SetUnion setUnion(ar) => SetUnion(this, ar);
 
-  SetIntersection setIntersection(ar) => new SetIntersection(this, ar);
+  SetIntersection setIntersection(ar) => SetIntersection(this, ar);
 
-  SetDifference setDifference(ar) => new SetDifference(this, ar);
+  SetDifference setDifference(ar) => SetDifference(this, ar);
 
-  GetField getField(index) => new GetField(this, index);
+  GetField getField(index) => GetField(this, index);
 
-  Nth nth(int index) => new Nth(this, index);
+  Nth nth(int index) => Nth(this, index);
 
-  Match match(String regex) => new Match(this, regex);
+  Match match(String regex) => Match(this, regex);
 
   Split split([seperator = " ", maxSplits]) =>
-      new Split(this, seperator, maxSplits);
+      Split(this, seperator, maxSplits);
 
-  Upcase upcase() => new Upcase(this);
+  Upcase upcase() => Upcase(this);
 
-  Downcase downcase() => new Downcase(this);
+  Downcase downcase() => Downcase(this);
 
-  IsEmpty isEmpty() => new IsEmpty(this);
+  IsEmpty isEmpty() => IsEmpty(this);
 
   Slice slice(int start, [end, Map options]) =>
-      new Slice(this, start, end, options);
+      Slice(this, start, end, options);
 
-  Fold fold(base, function, [options]) =>
-      new Fold(this, base, function, options);
+  Fold fold(base, function, [options]) => Fold(this, base, function, options);
 
-  Skip skip(int i) => new Skip(this, i);
+  Skip skip(int i) => Skip(this, i);
 
-  Limit limit(int i) => new Limit(this, i);
+  Limit limit(int i) => Limit(this, i);
 
   Reduce reduce(reductionFunction, [base]) =>
-      new Reduce(this, _funcWrap(reductionFunction, 2), base);
+      Reduce(this, _funcWrap(reductionFunction, 2), base);
 
-  Sum sum([args]) => new Sum(this, args);
+  Sum sum([args]) => Sum(this, args);
 
-  Avg avg([args]) => new Avg(this, args);
+  Avg avg([args]) => Avg(this, args);
 
-  Min min([args]) => new Min(this, args);
+  Min min([args]) => Min(this, args);
 
-  Max max([args]) => new Max(this, args);
+  Max max([args]) => Max(this, args);
 
   dynamic get map => RqlMapFunction(this);
 
-  Filter filter(expr, [options]) =>
-      new Filter(this, _funcWrap(expr, 1), options);
+  Filter filter(expr, [options]) => Filter(this, _funcWrap(expr, 1), options);
 
   ConcatMap concatMap(mappingFunction) =>
-      new ConcatMap(this, _funcWrap(mappingFunction, 1));
+      ConcatMap(this, _funcWrap(mappingFunction, 1));
 
-  Get get(id) => new Get(this, id);
+  Get get(id) => Get(this, id);
 
   OrderBy orderBy(attrs, [index]) {
     if (attrs is Map && attrs.containsKey("index")) {
@@ -630,8 +627,9 @@ class RqlQuery {
       attrs.forEach((ob) {
         if (ob is Asc || ob is Desc) {
           //do nothing
-        } else
+        } else {
           ob = _funcWrap(ob, 1);
+        }
       });
     } else {
       List tmp = [];
@@ -643,7 +641,7 @@ class RqlQuery {
       attrs = tmp;
     }
 
-    return new OrderBy(_listify(attrs, this), index);
+    return OrderBy(_listify(attrs, this), index);
   }
 
   operator +(other) => this.add(other);
@@ -661,109 +659,109 @@ class RqlQuery {
   operator [](attr) => this.pluck(attr);
 
   Between between(lowerKey, [upperKey, options]) =>
-      new Between(this, lowerKey, upperKey, options);
+      Between(this, lowerKey, upperKey, options);
 
-  Distinct distinct() => new Distinct(this);
+  Distinct distinct() => Distinct(this);
 
   Count count([filter]) {
-    if (filter == null) return new Count(this);
-    return new Count(this, _funcWrap(filter, 1));
+    if (filter == null) return Count(this);
+    return Count(this, _funcWrap(filter, 1));
   }
 
   dynamic get union => UnionFunction(this);
 
   InnerJoin innerJoin(otherSequence, [predicate]) =>
-      new InnerJoin(this, otherSequence, predicate);
+      InnerJoin(this, otherSequence, predicate);
 
   OuterJoin outerJoin(otherSequence, [predicate]) =>
-      new OuterJoin(this, otherSequence, predicate);
+      OuterJoin(this, otherSequence, predicate);
 
   EqJoin eqJoin(leftAttr, [otherTable, options]) =>
-      new EqJoin(this, _funcWrap(leftAttr, 1), otherTable, options);
+      EqJoin(this, _funcWrap(leftAttr, 1), otherTable, options);
 
-  Zip zip() => new Zip(this);
+  Zip zip() => Zip(this);
 
   dynamic get group => GroupFunction(this);
 
-  ForEach forEach(writeQuery) => new ForEach(this, _funcWrap(writeQuery, 1));
+  ForEach forEach(writeQuery) => ForEach(this, _funcWrap(writeQuery, 1));
 
-  Info info() => new Info(this);
+  Info info() => Info(this);
 
   //Array only operations
 
-  InsertAt insertAt(index, [value]) => new InsertAt(this, index, value);
+  InsertAt insertAt(index, [value]) => InsertAt(this, index, value);
 
-  SpliceAt spliceAt(index, [ar]) => new SpliceAt(this, index, ar);
+  SpliceAt spliceAt(index, [ar]) => SpliceAt(this, index, ar);
 
-  DeleteAt deleteAt(index, [end]) => new DeleteAt(this, index, end);
+  DeleteAt deleteAt(index, [end]) => DeleteAt(this, index, end);
 
-  ChangeAt changeAt(index, [value]) => new ChangeAt(this, index, value);
+  ChangeAt changeAt(index, [value]) => ChangeAt(this, index, value);
 
-  Sample sample(int i) => new Sample(this, i);
+  Sample sample(int i) => Sample(this, i);
 
   // Time support
-  ToISO8601 toISO8601() => new ToISO8601(this);
+  ToISO8601 toISO8601() => ToISO8601(this);
 
-  ToEpochTime toEpochTime() => new ToEpochTime(this);
+  ToEpochTime toEpochTime() => ToEpochTime(this);
 
-  During during(start, [end, options]) => new During(this, start, end, options);
+  During during(start, [end, options]) => During(this, start, end, options);
 
-  Date date() => new Date(this);
+  Date date() => Date(this);
 
-  TimeOfDay timeOfDay() => new TimeOfDay(this);
+  TimeOfDay timeOfDay() => TimeOfDay(this);
 
-  Timezone timezone() => new Timezone(this);
+  Timezone timezone() => Timezone(this);
 
-  Year year() => new Year(this);
+  Year year() => Year(this);
 
-  Month month() => new Month(this);
+  Month month() => Month(this);
 
-  Day day() => new Day(this);
+  Day day() => Day(this);
 
-  DayOfWeek dayOfWeek() => new DayOfWeek(this);
+  DayOfWeek dayOfWeek() => DayOfWeek(this);
 
-  DayOfYear dayOfYear() => new DayOfYear(this);
+  DayOfYear dayOfYear() => DayOfYear(this);
 
-  Hours hours() => new Hours(this);
+  Hours hours() => Hours(this);
 
-  Minutes minutes() => new Minutes(this);
+  Minutes minutes() => Minutes(this);
 
-  Seconds seconds() => new Seconds(this);
+  Seconds seconds() => Seconds(this);
 
-  InTimezone inTimezone(tz) => new InTimezone(this, tz);
+  InTimezone inTimezone(tz) => InTimezone(this, tz);
 
-  Binary binary(data) => new Binary(data);
+  Binary binary(data) => Binary(data);
 
-  Distance distance(geo, [opts]) => new Distance(this, geo, opts);
+  Distance distance(geo, [opts]) => Distance(this, geo, opts);
 
-  Fill fill() => new Fill(this);
+  Fill fill() => Fill(this);
 
-  ToGeoJson toGeojson() => new ToGeoJson(this);
+  ToGeoJson toGeojson() => ToGeoJson(this);
 
   GetIntersecting getIntersecting(geo, Map options) =>
-      new GetIntersecting(this, geo, options);
+      GetIntersecting(this, geo, options);
 
   GetNearest getNearest(point, [Map options]) =>
-      new GetNearest(this, point, options);
+      GetNearest(this, point, options);
 
-  Includes includes(geo) => new Includes(this, geo);
+  Includes includes(geo) => Includes(this, geo);
 
-  Intersects intersects(geo) => new Intersects(this, geo);
+  Intersects intersects(geo) => Intersects(this, geo);
 
-  PolygonSub polygonSub(var poly) => new PolygonSub(this, poly);
+  PolygonSub polygonSub(var poly) => PolygonSub(this, poly);
 
-  Config config() => new Config(this);
+  Config config() => Config(this);
 
-  Rebalance rebalance() => new Rebalance(this);
+  Rebalance rebalance() => Rebalance(this);
 
-  Reconfigure reconfigure(Map options) => new Reconfigure(this, options);
+  Reconfigure reconfigure(Map options) => Reconfigure(this, options);
 
-  Status status() => new Status(this);
+  Status status() => Status(this);
 
-  Wait wait([Map options]) => new Wait(this, options);
+  Wait wait([Map options]) => Wait(this, options);
 
   call(attr) {
-    return new GetField(this, attr);
+    return GetField(this, attr);
   }
 }
 
@@ -831,7 +829,7 @@ class Var extends RqlQuery {
 
   Var(args) : super([args]);
 
-  call(arg) => new GetField(this, arg);
+  call(arg) => GetField(this, arg);
 }
 
 class JavaScript extends RqlTopLevelQuery {
@@ -893,7 +891,7 @@ class ImplicitVar extends RqlQuery {
 
   ImplicitVar() : super();
 
-  call(arg) => new GetField(this, arg);
+  call(arg) => GetField(this, arg);
 }
 
 class Eq extends RqlBiCompareOperQuery {
@@ -1118,18 +1116,17 @@ class DB extends RqlTopLevelQuery {
 
   DB(String dbName) : super([dbName]);
 
-  TableList tableList() => new TableList(this);
+  TableList tableList() => TableList(this);
 
   TableCreate tableCreate(String tableName, [Map options]) =>
-      new TableCreate.fromDB(this, tableName, options);
+      TableCreate.fromDB(this, tableName, options);
 
-  TableDrop tableDrop(String tableName) =>
-      new TableDrop.fromDB(this, tableName);
+  TableDrop tableDrop(String tableName) => TableDrop.fromDB(this, tableName);
 
   Table table(String tableName, [Map options]) =>
-      new Table.fromDB(this, tableName, options);
+      Table.fromDB(this, tableName, options);
 
-  Grant grant(String user, [Map options]) => new Grant(this, user, options);
+  Grant grant(String user, [Map options]) => Grant(this, user, options);
 }
 
 class FunCall extends RqlQuery {
@@ -1162,9 +1159,9 @@ class GetAllFunction extends RqlQuery {
     if (options != null && options is Map == false) {
       args = _listify(args, _table);
       options = args.add(options);
-      return new GetAll(args, options);
+      return GetAll(args, options);
     }
-    return new GetAll(_listify(args, _table), options);
+    return GetAll(_listify(args, _table), options);
   }
 
   @override
@@ -1182,9 +1179,9 @@ class IndexStatusFunction extends RqlQuery {
 
   IndexStatus call([indexes]) {
     if (indexes == null) {
-      return new IndexStatus.all(_table);
+      return IndexStatus.all(_table);
     }
-    return new IndexStatus(_table, indexes);
+    return IndexStatus(_table, indexes);
   }
 
   @override
@@ -1202,9 +1199,9 @@ class IndexWaitFunction extends RqlQuery {
 
   IndexWait call([indexes]) {
     if (indexes == null) {
-      return new IndexWait.all(_table);
+      return IndexWait.all(_table);
     }
-    return new IndexWait(_table, indexes);
+    return IndexWait(_table, indexes);
   }
 
   @override
@@ -1223,40 +1220,39 @@ class Table extends RqlQuery {
   Table.fromDB(DB db, String tableName, [Map options])
       : super([db, tableName], options);
 
-  Insert insert(records, [options]) => new Insert(this, records, options);
+  Insert insert(records, [options]) => Insert(this, records, options);
 
-  Grant grant(user, [options]) => new Grant(this, user, options);
+  Grant grant(user, [options]) => Grant(this, user, options);
 
-  IndexList indexList() => new IndexList(this);
+  IndexList indexList() => IndexList(this);
 
   IndexCreate indexCreate(indexName, [indexFunction, Map options]) {
     if (indexFunction == null && options == null) {
-      return new IndexCreate(this, indexName);
+      return IndexCreate(this, indexName);
     } else if (indexFunction != null && indexFunction is Map) {
-      return new IndexCreate(this, indexName, indexFunction);
+      return IndexCreate(this, indexName, indexFunction);
     }
-    return new IndexCreate.withIndexFunction(
+    return IndexCreate.withIndexFunction(
         this, indexName, _funcWrap(indexFunction, 1), options);
   }
 
-  IndexDrop indexDrop(indexName) => new IndexDrop(this, indexName);
+  IndexDrop indexDrop(indexName) => IndexDrop(this, indexName);
 
   IndexRename indexRename(oldName, newName, [Map options]) =>
-      new IndexRename(this, oldName, newName, options);
+      IndexRename(this, oldName, newName, options);
 
   dynamic get indexStatus => IndexStatusFunction(this);
 
   dynamic get indexWait => IndexWaitFunction(this);
 
-  Update update(args, [options]) =>
-      new Update(this, _funcWrap(args, 1), options);
+  Update update(args, [options]) => Update(this, _funcWrap(args, 1), options);
 
-  Sync sync() => new Sync(this);
+  Sync sync() => Sync(this);
 
   dynamic get getAll => GetAllFunction(this);
 
   InnerJoin innerJoin(otherSeq, [predicate]) =>
-      new InnerJoin(this, otherSeq, predicate);
+      InnerJoin(this, otherSeq, predicate);
 }
 
 class Get extends RqlMethodQuery {
@@ -1265,7 +1261,7 @@ class Get extends RqlMethodQuery {
   Get(table, key) : super([table, key]);
 
   call(attr) {
-    return new GetField(this, attr);
+    return GetField(this, attr);
   }
 }
 
@@ -1275,7 +1271,7 @@ class GetAll extends RqlMethodQuery {
   GetAll(keys, [options]) : super(keys, options);
 
   call(attr) {
-    return new GetField(this, attr);
+    return GetField(this, attr);
   }
 }
 
@@ -1558,7 +1554,7 @@ class IndexStatus extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.INDEX_STATUS;
 
   IndexStatus(tbl, indexList)
-      : super([tbl, indexList is List ? new Args(indexList) : indexList]);
+      : super([tbl, indexList is List ? Args(indexList) : indexList]);
   IndexStatus.all(tbl) : super([tbl]);
 }
 
@@ -1566,7 +1562,7 @@ class IndexWait extends RqlMethodQuery {
   p.Term_TermType tt = p.Term_TermType.INDEX_WAIT;
 
   IndexWait(tbl, indexList)
-      : super([tbl, indexList is List ? new Args(indexList) : indexList]);
+      : super([tbl, indexList is List ? Args(indexList) : indexList]);
   IndexWait.all(tbl) : super([tbl]);
 }
 
@@ -1796,12 +1792,12 @@ class Func extends RqlQuery {
     List vrids = [];
 
     for (int i = 0; i < argsCount; i++) {
-      vrs.add(new Var(Func.nextId));
+      vrs.add(Var(Func.nextId));
       vrids.add(Func.nextId);
       Func.nextId++;
     }
 
-    this.args = [new MakeArray(vrids), _expr(Function.apply(fun, vrs))];
+    this.args = [MakeArray(vrids), _expr(Function.apply(fun, vrs))];
   }
 }
 

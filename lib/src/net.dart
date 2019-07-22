@@ -6,10 +6,9 @@ class Query extends RqlQuery {
   RqlQuery _term;
   Map _globalOptargs;
   Cursor _cursor;
-  final Completer _queryCompleter = new Completer();
+  final Completer _queryCompleter = Completer();
 
-  Query(p.Query_QueryType this._type, int this._token,
-      [RqlQuery this._term, Map this._globalOptargs]);
+  Query(this._type, this._token, [this._term, this._globalOptargs]);
 
   serialize() {
     List res = [_type.value];
@@ -37,8 +36,8 @@ class Response {
   int _errorType;
   List _notes = [];
 
-  Response(int this._token, String jsonStr) {
-    if (jsonStr.length > 0) {
+  Response(this._token, String jsonStr) {
+    if (jsonStr.isNotEmpty) {
       Map fullResponse = json.decode(jsonStr);
       this._type = fullResponse['t'];
       this._data = fullResponse['r'];
@@ -51,7 +50,7 @@ class Response {
 }
 
 class Connection {
-  Socket _socket = null;
+  Socket _socket;
   static int _nextToken = 0;
   String _host;
   int _port;
@@ -63,18 +62,18 @@ class Connection {
   Digest _serverSignature;
   Map _sslOpts;
 
-  Completer<Connection> _completer = new Completer();
+  Completer<Connection> _completer = Completer();
 
   int _responseLength = 0;
   List<int> _responseBuffer = [];
 
-  final Map _replyQueries = new Map();
-  final Queue<Query> _sendQueue = new Queue<Query>();
+  final Map _replyQueries = Map();
+  final Queue<Query> _sendQueue = Queue<Query>();
 
-  final Map<String, List> _listeners = new Map<String, List>();
+  final Map<String, List> _listeners = Map<String, List>();
 
-  Connection(String this._db, String this._host, int this._port,
-      String this._user, String this._password, Map this._sslOpts);
+  Connection(this._db, this._host, this._port, this._user, this._password,
+      this._sslOpts);
 
   get isClosed => _socket == null;
 
@@ -84,7 +83,7 @@ class Connection {
 
   Future server() {
     RqlQuery query =
-        new Query(p.Query_QueryType.SERVER_INFO, _getToken(), null, null);
+        Query(p.Query_QueryType.SERVER_INFO, _getToken(), null, null);
     _sendQueue.add(query);
     return _start(query);
   }
@@ -96,12 +95,13 @@ class Connection {
   Future<Connection> reconnect([bool noreplyWait = true]) {
     close(noreplyWait);
 
-    if (_listeners["connect"] != null)
+    if (_listeners["connect"] != null) {
       _listeners["connect"].forEach((func) => func());
+    }
     var _sock = Socket.connect(_host, _port);
 
     if (_sslOpts != null && _sslOpts.containsKey('ca')) {
-      SecurityContext context = new SecurityContext()
+      SecurityContext context = SecurityContext()
         ..setTrustedCertificates(_sslOpts['ca']);
       _sock = SecureSocket.connect(_host, _port, context: context);
     }
@@ -113,8 +113,9 @@ class Connection {
       if (socket != null) {
         _socket = socket;
         _socket.listen(_handleResponse, onDone: () {
-          if (_listeners["close"] != null)
+          if (_listeners["close"] != null) {
             _listeners["close"].forEach((func) => func());
+          }
         });
 
         _clientFirstMessage = "n=$_user,r=" + _makeSalt();
@@ -124,7 +125,7 @@ class Connection {
           'authentication': "n,,${_clientFirstMessage}"
         });
         List<int> handshake =
-            new List.from(_toBytes(p.VersionDummy_Version.V1_0.value))
+            List.from(_toBytes(p.VersionDummy_Version.V1_0.value))
               ..addAll(message.codeUnits)
               ..add(0);
 
@@ -155,8 +156,9 @@ class Connection {
   }
 
   _handleAuthError(Exception error) {
-    if (_listeners["error"] != null)
+    if (_listeners["error"] != null) {
       _listeners["error"].forEach((func) => func(error));
+    }
     _completer.completeError(error);
   }
 
@@ -169,7 +171,7 @@ class Connection {
         int min = responseJSON['min_protocol_version'];
         if (min > _protocolVersion || max < _protocolVersion) {
           //We don't actually support changing the protocol yet, so just error.
-          _handleAuthError(new RqlDriverError(
+          _handleAuthError(RqlDriverError(
               """Unsupported protocol version ${_protocolVersion},
                   expected between ${min} and ${max}."""));
         }
@@ -186,9 +188,9 @@ class Connection {
         });
 
         if (authMap.containsKey('r')) {
-          String salt = new String.fromCharCodes(base64.decode(authMap['s']));
+          String salt = String.fromCharCodes(base64.decode(authMap['s']));
 
-          PBKDF2 gen = new PBKDF2(hash: sha256);
+          PBKDF2 gen = PBKDF2(hash: sha256);
 
           int i = int.parse(authMap['i']);
 
@@ -197,7 +199,7 @@ class Connection {
           List<int> saltedPassword = gen.generateKey(_password, salt, i, 32);
 
           Digest clientKey =
-              new Hmac(sha256, saltedPassword).convert("Client Key".codeUnits);
+              Hmac(sha256, saltedPassword).convert("Client Key".codeUnits);
 
           Digest storedKey = sha256.convert(clientKey.bytes);
 
@@ -205,15 +207,15 @@ class Connection {
               "$_clientFirstMessage,$authString,$clientFinalMessageWithoutProof";
 
           Digest clientSignature =
-              new Hmac(sha256, storedKey.bytes).convert(authMessage.codeUnits);
+              Hmac(sha256, storedKey.bytes).convert(authMessage.codeUnits);
 
           List<int> clientProof = _xOr(clientKey.bytes, clientSignature.bytes);
 
           Digest serverKey =
-              new Hmac(sha256, saltedPassword).convert("Server Key".codeUnits);
+              Hmac(sha256, saltedPassword).convert("Server Key".codeUnits);
 
           _serverSignature =
-              new Hmac(sha256, serverKey.bytes).convert(authMessage.codeUnits);
+              Hmac(sha256, serverKey.bytes).convert(authMessage.codeUnits);
 
           String message = json.encode({
             'authentication': clientFinalMessageWithoutProof +
@@ -221,19 +223,19 @@ class Connection {
                 base64.encode(clientProof)
           });
 
-          List<int> messageBytes = new List.from(message.codeUnits)..add(0);
+          List<int> messageBytes = List.from(message.codeUnits)..add(0);
 
           _socket.add(messageBytes);
         } else if (authMap.containsKey('v')) {
           if (base64.encode(_serverSignature.bytes) != authMap['v']) {
-            _handleAuthError(new RqlDriverError("Invalid server signature"));
+            _handleAuthError(RqlDriverError("Invalid server signature"));
           } else {
             _completer.complete(this);
           }
         }
       }
     } else {
-      _handleAuthError(new RqlDriverError(
+      _handleAuthError(RqlDriverError(
           "Server dropped connection with message: ${responseJSON['error']}"));
     }
   }
@@ -249,33 +251,30 @@ class Connection {
 
     if (response._type == p.Response_ResponseType.SUCCESS_PARTIAL.value) {
       _replyQueries[response._token] = query;
-      var cursor = null;
+      var cursor;
       response._notes.forEach((note) {
         if (note == p.Response_ResponseNote.SEQUENCE_FEED.value) {
-          cursor =
-              cursor == null ? new Feed(this, query, query.optargs) : cursor;
+          cursor = cursor == null ? Feed(this, query, query.optargs) : cursor;
         } else if (note == p.Response_ResponseNote.UNIONED_FEED.value) {
-          cursor = cursor == null
-              ? new UnionedFeed(this, query, query.optargs)
-              : cursor;
+          cursor =
+              cursor == null ? UnionedFeed(this, query, query.optargs) : cursor;
         } else if (note == p.Response_ResponseNote.ATOM_FEED.value) {
-          cursor = cursor == null
-              ? new AtomFeed(this, query, query.optargs)
-              : cursor;
+          cursor =
+              cursor == null ? AtomFeed(this, query, query.optargs) : cursor;
         } else if (note == p.Response_ResponseNote.ORDER_BY_LIMIT_FEED.value) {
           cursor = cursor == null
-              ? new OrderByLimitFeed(this, query, query.optargs)
+              ? OrderByLimitFeed(this, query, query.optargs)
               : cursor;
         }
       });
-      cursor = cursor == null ? new Cursor(this, query, query.optargs) : cursor;
+      cursor = cursor == null ? Cursor(this, query, query.optargs) : cursor;
 
       value = cursor;
       query._cursor = value;
       value._extend(response);
     } else if (response._type ==
         p.Response_ResponseType.SUCCESS_SEQUENCE.value) {
-      value = new Cursor(this, query, {});
+      value = Cursor(this, query, {});
       query._cursor = value;
       value._extend(response);
     } else if (response._type == p.Response_ResponseType.SUCCESS_ATOM.value) {
@@ -289,15 +288,18 @@ class Connection {
     } else if (response._type == p.Response_ResponseType.SERVER_INFO.value) {
       query._queryCompleter.complete(response._data.first);
     } else {
-      if (!query._queryCompleter.isCompleted)
+      if (!query._queryCompleter.isCompleted) {
         query._queryCompleter
-            .completeError(new RqlDriverError("Error: ${response._data}."));
+            .completeError(RqlDriverError("Error: ${response._data}."));
+      }
     }
 
-    if (response._profile != null)
+    if (response._profile != null) {
       value = {"value": value, "profile": response._profile};
-    if (!query._queryCompleter.isCompleted)
+    }
+    if (!query._queryCompleter.isCompleted) {
       query._queryCompleter.complete(value);
+    }
   }
 
   void close([bool noreplyWait = true]) {
@@ -305,27 +307,26 @@ class Connection {
       if (noreplyWait) this.noreplyWait();
       try {
         _socket.close();
-      } catch (err) {}
+      } catch (err) {
+        // TODO: do something with err.
+      }
 
       _socket.destroy();
       _socket = null;
     }
   }
 
-  /**
-   * Alias for addListener
-   */
+  /// Alias for addListener
   void on(String key, Function val) {
     addListener(key, val);
   }
 
-  /**
-   * Adds a listener to the connection.
-   */
+  /// Adds a listener to the connection.
   void addListener(String key, Function val) {
     List currentListeners = [];
-    if (_listeners != null && _listeners[key] != null)
+    if (_listeners != null && _listeners[key] != null) {
       _listeners[key].forEach((element) => currentListeners.add(element));
+    }
 
     currentListeners.add(val);
     _listeners[key] = currentListeners;
@@ -345,7 +346,7 @@ class Connection {
 
   noreplyWait() {
     RqlQuery query =
-        new Query(p.Query_QueryType.NOREPLY_WAIT, _getToken(), null, null);
+        Query(p.Query_QueryType.NOREPLY_WAIT, _getToken(), null, null);
 
     _sendQueue.add(query);
     return _start(query);
@@ -357,8 +358,9 @@ class Connection {
     cursor._outstandingRequests--;
 
     if (response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value &&
-        cursor._outstandingRequests == 0)
+        cursor._outstandingRequests == 0) {
       _replyQueries[response._token]._cursor = null;
+    }
   }
 
   _readResponse(res) {
@@ -380,17 +382,17 @@ class Connection {
         _responseBuffer.removeRange(0, responseLen + 12);
         _responseLength = _responseBuffer.length;
 
-        Response response = new Response(responseToken, responseBuf);
+        Response response = Response(responseToken, responseBuf);
 
         if (_replyQueries[response._token]._cursor != null) {
           _handleCursorResponse(response);
         }
         //if for some reason there are other queries on the line...
 
-        if (_replyQueries.containsKey(response._token))
+        if (_replyQueries.containsKey(response._token)) {
           _handleQueryResponse(response);
-        else {
-          throw new RqlDriverError("Unexpected response received.");
+        } else {
+          throw RqlDriverError("Unexpected response received.");
         }
 
         if (_responseLength > 0) {
@@ -408,48 +410,48 @@ class Connection {
       frames = response._backtrace;
       int errType = response._errorType;
       if (errType == p.Response_ErrorType.INTERNAL.value) {
-        return new ReqlInternalError(message, term, frames);
+        return ReqlInternalError(message, term, frames);
       } else if (errType == p.Response_ErrorType.RESOURCE_LIMIT.value) {
-        return new ReqlResourceLimitError(message, term, frames);
+        return ReqlResourceLimitError(message, term, frames);
       } else if (errType == p.Response_ErrorType.QUERY_LOGIC.value) {
-        return new ReqlQueryLogicError(message, term, frames);
+        return ReqlQueryLogicError(message, term, frames);
       } else if (errType == p.Response_ErrorType.NON_EXISTENCE.value) {
-        return new ReqlNonExistenceError(message, term, frames);
+        return ReqlNonExistenceError(message, term, frames);
       } else if (errType == p.Response_ErrorType.OP_FAILED.value) {
-        return new ReqlOpFailedError(message, term, frames);
+        return ReqlOpFailedError(message, term, frames);
       } else if (errType == p.Response_ErrorType.OP_INDETERMINATE.value) {
-        return new ReqlOpIndeterminateError(message, term, frames);
+        return ReqlOpIndeterminateError(message, term, frames);
       } else if (errType == p.Response_ErrorType.USER.value) {
-        return new ReqlUserError(message, term, frames);
+        return ReqlUserError(message, term, frames);
       } else if (errType == p.Response_ErrorType.PERMISSION_ERROR.value) {
-        return new ReqlPermissionError(message, term, frames);
+        return ReqlPermissionError(message, term, frames);
       } else {
-        return new RqlRuntimeError(message, term, frames);
+        return RqlRuntimeError(message, term, frames);
       }
     } else if (response._type == p.Response_ResponseType.COMPILE_ERROR.value) {
       message = response._data.first;
       frames = response._backtrace;
-      return new RqlCompileError(message, term, frames);
+      return RqlCompileError(message, term, frames);
     } else if (response._type == p.Response_ResponseType.CLIENT_ERROR.value) {
       message = response._data.first;
       frames = response._backtrace;
-      return new RqlClientError(message, term, frames);
+      return RqlClientError(message, term, frames);
     }
     return null;
   }
 
   _sendQuery() {
-    if (!_sendQueue.isEmpty) {
+    if (_sendQueue.isNotEmpty) {
       Query query = _sendQueue.removeFirst();
 
       // Error if this connection has closed
       if (_socket == null) {
         query._queryCompleter
-            .completeError(new RqlDriverError("Connection is closed."));
+            .completeError(RqlDriverError("Connection is closed."));
       } else {
         // Send json
         List<int> queryStr = utf8.encode(query.serialize());
-        List<int> queryHeader = new List.from(_toBytes8(query._token))
+        List<int> queryHeader = List.from(_toBytes8(query._token))
           ..addAll(_toBytes(queryStr.length))
           ..addAll(queryStr);
         _socket.add(queryHeader);
@@ -463,40 +465,40 @@ class Connection {
   _start(RqlQuery term, [Map globalOptargs]) {
     globalOptargs ??= {};
     if (globalOptargs.containsKey('db')) {
-      globalOptargs['db'] = new DB(globalOptargs['db']);
+      globalOptargs['db'] = DB(globalOptargs['db']);
     } else {
-      globalOptargs['db'] = new DB(_db);
+      globalOptargs['db'] = DB(_db);
     }
 
     Query query =
-        new Query(p.Query_QueryType.START, _getToken(), term, globalOptargs);
+        Query(p.Query_QueryType.START, _getToken(), term, globalOptargs);
     _sendQueue.addLast(query);
     return _sendQuery();
   }
 
   Uint8List _toBytes(int data) {
-    ByteBuffer buffer = new Uint8List(4).buffer;
-    ByteData bdata = new ByteData.view(buffer);
+    ByteBuffer buffer = Uint8List(4).buffer;
+    ByteData bdata = ByteData.view(buffer);
     bdata.setInt32(0, data, Endian.little);
-    return new Uint8List.view(buffer);
+    return Uint8List.view(buffer);
   }
 
   Uint8List _toBytes8(int data) {
-    ByteBuffer buffer = new Uint8List(8).buffer;
-    ByteData bdata = new ByteData.view(buffer);
+    ByteBuffer buffer = Uint8List(8).buffer;
+    ByteData bdata = ByteData.view(buffer);
     bdata.setInt32(0, data, Endian.little);
-    return new Uint8List.view(buffer);
+    return Uint8List.view(buffer);
   }
 
   int _fromBytes(List<int> data) {
-    Uint8List buf = new Uint8List.fromList(data);
-    ByteData bdata = new ByteData.view(buf.buffer);
+    Uint8List buf = Uint8List.fromList(data);
+    ByteData bdata = ByteData.view(buf.buffer);
     return bdata.getInt32(0, Endian.little);
   }
 
   String _makeSalt() {
-    List<int> randomBytes = new List(18);
-    math.Random random = new math.Random.secure();
+    List<int> randomBytes = List(18);
+    math.Random random = math.Random.secure();
 
     for (int i = 0; i < randomBytes.length; ++i) {
       randomBytes[i] = random.nextInt(255);

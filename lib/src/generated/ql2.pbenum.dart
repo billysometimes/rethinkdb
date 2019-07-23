@@ -1,7 +1,8 @@
 ///
 //  Generated code. Do not modify.
 //  source: ql2.proto
-///
+//
+// @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
 
 // ignore_for_file: UNDEFINED_SHOWN_NAME,UNUSED_SHOWN_NAME
@@ -9,13 +10,18 @@ import 'dart:core' as $core show int, dynamic, String, List, Map;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class VersionDummy_Version extends $pb.ProtobufEnum {
-  static const VersionDummy_Version V0_1 = VersionDummy_Version._(1063369270, 'V0_1');
-  static const VersionDummy_Version V0_2 = VersionDummy_Version._(1915781601, 'V0_2');
-  static const VersionDummy_Version V0_3 = VersionDummy_Version._(1601562686, 'V0_3');
-  static const VersionDummy_Version V0_4 = VersionDummy_Version._(1074539808, 'V0_4');
-  static const VersionDummy_Version V1_0 = VersionDummy_Version._(885177795, 'V1_0');
+  static const VersionDummy_Version V0_1 =
+      VersionDummy_Version._(1063369270, 'V0_1');
+  static const VersionDummy_Version V0_2 =
+      VersionDummy_Version._(1915781601, 'V0_2');
+  static const VersionDummy_Version V0_3 =
+      VersionDummy_Version._(1601562686, 'V0_3');
+  static const VersionDummy_Version V0_4 =
+      VersionDummy_Version._(1074539808, 'V0_4');
+  static const VersionDummy_Version V1_0 =
+      VersionDummy_Version._(885177795, 'V1_0');
 
-  static const $core.List<VersionDummy_Version> values = <VersionDummy_Version> [
+  static const $core.List<VersionDummy_Version> values = <VersionDummy_Version>[
     V0_1,
     V0_2,
     V0_3,
@@ -23,22 +29,27 @@ class VersionDummy_Version extends $pb.ProtobufEnum {
     V1_0,
   ];
 
-  static final $core.Map<$core.int, VersionDummy_Version> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, VersionDummy_Version> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static VersionDummy_Version valueOf($core.int value) => _byValue[value];
 
   const VersionDummy_Version._($core.int v, $core.String n) : super(v, n);
 }
 
 class VersionDummy_Protocol extends $pb.ProtobufEnum {
-  static const VersionDummy_Protocol PROTOBUF = VersionDummy_Protocol._(656407617, 'PROTOBUF');
-  static const VersionDummy_Protocol JSON = VersionDummy_Protocol._(2120839367, 'JSON');
+  static const VersionDummy_Protocol PROTOBUF =
+      VersionDummy_Protocol._(656407617, 'PROTOBUF');
+  static const VersionDummy_Protocol JSON =
+      VersionDummy_Protocol._(2120839367, 'JSON');
 
-  static const $core.List<VersionDummy_Protocol> values = <VersionDummy_Protocol> [
+  static const $core.List<VersionDummy_Protocol> values =
+      <VersionDummy_Protocol>[
     PROTOBUF,
     JSON,
   ];
 
-  static final $core.Map<$core.int, VersionDummy_Protocol> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, VersionDummy_Protocol> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static VersionDummy_Protocol valueOf($core.int value) => _byValue[value];
 
   const VersionDummy_Protocol._($core.int v, $core.String n) : super(v, n);
@@ -48,10 +59,12 @@ class Query_QueryType extends $pb.ProtobufEnum {
   static const Query_QueryType START = Query_QueryType._(1, 'START');
   static const Query_QueryType CONTINUE = Query_QueryType._(2, 'CONTINUE');
   static const Query_QueryType STOP = Query_QueryType._(3, 'STOP');
-  static const Query_QueryType NOREPLY_WAIT = Query_QueryType._(4, 'NOREPLY_WAIT');
-  static const Query_QueryType SERVER_INFO = Query_QueryType._(5, 'SERVER_INFO');
+  static const Query_QueryType NOREPLY_WAIT =
+      Query_QueryType._(4, 'NOREPLY_WAIT');
+  static const Query_QueryType SERVER_INFO =
+      Query_QueryType._(5, 'SERVER_INFO');
 
-  static const $core.List<Query_QueryType> values = <Query_QueryType> [
+  static const $core.List<Query_QueryType> values = <Query_QueryType>[
     START,
     CONTINUE,
     STOP,
@@ -59,7 +72,8 @@ class Query_QueryType extends $pb.ProtobufEnum {
     SERVER_INFO,
   ];
 
-  static final $core.Map<$core.int, Query_QueryType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, Query_QueryType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static Query_QueryType valueOf($core.int value) => _byValue[value];
 
   const Query_QueryType._($core.int v, $core.String n) : super(v, n);
@@ -69,28 +83,38 @@ class Frame_FrameType extends $pb.ProtobufEnum {
   static const Frame_FrameType POS = Frame_FrameType._(1, 'POS');
   static const Frame_FrameType OPT = Frame_FrameType._(2, 'OPT');
 
-  static const $core.List<Frame_FrameType> values = <Frame_FrameType> [
+  static const $core.List<Frame_FrameType> values = <Frame_FrameType>[
     POS,
     OPT,
   ];
 
-  static final $core.Map<$core.int, Frame_FrameType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, Frame_FrameType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static Frame_FrameType valueOf($core.int value) => _byValue[value];
 
   const Frame_FrameType._($core.int v, $core.String n) : super(v, n);
 }
 
 class Response_ResponseType extends $pb.ProtobufEnum {
-  static const Response_ResponseType SUCCESS_ATOM = Response_ResponseType._(1, 'SUCCESS_ATOM');
-  static const Response_ResponseType SUCCESS_SEQUENCE = Response_ResponseType._(2, 'SUCCESS_SEQUENCE');
-  static const Response_ResponseType SUCCESS_PARTIAL = Response_ResponseType._(3, 'SUCCESS_PARTIAL');
-  static const Response_ResponseType WAIT_COMPLETE = Response_ResponseType._(4, 'WAIT_COMPLETE');
-  static const Response_ResponseType SERVER_INFO = Response_ResponseType._(5, 'SERVER_INFO');
-  static const Response_ResponseType CLIENT_ERROR = Response_ResponseType._(16, 'CLIENT_ERROR');
-  static const Response_ResponseType COMPILE_ERROR = Response_ResponseType._(17, 'COMPILE_ERROR');
-  static const Response_ResponseType RUNTIME_ERROR = Response_ResponseType._(18, 'RUNTIME_ERROR');
+  static const Response_ResponseType SUCCESS_ATOM =
+      Response_ResponseType._(1, 'SUCCESS_ATOM');
+  static const Response_ResponseType SUCCESS_SEQUENCE =
+      Response_ResponseType._(2, 'SUCCESS_SEQUENCE');
+  static const Response_ResponseType SUCCESS_PARTIAL =
+      Response_ResponseType._(3, 'SUCCESS_PARTIAL');
+  static const Response_ResponseType WAIT_COMPLETE =
+      Response_ResponseType._(4, 'WAIT_COMPLETE');
+  static const Response_ResponseType SERVER_INFO =
+      Response_ResponseType._(5, 'SERVER_INFO');
+  static const Response_ResponseType CLIENT_ERROR =
+      Response_ResponseType._(16, 'CLIENT_ERROR');
+  static const Response_ResponseType COMPILE_ERROR =
+      Response_ResponseType._(17, 'COMPILE_ERROR');
+  static const Response_ResponseType RUNTIME_ERROR =
+      Response_ResponseType._(18, 'RUNTIME_ERROR');
 
-  static const $core.List<Response_ResponseType> values = <Response_ResponseType> [
+  static const $core.List<Response_ResponseType> values =
+      <Response_ResponseType>[
     SUCCESS_ATOM,
     SUCCESS_SEQUENCE,
     SUCCESS_PARTIAL,
@@ -101,23 +125,31 @@ class Response_ResponseType extends $pb.ProtobufEnum {
     RUNTIME_ERROR,
   ];
 
-  static final $core.Map<$core.int, Response_ResponseType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, Response_ResponseType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static Response_ResponseType valueOf($core.int value) => _byValue[value];
 
   const Response_ResponseType._($core.int v, $core.String n) : super(v, n);
 }
 
 class Response_ErrorType extends $pb.ProtobufEnum {
-  static const Response_ErrorType INTERNAL = Response_ErrorType._(1000000, 'INTERNAL');
-  static const Response_ErrorType RESOURCE_LIMIT = Response_ErrorType._(2000000, 'RESOURCE_LIMIT');
-  static const Response_ErrorType QUERY_LOGIC = Response_ErrorType._(3000000, 'QUERY_LOGIC');
-  static const Response_ErrorType NON_EXISTENCE = Response_ErrorType._(3100000, 'NON_EXISTENCE');
-  static const Response_ErrorType OP_FAILED = Response_ErrorType._(4100000, 'OP_FAILED');
-  static const Response_ErrorType OP_INDETERMINATE = Response_ErrorType._(4200000, 'OP_INDETERMINATE');
+  static const Response_ErrorType INTERNAL =
+      Response_ErrorType._(1000000, 'INTERNAL');
+  static const Response_ErrorType RESOURCE_LIMIT =
+      Response_ErrorType._(2000000, 'RESOURCE_LIMIT');
+  static const Response_ErrorType QUERY_LOGIC =
+      Response_ErrorType._(3000000, 'QUERY_LOGIC');
+  static const Response_ErrorType NON_EXISTENCE =
+      Response_ErrorType._(3100000, 'NON_EXISTENCE');
+  static const Response_ErrorType OP_FAILED =
+      Response_ErrorType._(4100000, 'OP_FAILED');
+  static const Response_ErrorType OP_INDETERMINATE =
+      Response_ErrorType._(4200000, 'OP_INDETERMINATE');
   static const Response_ErrorType USER = Response_ErrorType._(5000000, 'USER');
-  static const Response_ErrorType PERMISSION_ERROR = Response_ErrorType._(6000000, 'PERMISSION_ERROR');
+  static const Response_ErrorType PERMISSION_ERROR =
+      Response_ErrorType._(6000000, 'PERMISSION_ERROR');
 
-  static const $core.List<Response_ErrorType> values = <Response_ErrorType> [
+  static const $core.List<Response_ErrorType> values = <Response_ErrorType>[
     INTERNAL,
     RESOURCE_LIMIT,
     QUERY_LOGIC,
@@ -128,20 +160,27 @@ class Response_ErrorType extends $pb.ProtobufEnum {
     PERMISSION_ERROR,
   ];
 
-  static final $core.Map<$core.int, Response_ErrorType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, Response_ErrorType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static Response_ErrorType valueOf($core.int value) => _byValue[value];
 
   const Response_ErrorType._($core.int v, $core.String n) : super(v, n);
 }
 
 class Response_ResponseNote extends $pb.ProtobufEnum {
-  static const Response_ResponseNote SEQUENCE_FEED = Response_ResponseNote._(1, 'SEQUENCE_FEED');
-  static const Response_ResponseNote ATOM_FEED = Response_ResponseNote._(2, 'ATOM_FEED');
-  static const Response_ResponseNote ORDER_BY_LIMIT_FEED = Response_ResponseNote._(3, 'ORDER_BY_LIMIT_FEED');
-  static const Response_ResponseNote UNIONED_FEED = Response_ResponseNote._(4, 'UNIONED_FEED');
-  static const Response_ResponseNote INCLUDES_STATES = Response_ResponseNote._(5, 'INCLUDES_STATES');
+  static const Response_ResponseNote SEQUENCE_FEED =
+      Response_ResponseNote._(1, 'SEQUENCE_FEED');
+  static const Response_ResponseNote ATOM_FEED =
+      Response_ResponseNote._(2, 'ATOM_FEED');
+  static const Response_ResponseNote ORDER_BY_LIMIT_FEED =
+      Response_ResponseNote._(3, 'ORDER_BY_LIMIT_FEED');
+  static const Response_ResponseNote UNIONED_FEED =
+      Response_ResponseNote._(4, 'UNIONED_FEED');
+  static const Response_ResponseNote INCLUDES_STATES =
+      Response_ResponseNote._(5, 'INCLUDES_STATES');
 
-  static const $core.List<Response_ResponseNote> values = <Response_ResponseNote> [
+  static const $core.List<Response_ResponseNote> values =
+      <Response_ResponseNote>[
     SEQUENCE_FEED,
     ATOM_FEED,
     ORDER_BY_LIMIT_FEED,
@@ -149,7 +188,8 @@ class Response_ResponseNote extends $pb.ProtobufEnum {
     INCLUDES_STATES,
   ];
 
-  static final $core.Map<$core.int, Response_ResponseNote> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, Response_ResponseNote> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static Response_ResponseNote valueOf($core.int value) => _byValue[value];
 
   const Response_ResponseNote._($core.int v, $core.String n) : super(v, n);
@@ -164,7 +204,7 @@ class Datum_DatumType extends $pb.ProtobufEnum {
   static const Datum_DatumType R_OBJECT = Datum_DatumType._(6, 'R_OBJECT');
   static const Datum_DatumType R_JSON = Datum_DatumType._(7, 'R_JSON');
 
-  static const $core.List<Datum_DatumType> values = <Datum_DatumType> [
+  static const $core.List<Datum_DatumType> values = <Datum_DatumType>[
     R_NULL,
     R_BOOL,
     R_NUM,
@@ -174,7 +214,8 @@ class Datum_DatumType extends $pb.ProtobufEnum {
     R_JSON,
   ];
 
-  static final $core.Map<$core.int, Datum_DatumType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, Datum_DatumType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static Datum_DatumType valueOf($core.int value) => _byValue[value];
 
   const Datum_DatumType._($core.int v, $core.String n) : super(v, n);
@@ -213,9 +254,11 @@ class Term_TermType extends $pb.ProtobufEnum {
   static const Term_TermType PREPEND = Term_TermType._(80, 'PREPEND');
   static const Term_TermType DIFFERENCE = Term_TermType._(95, 'DIFFERENCE');
   static const Term_TermType SET_INSERT = Term_TermType._(88, 'SET_INSERT');
-  static const Term_TermType SET_INTERSECTION = Term_TermType._(89, 'SET_INTERSECTION');
+  static const Term_TermType SET_INTERSECTION =
+      Term_TermType._(89, 'SET_INTERSECTION');
   static const Term_TermType SET_UNION = Term_TermType._(90, 'SET_UNION');
-  static const Term_TermType SET_DIFFERENCE = Term_TermType._(91, 'SET_DIFFERENCE');
+  static const Term_TermType SET_DIFFERENCE =
+      Term_TermType._(91, 'SET_DIFFERENCE');
   static const Term_TermType SLICE = Term_TermType._(30, 'SLICE');
   static const Term_TermType SKIP = Term_TermType._(70, 'SKIP');
   static const Term_TermType LIMIT = Term_TermType._(71, 'LIMIT');
@@ -230,7 +273,8 @@ class Term_TermType extends $pb.ProtobufEnum {
   static const Term_TermType PLUCK = Term_TermType._(33, 'PLUCK');
   static const Term_TermType WITHOUT = Term_TermType._(34, 'WITHOUT');
   static const Term_TermType MERGE = Term_TermType._(35, 'MERGE');
-  static const Term_TermType BETWEEN_DEPRECATED = Term_TermType._(36, 'BETWEEN_DEPRECATED');
+  static const Term_TermType BETWEEN_DEPRECATED =
+      Term_TermType._(36, 'BETWEEN_DEPRECATED');
   static const Term_TermType BETWEEN = Term_TermType._(182, 'BETWEEN');
   static const Term_TermType REDUCE = Term_TermType._(37, 'REDUCE');
   static const Term_TermType MAP = Term_TermType._(38, 'MAP');
@@ -275,11 +319,15 @@ class Term_TermType extends $pb.ProtobufEnum {
   static const Term_TermType INDEX_CREATE = Term_TermType._(75, 'INDEX_CREATE');
   static const Term_TermType INDEX_DROP = Term_TermType._(76, 'INDEX_DROP');
   static const Term_TermType INDEX_LIST = Term_TermType._(77, 'INDEX_LIST');
-  static const Term_TermType INDEX_STATUS = Term_TermType._(139, 'INDEX_STATUS');
+  static const Term_TermType INDEX_STATUS =
+      Term_TermType._(139, 'INDEX_STATUS');
   static const Term_TermType INDEX_WAIT = Term_TermType._(140, 'INDEX_WAIT');
-  static const Term_TermType INDEX_RENAME = Term_TermType._(156, 'INDEX_RENAME');
-  static const Term_TermType SET_WRITE_HOOK = Term_TermType._(189, 'SET_WRITE_HOOK');
-  static const Term_TermType GET_WRITE_HOOK = Term_TermType._(190, 'GET_WRITE_HOOK');
+  static const Term_TermType INDEX_RENAME =
+      Term_TermType._(156, 'INDEX_RENAME');
+  static const Term_TermType SET_WRITE_HOOK =
+      Term_TermType._(189, 'SET_WRITE_HOOK');
+  static const Term_TermType GET_WRITE_HOOK =
+      Term_TermType._(190, 'GET_WRITE_HOOK');
   static const Term_TermType FUNCALL = Term_TermType._(64, 'FUNCALL');
   static const Term_TermType BRANCH = Term_TermType._(65, 'BRANCH');
   static const Term_TermType OR = Term_TermType._(66, 'OR');
@@ -298,7 +346,8 @@ class Term_TermType extends $pb.ProtobufEnum {
   static const Term_TermType ISO8601 = Term_TermType._(99, 'ISO8601');
   static const Term_TermType TO_ISO8601 = Term_TermType._(100, 'TO_ISO8601');
   static const Term_TermType EPOCH_TIME = Term_TermType._(101, 'EPOCH_TIME');
-  static const Term_TermType TO_EPOCH_TIME = Term_TermType._(102, 'TO_EPOCH_TIME');
+  static const Term_TermType TO_EPOCH_TIME =
+      Term_TermType._(102, 'TO_EPOCH_TIME');
   static const Term_TermType NOW = Term_TermType._(103, 'NOW');
   static const Term_TermType IN_TIMEZONE = Term_TermType._(104, 'IN_TIMEZONE');
   static const Term_TermType DURING = Term_TermType._(105, 'DURING');
@@ -354,11 +403,13 @@ class Term_TermType extends $pb.ProtobufEnum {
   static const Term_TermType INTERSECTS = Term_TermType._(163, 'INTERSECTS');
   static const Term_TermType INCLUDES = Term_TermType._(164, 'INCLUDES');
   static const Term_TermType CIRCLE = Term_TermType._(165, 'CIRCLE');
-  static const Term_TermType GET_INTERSECTING = Term_TermType._(166, 'GET_INTERSECTING');
+  static const Term_TermType GET_INTERSECTING =
+      Term_TermType._(166, 'GET_INTERSECTING');
   static const Term_TermType FILL = Term_TermType._(167, 'FILL');
   static const Term_TermType GET_NEAREST = Term_TermType._(168, 'GET_NEAREST');
   static const Term_TermType POLYGON_SUB = Term_TermType._(171, 'POLYGON_SUB');
-  static const Term_TermType TO_JSON_STRING = Term_TermType._(172, 'TO_JSON_STRING');
+  static const Term_TermType TO_JSON_STRING =
+      Term_TermType._(172, 'TO_JSON_STRING');
   static const Term_TermType MINVAL = Term_TermType._(180, 'MINVAL');
   static const Term_TermType MAXVAL = Term_TermType._(181, 'MAXVAL');
   static const Term_TermType BIT_AND = Term_TermType._(191, 'BIT_AND');
@@ -368,7 +419,7 @@ class Term_TermType extends $pb.ProtobufEnum {
   static const Term_TermType BIT_SAL = Term_TermType._(195, 'BIT_SAL');
   static const Term_TermType BIT_SAR = Term_TermType._(196, 'BIT_SAR');
 
-  static const $core.List<Term_TermType> values = <Term_TermType> [
+  static const $core.List<Term_TermType> values = <Term_TermType>[
     DATUM,
     MAKE_ARRAY,
     MAKE_OBJ,
@@ -557,9 +608,9 @@ class Term_TermType extends $pb.ProtobufEnum {
     BIT_SAR,
   ];
 
-  static final $core.Map<$core.int, Term_TermType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, Term_TermType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static Term_TermType valueOf($core.int value) => _byValue[value];
 
   const Term_TermType._($core.int v, $core.String n) : super(v, n);
 }
-

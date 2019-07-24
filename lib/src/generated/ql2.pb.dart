@@ -1,11 +1,12 @@
 ///
 //  Generated code. Do not modify.
 //  source: ql2.proto
-///
-// ignore_for_file: non_constant_identifier_names,library_prefixes,unused_import
+//
+// @dart = 2.3
+// ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
 
-// ignore: UNUSED_SHOWN_NAME
-import 'dart:core' show int, bool, double, String, List, override;
+import 'dart:core' as $core
+    show bool, Deprecated, double, int, List, Map, override, pragma, String;
 
 import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart' as $pb;
@@ -15,376 +16,517 @@ import 'ql2.pbenum.dart';
 export 'ql2.pbenum.dart';
 
 class VersionDummy extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('VersionDummy')
-    ..hasRequiredFields = false
-  ;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('VersionDummy')
+    ..hasRequiredFields = false;
 
-  VersionDummy() : super();
-  VersionDummy.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  VersionDummy.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  VersionDummy clone() => new VersionDummy()..mergeFromMessage(this);
-  VersionDummy copyWith(void Function(VersionDummy) updates) => super.copyWith((message) => updates(message as VersionDummy));
+  VersionDummy._() : super();
+  factory VersionDummy() => create();
+  factory VersionDummy.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory VersionDummy.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  VersionDummy clone() => VersionDummy()..mergeFromMessage(this);
+  VersionDummy copyWith(void Function(VersionDummy) updates) =>
+      super.copyWith((message) => updates(message as VersionDummy));
   $pb.BuilderInfo get info_ => _i;
-  static VersionDummy create() => new VersionDummy();
-  static $pb.PbList<VersionDummy> createRepeated() => new $pb.PbList<VersionDummy>();
+  @$core.pragma('dart2js:noInline')
+  static VersionDummy create() => VersionDummy._();
+  VersionDummy createEmptyInstance() => create();
+  static $pb.PbList<VersionDummy> createRepeated() =>
+      $pb.PbList<VersionDummy>();
   static VersionDummy getDefault() => _defaultInstance ??= create()..freeze();
   static VersionDummy _defaultInstance;
-  static void $checkItem(VersionDummy v) {
-    if (v is! VersionDummy) $pb.checkItemFailed(v, _i.messageName);
-  }
 }
 
 class Query_AssocPair extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Query.AssocPair')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Query.AssocPair')
     ..aOS(1, 'key')
     ..a<Term>(2, 'val', $pb.PbFieldType.OM, Term.getDefault, Term.create)
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
-  Query_AssocPair() : super();
-  Query_AssocPair.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Query_AssocPair.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Query_AssocPair clone() => new Query_AssocPair()..mergeFromMessage(this);
-  Query_AssocPair copyWith(void Function(Query_AssocPair) updates) => super.copyWith((message) => updates(message as Query_AssocPair));
+  Query_AssocPair._() : super();
+  factory Query_AssocPair() => create();
+  factory Query_AssocPair.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Query_AssocPair.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Query_AssocPair clone() => Query_AssocPair()..mergeFromMessage(this);
+  Query_AssocPair copyWith(void Function(Query_AssocPair) updates) =>
+      super.copyWith((message) => updates(message as Query_AssocPair));
   $pb.BuilderInfo get info_ => _i;
-  static Query_AssocPair create() => new Query_AssocPair();
-  static $pb.PbList<Query_AssocPair> createRepeated() => new $pb.PbList<Query_AssocPair>();
-  static Query_AssocPair getDefault() => _defaultInstance ??= create()..freeze();
+  @$core.pragma('dart2js:noInline')
+  static Query_AssocPair create() => Query_AssocPair._();
+  Query_AssocPair createEmptyInstance() => create();
+  static $pb.PbList<Query_AssocPair> createRepeated() =>
+      $pb.PbList<Query_AssocPair>();
+  static Query_AssocPair getDefault() =>
+      _defaultInstance ??= create()..freeze();
   static Query_AssocPair _defaultInstance;
-  static void $checkItem(Query_AssocPair v) {
-    if (v is! Query_AssocPair) $pb.checkItemFailed(v, _i.messageName);
+
+  $core.String get key => $_getS(0, '');
+  set key($core.String v) {
+    $_setString(0, v);
   }
 
-  String get key => $_getS(0, '');
-  set key(String v) { $_setString(0, v); }
-  bool hasKey() => $_has(0);
+  $core.bool hasKey() => $_has(0);
   void clearKey() => clearField(1);
 
   Term get val => $_getN(1);
-  set val(Term v) { setField(2, v); }
-  bool hasVal() => $_has(1);
+  set val(Term v) {
+    setField(2, v);
+  }
+
+  $core.bool hasVal() => $_has(1);
   void clearVal() => clearField(2);
 }
 
 class Query extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Query')
-    ..e<Query_QueryType>(1, 'type', $pb.PbFieldType.OE, Query_QueryType.START, Query_QueryType.valueOf, Query_QueryType.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Query')
+    ..e<Query_QueryType>(1, 'type', $pb.PbFieldType.OE, Query_QueryType.START,
+        Query_QueryType.valueOf, Query_QueryType.values)
     ..a<Term>(2, 'query', $pb.PbFieldType.OM, Term.getDefault, Term.create)
     ..aInt64(3, 'token')
     ..aOB(4, 'oBSOLETENoreply')
     ..aOB(5, 'acceptsRJson')
-    ..pp<Query_AssocPair>(6, 'globalOptargs', $pb.PbFieldType.PM, Query_AssocPair.$checkItem, Query_AssocPair.create)
-    ..hasRequiredFields = false
-  ;
+    ..pc<Query_AssocPair>(
+        6, 'globalOptargs', $pb.PbFieldType.PM, Query_AssocPair.create)
+    ..hasRequiredFields = false;
 
-  Query() : super();
-  Query.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Query.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Query clone() => new Query()..mergeFromMessage(this);
-  Query copyWith(void Function(Query) updates) => super.copyWith((message) => updates(message as Query));
+  Query._() : super();
+  factory Query() => create();
+  factory Query.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Query.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Query clone() => Query()..mergeFromMessage(this);
+  Query copyWith(void Function(Query) updates) =>
+      super.copyWith((message) => updates(message as Query));
   $pb.BuilderInfo get info_ => _i;
-  static Query create() => new Query();
-  static $pb.PbList<Query> createRepeated() => new $pb.PbList<Query>();
+  @$core.pragma('dart2js:noInline')
+  static Query create() => Query._();
+  Query createEmptyInstance() => create();
+  static $pb.PbList<Query> createRepeated() => $pb.PbList<Query>();
   static Query getDefault() => _defaultInstance ??= create()..freeze();
   static Query _defaultInstance;
-  static void $checkItem(Query v) {
-    if (v is! Query) $pb.checkItemFailed(v, _i.messageName);
-  }
 
   Query_QueryType get type => $_getN(0);
-  set type(Query_QueryType v) { setField(1, v); }
-  bool hasType() => $_has(0);
+  set type(Query_QueryType v) {
+    setField(1, v);
+  }
+
+  $core.bool hasType() => $_has(0);
   void clearType() => clearField(1);
 
   Term get query => $_getN(1);
-  set query(Term v) { setField(2, v); }
-  bool hasQuery() => $_has(1);
+  set query(Term v) {
+    setField(2, v);
+  }
+
+  $core.bool hasQuery() => $_has(1);
   void clearQuery() => clearField(2);
 
   Int64 get token => $_getI64(2);
-  set token(Int64 v) { $_setInt64(2, v); }
-  bool hasToken() => $_has(2);
+  set token(Int64 v) {
+    $_setInt64(2, v);
+  }
+
+  $core.bool hasToken() => $_has(2);
   void clearToken() => clearField(3);
 
-  bool get oBSOLETENoreply => $_get(3, false);
-  set oBSOLETENoreply(bool v) { $_setBool(3, v); }
-  bool hasOBSOLETENoreply() => $_has(3);
+  $core.bool get oBSOLETENoreply => $_get(3, false);
+  set oBSOLETENoreply($core.bool v) {
+    $_setBool(3, v);
+  }
+
+  $core.bool hasOBSOLETENoreply() => $_has(3);
   void clearOBSOLETENoreply() => clearField(4);
 
-  bool get acceptsRJson => $_get(4, false);
-  set acceptsRJson(bool v) { $_setBool(4, v); }
-  bool hasAcceptsRJson() => $_has(4);
+  $core.bool get acceptsRJson => $_get(4, false);
+  set acceptsRJson($core.bool v) {
+    $_setBool(4, v);
+  }
+
+  $core.bool hasAcceptsRJson() => $_has(4);
   void clearAcceptsRJson() => clearField(5);
 
-  List<Query_AssocPair> get globalOptargs => $_getList(5);
+  $core.List<Query_AssocPair> get globalOptargs => $_getList(5);
 }
 
 class Frame extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Frame')
-    ..e<Frame_FrameType>(1, 'type', $pb.PbFieldType.OE, Frame_FrameType.POS, Frame_FrameType.valueOf, Frame_FrameType.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Frame')
+    ..e<Frame_FrameType>(1, 'type', $pb.PbFieldType.OE, Frame_FrameType.POS,
+        Frame_FrameType.valueOf, Frame_FrameType.values)
     ..aInt64(2, 'pos')
     ..aOS(3, 'opt')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
-  Frame() : super();
-  Frame.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Frame.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Frame clone() => new Frame()..mergeFromMessage(this);
-  Frame copyWith(void Function(Frame) updates) => super.copyWith((message) => updates(message as Frame));
+  Frame._() : super();
+  factory Frame() => create();
+  factory Frame.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Frame.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Frame clone() => Frame()..mergeFromMessage(this);
+  Frame copyWith(void Function(Frame) updates) =>
+      super.copyWith((message) => updates(message as Frame));
   $pb.BuilderInfo get info_ => _i;
-  static Frame create() => new Frame();
-  static $pb.PbList<Frame> createRepeated() => new $pb.PbList<Frame>();
+  @$core.pragma('dart2js:noInline')
+  static Frame create() => Frame._();
+  Frame createEmptyInstance() => create();
+  static $pb.PbList<Frame> createRepeated() => $pb.PbList<Frame>();
   static Frame getDefault() => _defaultInstance ??= create()..freeze();
   static Frame _defaultInstance;
-  static void $checkItem(Frame v) {
-    if (v is! Frame) $pb.checkItemFailed(v, _i.messageName);
-  }
 
   Frame_FrameType get type => $_getN(0);
-  set type(Frame_FrameType v) { setField(1, v); }
-  bool hasType() => $_has(0);
+  set type(Frame_FrameType v) {
+    setField(1, v);
+  }
+
+  $core.bool hasType() => $_has(0);
   void clearType() => clearField(1);
 
   Int64 get pos => $_getI64(1);
-  set pos(Int64 v) { $_setInt64(1, v); }
-  bool hasPos() => $_has(1);
+  set pos(Int64 v) {
+    $_setInt64(1, v);
+  }
+
+  $core.bool hasPos() => $_has(1);
   void clearPos() => clearField(2);
 
-  String get opt => $_getS(2, '');
-  set opt(String v) { $_setString(2, v); }
-  bool hasOpt() => $_has(2);
+  $core.String get opt => $_getS(2, '');
+  set opt($core.String v) {
+    $_setString(2, v);
+  }
+
+  $core.bool hasOpt() => $_has(2);
   void clearOpt() => clearField(3);
 }
 
 class Backtrace extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Backtrace')
-    ..pp<Frame>(1, 'frames', $pb.PbFieldType.PM, Frame.$checkItem, Frame.create)
-    ..hasRequiredFields = false
-  ;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Backtrace')
+    ..pc<Frame>(1, 'frames', $pb.PbFieldType.PM, Frame.create)
+    ..hasRequiredFields = false;
 
-  Backtrace() : super();
-  Backtrace.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Backtrace.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Backtrace clone() => new Backtrace()..mergeFromMessage(this);
-  Backtrace copyWith(void Function(Backtrace) updates) => super.copyWith((message) => updates(message as Backtrace));
+  Backtrace._() : super();
+  factory Backtrace() => create();
+  factory Backtrace.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Backtrace.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Backtrace clone() => Backtrace()..mergeFromMessage(this);
+  Backtrace copyWith(void Function(Backtrace) updates) =>
+      super.copyWith((message) => updates(message as Backtrace));
   $pb.BuilderInfo get info_ => _i;
-  static Backtrace create() => new Backtrace();
-  static $pb.PbList<Backtrace> createRepeated() => new $pb.PbList<Backtrace>();
+  @$core.pragma('dart2js:noInline')
+  static Backtrace create() => Backtrace._();
+  Backtrace createEmptyInstance() => create();
+  static $pb.PbList<Backtrace> createRepeated() => $pb.PbList<Backtrace>();
   static Backtrace getDefault() => _defaultInstance ??= create()..freeze();
   static Backtrace _defaultInstance;
-  static void $checkItem(Backtrace v) {
-    if (v is! Backtrace) $pb.checkItemFailed(v, _i.messageName);
-  }
 
-  List<Frame> get frames => $_getList(0);
+  $core.List<Frame> get frames => $_getList(0);
 }
 
 class Response extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Response')
-    ..e<Response_ResponseType>(1, 'type', $pb.PbFieldType.OE, Response_ResponseType.SUCCESS_ATOM, Response_ResponseType.valueOf, Response_ResponseType.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Response')
+    ..e<Response_ResponseType>(
+        1,
+        'type',
+        $pb.PbFieldType.OE,
+        Response_ResponseType.SUCCESS_ATOM,
+        Response_ResponseType.valueOf,
+        Response_ResponseType.values)
     ..aInt64(2, 'token')
-    ..pp<Datum>(3, 'response', $pb.PbFieldType.PM, Datum.$checkItem, Datum.create)
-    ..a<Backtrace>(4, 'backtrace', $pb.PbFieldType.OM, Backtrace.getDefault, Backtrace.create)
+    ..pc<Datum>(3, 'response', $pb.PbFieldType.PM, Datum.create)
+    ..a<Backtrace>(4, 'backtrace', $pb.PbFieldType.OM, Backtrace.getDefault,
+        Backtrace.create)
     ..a<Datum>(5, 'profile', $pb.PbFieldType.OM, Datum.getDefault, Datum.create)
-    ..pp<Response_ResponseNote>(6, 'notes', $pb.PbFieldType.PE, Response_ResponseNote.$checkItem, null, Response_ResponseNote.valueOf, Response_ResponseNote.values)
-    ..e<Response_ErrorType>(7, 'errorType', $pb.PbFieldType.OE, Response_ErrorType.INTERNAL, Response_ErrorType.valueOf, Response_ErrorType.values)
-    ..hasRequiredFields = false
-  ;
+    ..pc<Response_ResponseNote>(6, 'notes', $pb.PbFieldType.PE, null,
+        Response_ResponseNote.valueOf, Response_ResponseNote.values)
+    ..e<Response_ErrorType>(
+        7,
+        'errorType',
+        $pb.PbFieldType.OE,
+        Response_ErrorType.INTERNAL,
+        Response_ErrorType.valueOf,
+        Response_ErrorType.values)
+    ..hasRequiredFields = false;
 
-  Response() : super();
-  Response.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Response.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Response clone() => new Response()..mergeFromMessage(this);
-  Response copyWith(void Function(Response) updates) => super.copyWith((message) => updates(message as Response));
+  Response._() : super();
+  factory Response() => create();
+  factory Response.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Response.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Response clone() => Response()..mergeFromMessage(this);
+  Response copyWith(void Function(Response) updates) =>
+      super.copyWith((message) => updates(message as Response));
   $pb.BuilderInfo get info_ => _i;
-  static Response create() => new Response();
-  static $pb.PbList<Response> createRepeated() => new $pb.PbList<Response>();
+  @$core.pragma('dart2js:noInline')
+  static Response create() => Response._();
+  Response createEmptyInstance() => create();
+  static $pb.PbList<Response> createRepeated() => $pb.PbList<Response>();
   static Response getDefault() => _defaultInstance ??= create()..freeze();
   static Response _defaultInstance;
-  static void $checkItem(Response v) {
-    if (v is! Response) $pb.checkItemFailed(v, _i.messageName);
-  }
 
   Response_ResponseType get type => $_getN(0);
-  set type(Response_ResponseType v) { setField(1, v); }
-  bool hasType() => $_has(0);
+  set type(Response_ResponseType v) {
+    setField(1, v);
+  }
+
+  $core.bool hasType() => $_has(0);
   void clearType() => clearField(1);
 
   Int64 get token => $_getI64(1);
-  set token(Int64 v) { $_setInt64(1, v); }
-  bool hasToken() => $_has(1);
+  set token(Int64 v) {
+    $_setInt64(1, v);
+  }
+
+  $core.bool hasToken() => $_has(1);
   void clearToken() => clearField(2);
 
-  List<Datum> get response => $_getList(2);
+  $core.List<Datum> get response => $_getList(2);
 
   Backtrace get backtrace => $_getN(3);
-  set backtrace(Backtrace v) { setField(4, v); }
-  bool hasBacktrace() => $_has(3);
+  set backtrace(Backtrace v) {
+    setField(4, v);
+  }
+
+  $core.bool hasBacktrace() => $_has(3);
   void clearBacktrace() => clearField(4);
 
   Datum get profile => $_getN(4);
-  set profile(Datum v) { setField(5, v); }
-  bool hasProfile() => $_has(4);
+  set profile(Datum v) {
+    setField(5, v);
+  }
+
+  $core.bool hasProfile() => $_has(4);
   void clearProfile() => clearField(5);
 
-  List<Response_ResponseNote> get notes => $_getList(5);
+  $core.List<Response_ResponseNote> get notes => $_getList(5);
 
   Response_ErrorType get errorType => $_getN(6);
-  set errorType(Response_ErrorType v) { setField(7, v); }
-  bool hasErrorType() => $_has(6);
+  set errorType(Response_ErrorType v) {
+    setField(7, v);
+  }
+
+  $core.bool hasErrorType() => $_has(6);
   void clearErrorType() => clearField(7);
 }
 
 class Datum_AssocPair extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Datum.AssocPair')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Datum.AssocPair')
     ..aOS(1, 'key')
     ..a<Datum>(2, 'val', $pb.PbFieldType.OM, Datum.getDefault, Datum.create)
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
-  Datum_AssocPair() : super();
-  Datum_AssocPair.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Datum_AssocPair.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Datum_AssocPair clone() => new Datum_AssocPair()..mergeFromMessage(this);
-  Datum_AssocPair copyWith(void Function(Datum_AssocPair) updates) => super.copyWith((message) => updates(message as Datum_AssocPair));
+  Datum_AssocPair._() : super();
+  factory Datum_AssocPair() => create();
+  factory Datum_AssocPair.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Datum_AssocPair.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Datum_AssocPair clone() => Datum_AssocPair()..mergeFromMessage(this);
+  Datum_AssocPair copyWith(void Function(Datum_AssocPair) updates) =>
+      super.copyWith((message) => updates(message as Datum_AssocPair));
   $pb.BuilderInfo get info_ => _i;
-  static Datum_AssocPair create() => new Datum_AssocPair();
-  static $pb.PbList<Datum_AssocPair> createRepeated() => new $pb.PbList<Datum_AssocPair>();
-  static Datum_AssocPair getDefault() => _defaultInstance ??= create()..freeze();
+  @$core.pragma('dart2js:noInline')
+  static Datum_AssocPair create() => Datum_AssocPair._();
+  Datum_AssocPair createEmptyInstance() => create();
+  static $pb.PbList<Datum_AssocPair> createRepeated() =>
+      $pb.PbList<Datum_AssocPair>();
+  static Datum_AssocPair getDefault() =>
+      _defaultInstance ??= create()..freeze();
   static Datum_AssocPair _defaultInstance;
-  static void $checkItem(Datum_AssocPair v) {
-    if (v is! Datum_AssocPair) $pb.checkItemFailed(v, _i.messageName);
+
+  $core.String get key => $_getS(0, '');
+  set key($core.String v) {
+    $_setString(0, v);
   }
 
-  String get key => $_getS(0, '');
-  set key(String v) { $_setString(0, v); }
-  bool hasKey() => $_has(0);
+  $core.bool hasKey() => $_has(0);
   void clearKey() => clearField(1);
 
   Datum get val => $_getN(1);
-  set val(Datum v) { setField(2, v); }
-  bool hasVal() => $_has(1);
+  set val(Datum v) {
+    setField(2, v);
+  }
+
+  $core.bool hasVal() => $_has(1);
   void clearVal() => clearField(2);
 }
 
 class Datum extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Datum')
-    ..e<Datum_DatumType>(1, 'type', $pb.PbFieldType.OE, Datum_DatumType.R_NULL, Datum_DatumType.valueOf, Datum_DatumType.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Datum')
+    ..e<Datum_DatumType>(1, 'type', $pb.PbFieldType.OE, Datum_DatumType.R_NULL,
+        Datum_DatumType.valueOf, Datum_DatumType.values)
     ..aOB(2, 'rBool')
-    ..a<double>(3, 'rNum', $pb.PbFieldType.OD)
+    ..a<$core.double>(3, 'rNum', $pb.PbFieldType.OD)
     ..aOS(4, 'rStr')
-    ..pp<Datum>(5, 'rArray', $pb.PbFieldType.PM, Datum.$checkItem, Datum.create)
-    ..pp<Datum_AssocPair>(6, 'rObject', $pb.PbFieldType.PM, Datum_AssocPair.$checkItem, Datum_AssocPair.create)
-    ..hasRequiredFields = false
-  ;
+    ..pc<Datum>(5, 'rArray', $pb.PbFieldType.PM, Datum.create)
+    ..pc<Datum_AssocPair>(
+        6, 'rObject', $pb.PbFieldType.PM, Datum_AssocPair.create)
+    ..hasRequiredFields = false;
 
-  Datum() : super();
-  Datum.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Datum.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Datum clone() => new Datum()..mergeFromMessage(this);
-  Datum copyWith(void Function(Datum) updates) => super.copyWith((message) => updates(message as Datum));
+  Datum._() : super();
+  factory Datum() => create();
+  factory Datum.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Datum.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Datum clone() => Datum()..mergeFromMessage(this);
+  Datum copyWith(void Function(Datum) updates) =>
+      super.copyWith((message) => updates(message as Datum));
   $pb.BuilderInfo get info_ => _i;
-  static Datum create() => new Datum();
-  static $pb.PbList<Datum> createRepeated() => new $pb.PbList<Datum>();
+  @$core.pragma('dart2js:noInline')
+  static Datum create() => Datum._();
+  Datum createEmptyInstance() => create();
+  static $pb.PbList<Datum> createRepeated() => $pb.PbList<Datum>();
   static Datum getDefault() => _defaultInstance ??= create()..freeze();
   static Datum _defaultInstance;
-  static void $checkItem(Datum v) {
-    if (v is! Datum) $pb.checkItemFailed(v, _i.messageName);
-  }
 
   Datum_DatumType get type => $_getN(0);
-  set type(Datum_DatumType v) { setField(1, v); }
-  bool hasType() => $_has(0);
+  set type(Datum_DatumType v) {
+    setField(1, v);
+  }
+
+  $core.bool hasType() => $_has(0);
   void clearType() => clearField(1);
 
-  bool get rBool => $_get(1, false);
-  set rBool(bool v) { $_setBool(1, v); }
-  bool hasRBool() => $_has(1);
+  $core.bool get rBool => $_get(1, false);
+  set rBool($core.bool v) {
+    $_setBool(1, v);
+  }
+
+  $core.bool hasRBool() => $_has(1);
   void clearRBool() => clearField(2);
 
-  double get rNum => $_getN(2);
-  set rNum(double v) { $_setDouble(2, v); }
-  bool hasRNum() => $_has(2);
+  $core.double get rNum => $_getN(2);
+  set rNum($core.double v) {
+    $_setDouble(2, v);
+  }
+
+  $core.bool hasRNum() => $_has(2);
   void clearRNum() => clearField(3);
 
-  String get rStr => $_getS(3, '');
-  set rStr(String v) { $_setString(3, v); }
-  bool hasRStr() => $_has(3);
+  $core.String get rStr => $_getS(3, '');
+  set rStr($core.String v) {
+    $_setString(3, v);
+  }
+
+  $core.bool hasRStr() => $_has(3);
   void clearRStr() => clearField(4);
 
-  List<Datum> get rArray => $_getList(4);
+  $core.List<Datum> get rArray => $_getList(4);
 
-  List<Datum_AssocPair> get rObject => $_getList(5);
+  $core.List<Datum_AssocPair> get rObject => $_getList(5);
 }
 
 class Term_AssocPair extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Term.AssocPair')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Term.AssocPair')
     ..aOS(1, 'key')
     ..a<Term>(2, 'val', $pb.PbFieldType.OM, Term.getDefault, Term.create)
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
-  Term_AssocPair() : super();
-  Term_AssocPair.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Term_AssocPair.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Term_AssocPair clone() => new Term_AssocPair()..mergeFromMessage(this);
-  Term_AssocPair copyWith(void Function(Term_AssocPair) updates) => super.copyWith((message) => updates(message as Term_AssocPair));
+  Term_AssocPair._() : super();
+  factory Term_AssocPair() => create();
+  factory Term_AssocPair.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Term_AssocPair.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Term_AssocPair clone() => Term_AssocPair()..mergeFromMessage(this);
+  Term_AssocPair copyWith(void Function(Term_AssocPair) updates) =>
+      super.copyWith((message) => updates(message as Term_AssocPair));
   $pb.BuilderInfo get info_ => _i;
-  static Term_AssocPair create() => new Term_AssocPair();
-  static $pb.PbList<Term_AssocPair> createRepeated() => new $pb.PbList<Term_AssocPair>();
+  @$core.pragma('dart2js:noInline')
+  static Term_AssocPair create() => Term_AssocPair._();
+  Term_AssocPair createEmptyInstance() => create();
+  static $pb.PbList<Term_AssocPair> createRepeated() =>
+      $pb.PbList<Term_AssocPair>();
   static Term_AssocPair getDefault() => _defaultInstance ??= create()..freeze();
   static Term_AssocPair _defaultInstance;
-  static void $checkItem(Term_AssocPair v) {
-    if (v is! Term_AssocPair) $pb.checkItemFailed(v, _i.messageName);
+
+  $core.String get key => $_getS(0, '');
+  set key($core.String v) {
+    $_setString(0, v);
   }
 
-  String get key => $_getS(0, '');
-  set key(String v) { $_setString(0, v); }
-  bool hasKey() => $_has(0);
+  $core.bool hasKey() => $_has(0);
   void clearKey() => clearField(1);
 
   Term get val => $_getN(1);
-  set val(Term v) { setField(2, v); }
-  bool hasVal() => $_has(1);
+  set val(Term v) {
+    setField(2, v);
+  }
+
+  $core.bool hasVal() => $_has(1);
   void clearVal() => clearField(2);
 }
 
 class Term extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Term')
-    ..e<Term_TermType>(1, 'type', $pb.PbFieldType.OE, Term_TermType.DATUM, Term_TermType.valueOf, Term_TermType.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo('Term')
+    ..e<Term_TermType>(1, 'type', $pb.PbFieldType.OE, Term_TermType.DATUM,
+        Term_TermType.valueOf, Term_TermType.values)
     ..a<Datum>(2, 'datum', $pb.PbFieldType.OM, Datum.getDefault, Datum.create)
-    ..pp<Term>(3, 'args', $pb.PbFieldType.PM, Term.$checkItem, Term.create)
-    ..pp<Term_AssocPair>(4, 'optargs', $pb.PbFieldType.PM, Term_AssocPair.$checkItem, Term_AssocPair.create)
-    ..hasRequiredFields = false
-  ;
+    ..pc<Term>(3, 'args', $pb.PbFieldType.PM, Term.create)
+    ..pc<Term_AssocPair>(
+        4, 'optargs', $pb.PbFieldType.PM, Term_AssocPair.create)
+    ..hasRequiredFields = false;
 
-  Term() : super();
-  Term.fromBuffer(List<int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  Term.fromJson(String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  Term clone() => new Term()..mergeFromMessage(this);
-  Term copyWith(void Function(Term) updates) => super.copyWith((message) => updates(message as Term));
+  Term._() : super();
+  factory Term() => create();
+  factory Term.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory Term.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
+  Term clone() => Term()..mergeFromMessage(this);
+  Term copyWith(void Function(Term) updates) =>
+      super.copyWith((message) => updates(message as Term));
   $pb.BuilderInfo get info_ => _i;
-  static Term create() => new Term();
-  static $pb.PbList<Term> createRepeated() => new $pb.PbList<Term>();
+  @$core.pragma('dart2js:noInline')
+  static Term create() => Term._();
+  Term createEmptyInstance() => create();
+  static $pb.PbList<Term> createRepeated() => $pb.PbList<Term>();
   static Term getDefault() => _defaultInstance ??= create()..freeze();
   static Term _defaultInstance;
-  static void $checkItem(Term v) {
-    if (v is! Term) $pb.checkItemFailed(v, _i.messageName);
-  }
 
   Term_TermType get type => $_getN(0);
-  set type(Term_TermType v) { setField(1, v); }
-  bool hasType() => $_has(0);
+  set type(Term_TermType v) {
+    setField(1, v);
+  }
+
+  $core.bool hasType() => $_has(0);
   void clearType() => clearField(1);
 
   Datum get datum => $_getN(1);
-  set datum(Datum v) { setField(2, v); }
-  bool hasDatum() => $_has(1);
+  set datum(Datum v) {
+    setField(2, v);
+  }
+
+  $core.bool hasDatum() => $_has(1);
   void clearDatum() => clearField(2);
 
-  List<Term> get args => $_getList(2);
+  $core.List<Term> get args => $_getList(2);
 
-  List<Term_AssocPair> get optargs => $_getList(3);
+  $core.List<Term_AssocPair> get optargs => $_getList(3);
 }
-

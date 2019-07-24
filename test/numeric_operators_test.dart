@@ -1,10 +1,10 @@
 import 'package:test/test.dart';
-import '../lib/rethinkdb_dart.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
 main() {
   Rethinkdb r = Rethinkdb();
-  String tableName = null;
-  String testDbName = null;
+  String tableName;
+  String testDbName;
   bool shouldDropTable = false;
   Connection connection;
 

@@ -1,11 +1,11 @@
 import 'package:test/test.dart';
-import '../lib/rethinkdb_dart.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
 main() {
-  Rethinkdb r = new Rethinkdb();
-  String databaseName = null;
-  String tableName = null;
-  String testDbName = null;
+  Rethinkdb r = Rethinkdb();
+  String databaseName;
+  String tableName;
+  String testDbName;
   bool shouldDropTable = false;
   Connection connection;
 
@@ -42,23 +42,23 @@ main() {
 
   group("count command -> ", () {
     test("should count an array", () async {
-      int count = await r.expr([1,2,3]).count().run(connection);
+      int count = await r.expr([1, 2, 3]).count().run(connection);
       expect(count, equals(3));
     });
-    
+
     test("should count an array with a filter", () async {
-      int count = await r.expr([2,1,2,3,2,2]).count(2).run(connection);
+      int count = await r.expr([2, 1, 2, 3, 2, 2]).count(2).run(connection);
       expect(count, equals(4));
     });
 
     test("should count items in a table", () async {
       await r.tableCreate(tableName).run(connection);
       List testData = [
-        {"id":1},
-        {"id":2},
-        {"id":3},
-        {"id":4},
-        {"id":5}
+        {"id": 1},
+        {"id": 2},
+        {"id": 3},
+        {"id": 4},
+        {"id": 5}
       ];
       await r.table(tableName).insert(testData).run(connection);
       int count = await r.table(tableName).count().run(connection);
@@ -67,20 +67,20 @@ main() {
 
     test("should count items in a table with a filter", () async {
       List testData = [
-        {"id":6, "age":21},
-        {"id":7, "age":22},
-        {"id":8, "age":21},
-        {"id":9, "age":33},
-        {"id":10, "age":34}
+        {"id": 6, "age": 21},
+        {"id": 7, "age": 22},
+        {"id": 8, "age": 21},
+        {"id": 9, "age": 33},
+        {"id": 10, "age": 34}
       ];
       await r.table(tableName).insert(testData).run(connection);
       int count = await r.table(tableName)('age').count(21).run(connection);
       expect(count, equals(2));
 
-      count = await r.table(tableName).count((user){
+      count = await r.table(tableName).count((user) {
         return user('id').lt(8);
       }).run(connection);
-      
+
       expect(count, equals(7));
     });
 

@@ -58,6 +58,12 @@ var count = await r.table('tv_shows').count();
 print("count: $count");
 ```
 
+To update protobuf execute the following command from the project root:
+
+```sh
+bash lib/src/generated/regenerate-proto.sh
+```
+
 To run tests execute the following command from the project root:
 
 **warning: tests are run against a live database, but they do attempt to

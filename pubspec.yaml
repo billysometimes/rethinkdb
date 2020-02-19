@@ -12,8 +12,7 @@ dependencies:
   protobuf: ^0.13.15
   crypto: ^2.0.6
   convert: ^2.1.1
-  pbkdf2:
-    git: "https://github.com/jamesots/pbkdf2"
+  pbkdf2_dart: ^2.1.0
 dev_dependencies:
   test: ^1.6.5
   pedantic: ^1.8.0

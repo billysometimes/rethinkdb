@@ -1,6 +1,7 @@
 ## 2.3.2+6
 
 * Fix '_GrowableList<dynamic>' is not a subtype of type 'Iterable<int>' (thanks to @redsolver)
+* Changed pbkdf2 package to pbkdf2_dart
 
 ## 2.3.2+5
 

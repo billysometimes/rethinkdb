@@ -1,3 +1,7 @@
+## 2.3.2+6
+
+* Fix '_GrowableList<dynamic>' is not a subtype of type 'Iterable<int>' (thanks to @redsolver)
+
 ## 2.3.2+5
 
 * Made 'SocketException: OS Error: Connection refused' handleable by user code

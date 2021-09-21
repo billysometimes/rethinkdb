@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/marceloneppel/rethinkdb.svg?branch=master)](https://travis-ci.org/marceloneppel/rethinkdb)
+[![Build Status](https://app.travis-ci.com/marceloneppel/rethinkdb.svg?branch=master)](https://app.travis-ci.com/github/marceloneppel/rethinkdb)
 
 Dart 2 and Flutter RethinkDB Driver
 =========

@@ -1,10 +1,10 @@
 import 'package:test/test.dart';
-import '../lib/rethinkdb_driver.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
 main() {
-  Rethinkdb r = new Rethinkdb();
-  String tableName = null;
-  String testDbName = null;
+  Rethinkdb r = Rethinkdb();
+  String tableName;
+  String testDbName;
   bool shouldDropTable = false;
   Connection connection;
 
@@ -114,7 +114,7 @@ main() {
 
     test("should allow handle conflicts", () async {
       var update = await r.table(tableName).insert(
-          {'id': 1, 'birthYear': new DateTime(1984)},
+          {'id': 1, 'birthYear': DateTime(1984)},
           {'conflict': 'update', 'return_changes': true}).run(connection);
 
       expect(update['changes'][0]['new_val'].containsKey('birthYear'),
@@ -156,7 +156,7 @@ main() {
     test("should update all records in a table", () async {
       Map update = await r
           .table(tableName)
-          .update({'lastModified': new DateTime.now()}).run(connection);
+          .update({'lastModified': DateTime.now()}).run(connection);
 
       expect(update['replaced'], equals(5));
     });

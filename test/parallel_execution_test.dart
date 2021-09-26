@@ -1,16 +1,16 @@
 import 'package:test/test.dart';
 import 'dart:async';
-import '../lib/rethinkdb_driver.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
 main() {
   test('ParallelExecution', () async {
     bool isParallel = await pEx();
     expect(isParallel, equals(true));
-  }, timeout: new Timeout.factor(4));
+  }, timeout: Timeout.factor(4));
 }
 
 Future pEx() {
-  Rethinkdb r = new Rethinkdb();
+  var r = Rethinkdb() as dynamic;
   return r
       .connect(db: "test", port: 28015)
       .then((connection) => _queryWhileWriting(connection, r));
@@ -18,9 +18,9 @@ Future pEx() {
 
 _queryWhileWriting(conn, r) async {
   //variable that will be set by our faster query
-  int total = null;
+  int total;
 
-  Completer testCompleter = new Completer();
+  Completer testCompleter = Completer();
 
   //set up some test tables
 

@@ -1,11 +1,11 @@
 import 'package:test/test.dart';
-import '../lib/rethinkdb_driver.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
 main() {
-  Rethinkdb r = new Rethinkdb();
-  String databaseName = null;
-  String tableName = null;
-  String testDbName = null;
+  var r = Rethinkdb() as dynamic;
+  String databaseName;
+  String tableName;
+  String testDbName;
   bool shouldDropTable = false;
   Connection connection;
 
@@ -251,7 +251,7 @@ main() {
       DateTime obj = await r.time(2010, 12, 29, timezone: 'Z').run(connection);
 
       expect(obj.runtimeType, equals(DateTime));
-      expect(obj.isBefore(new DateTime.now()), equals(true));
+      expect(obj.isBefore(DateTime.now()), equals(true));
       expect(obj.minute, equals(0));
       expect(obj.second, equals(0));
     });
@@ -264,7 +264,7 @@ main() {
           .run(connection);
 
       expect(obj.runtimeType, equals(DateTime));
-      expect(obj.isBefore(new DateTime.now()), equals(true));
+      expect(obj.isBefore(DateTime.now()), equals(true));
       expect(obj.minute, equals(33));
       expect(obj.second, equals(45));
     });
@@ -273,7 +273,7 @@ main() {
   test(
       "nativeTime command -> should turn a native dart DateTime to a reql time",
       () async {
-    DateTime dt = new DateTime.now();
+    DateTime dt = DateTime.now();
     DateTime rqlDt = await r.nativeTime(dt).run(connection);
 
     expect(dt.year, equals(rqlDt.year));
@@ -309,7 +309,7 @@ main() {
 
   test("epochTime command -> should take a timestamp and return a time object",
       () async {
-    DateTime dateTime = new DateTime.fromMillisecondsSinceEpoch(531360000000);
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(531360000000);
 
     DateTime dt = await r.epochTime(531360000).run(connection);
 
@@ -324,7 +324,7 @@ main() {
     DateTime dt = await r.now().run(connection);
 
     expect(dt is DateTime, equals(true));
-    expect(dt.isBefore(new DateTime.now()), equals(true));
+    expect(dt.isBefore(DateTime.now()), equals(true));
   });
 
   group("rqlDo command -> ", () {
@@ -678,12 +678,13 @@ main() {
     expect(response['dbs_dropped'], equals(1));
     expect(response['tables_dropped'], equals(0));
   });
-  /**TO TEST:
-    test with orderby: r.asc(attr)
-    test with orderby: r.desc(attr)
-    r.http(url)
 
-    test with filter or something: r.row;
-    test with time: r.monday ... r.sunday;
-    test with time: r.january .. r.december;**/
+  /// TO TEST:
+  /// test with orderby: r.asc(attr)
+  /// test with orderby: r.desc(attr)
+  /// r.http(url)
+  ///
+  /// test with filter or something: r.row;
+  /// test with time: r.monday ... r.sunday;
+  ///    test with time: r.january .. r.december;
 }

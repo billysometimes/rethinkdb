@@ -1,9 +1,9 @@
 import 'package:test/test.dart';
 import 'dart:async';
-import '../lib/rethinkdb_driver.dart';
+import 'package:rethinkdb_dart/rethinkdb_dart.dart';
 
 main() {
-  Rethinkdb r = new Rethinkdb();
+  Rethinkdb r = Rethinkdb();
 
   test("connect() connects with defaults if no params are passed", () async {
     Connection c = await r.connect();
@@ -36,7 +36,7 @@ main() {
     expect(closeCounter, equals(0));
     conn.close();
     conn.close();
-    expect(closeCounter, equals(2));
+    expect(closeCounter, equals(1));
     Connection c = await conn.connect();
 
     expect(connectCounter, equals(1));

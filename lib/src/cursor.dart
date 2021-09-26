@@ -6,9 +6,9 @@ class Cursor extends Stream {
   Map _opts;
   int _outstandingRequests = 0;
   bool _endFlag = false;
-  StreamController _s = new StreamController();
+  StreamController _s = StreamController();
 
-  Cursor(Connection this._conn, Query this._query, Map this._opts);
+  Cursor(this._conn, this._query, this._opts);
 
   _extend(Response response) {
     _endFlag = response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value;
@@ -16,8 +16,7 @@ class Cursor extends Stream {
     if (response._type != p.Response_ResponseType.SUCCESS_PARTIAL.value &&
         response._type != p.Response_ResponseType.SUCCESS_SEQUENCE.value) {
       _s.addError(
-          new RqlDriverError("Unexpected response type received for cursor"),
-          null);
+          RqlDriverError("Unexpected response type received for cursor"), null);
     }
 
     try {
@@ -28,11 +27,11 @@ class Cursor extends Stream {
 
     var convertedData =
         _query._recursivelyConvertPseudotypes(response._data, _opts);
-    _s.addStream(new Stream.fromIterable(convertedData)).then((f) {
+    _s.addStream(Stream.fromIterable(convertedData)).then((f) {
       if (!_endFlag) {
         _outstandingRequests++;
-        Query query = new Query(
-            p.Query_QueryType.CONTINUE, this._query._token, null, null);
+        Query query =
+            Query(p.Query_QueryType.CONTINUE, this._query._token, null, null);
         query._cursor = this;
         _conn._sendQueue.addLast(query);
         _conn._sendQuery();
@@ -54,31 +53,31 @@ class Cursor extends Stream {
 class Feed extends Cursor {
   Feed(conn, opts, query) : super(conn, opts, query);
 
-  toSet() => throw new RqlDriverError("`toSet` is not available for feeds.");
-  toList() => throw new RqlDriverError("`toList` is not available for feeds.");
+  toSet() => throw RqlDriverError("`toSet` is not available for feeds.");
+  toList() => throw RqlDriverError("`toList` is not available for feeds.");
   toString() => "Instance of 'Feed'";
 }
 
 class UnionedFeed extends Cursor {
   UnionedFeed(conn, opts, query) : super(conn, opts, query);
 
-  toSet() => throw new RqlDriverError("`toSet` is not available for feeds.");
-  toList() => throw new RqlDriverError("`toList` is not available for feeds.");
+  toSet() => throw RqlDriverError("`toSet` is not available for feeds.");
+  toList() => throw RqlDriverError("`toList` is not available for feeds.");
   toString() => "Instance of 'UnionedFeed'";
 }
 
 class AtomFeed extends Cursor {
   AtomFeed(conn, opts, query) : super(conn, opts, query);
 
-  toSet() => throw new RqlDriverError("`toSet` is not available for feeds.");
-  toList() => throw new RqlDriverError("`toList` is not available for feeds.");
+  toSet() => throw RqlDriverError("`toSet` is not available for feeds.");
+  toList() => throw RqlDriverError("`toList` is not available for feeds.");
   toString() => "Instance of 'AtomFeed'";
 }
 
 class OrderByLimitFeed extends Cursor {
   OrderByLimitFeed(conn, opts, query) : super(conn, opts, query);
 
-  toSet() => throw new RqlDriverError("`toSet` is not available for feeds.");
-  toList() => throw new RqlDriverError("`toList` is not available for feeds.");
+  toSet() => throw RqlDriverError("`toSet` is not available for feeds.");
+  toList() => throw RqlDriverError("`toList` is not available for feeds.");
   toString() => "Instance of 'OrderByLimitFeed'";
 }
